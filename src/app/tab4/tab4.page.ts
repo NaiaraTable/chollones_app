@@ -13,7 +13,7 @@ import {
   navigateOutline,
   heart, heartOutline
 } from 'ionicons/icons';
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 import { LocationService } from '../services/location.service';
 
 @Component({
@@ -53,7 +53,7 @@ export class Tab4Page implements OnInit {
   ];
 
   constructor(
-    private supabaseService: SupabaseService,
+    private supabaseService: ApiService,
     private locationService: LocationService,
     private router: Router,
     private route: ActivatedRoute
@@ -73,15 +73,21 @@ export class Tab4Page implements OnInit {
     }
 
     try {
-      const { data: cats } = await this.supabaseService.client
-        .from('categorias')
-        .select('nombre, slug')
-        .order('nombre');
-
-      if (cats && cats.length > 0) {
+      const chollos = await this.supabaseService.getChollos();
+      // Extraer categorías únicas de los chollos
+      const catsMap = new Map();
+      chollos.forEach((c: any) => {
+        const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
+        cats.forEach((cat: any) => {
+          if (cat && cat.slug && !catsMap.has(cat.slug)) {
+            catsMap.set(cat.slug, { nombre: cat.nombre, slug: cat.slug });
+          }
+        });
+      });
+      if (catsMap.size > 0) {
         this.categorias = [
           { nombre: 'Todas', slug: 'todas' },
-          ...cats
+          ...Array.from(catsMap.values())
         ];
       }
     } catch (err) {
@@ -151,27 +157,18 @@ export class Tab4Page implements OnInit {
   // Nueva función: Cargar favoritos del usuario
   async cargarFavoritos() {
     try {
-      const { data: { user } } = await this.supabaseService.client.auth.getUser();
-      if (!user) return;
-
-      const { data } = await this.supabaseService.client
-        .from('guardados')
-        .select('chollo_id')
-        .eq('usuario_temp_id', user.id);
-
-      if (data) {
-        this.favoritosIds = new Set(data.map(f => f.chollo_id));
-      }
+      const ids = await this.supabaseService.getFavoritosIds();
+      this.favoritosIds = new Set(ids);
     } catch (error) {
       console.error('Error cargando favoritos:', error);
     }
   }
 
-  // Nueva función: Toggle de favorito (Igual que en Tab1)
+  // Toggle de favorito (usa ApiService)
   async toggleFavorito(chollo: any, event: Event) {
-    event.stopPropagation(); // Evita navegar al detalle
-    
-    const { data: { user } } = await this.supabaseService.client.auth.getUser();
+    event.stopPropagation();
+
+    const user = this.supabaseService.userValue;
     if (!user) {
       alert('Debes iniciar sesión para guardar favoritos');
       return;
@@ -181,16 +178,10 @@ export class Tab4Page implements OnInit {
 
     try {
       if (isFav) {
-        await this.supabaseService.client
-          .from('guardados')
-          .delete()
-          .eq('chollo_id', chollo.id)
-          .eq('usuario_temp_id', user.id);
+        await this.supabaseService.eliminarCholloFavorito(chollo.id);
         this.favoritosIds.delete(chollo.id);
       } else {
-        await this.supabaseService.client
-          .from('guardados')
-          .insert({ chollo_id: chollo.id, usuario_temp_id: user.id });
+        await this.supabaseService.guardarCholloFavorito(chollo.id);
         this.favoritosIds.add(chollo.id);
       }
     } catch (error) {

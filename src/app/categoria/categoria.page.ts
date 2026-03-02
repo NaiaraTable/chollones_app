@@ -6,7 +6,7 @@ import { arrowBack } from 'ionicons/icons';
 import {
   IonContent, NavController, IonButton, IonIcon, IonSpinner
 } from '@ionic/angular/standalone';
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-categoria',
@@ -25,9 +25,9 @@ export class CategoriaPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private supabase: SupabaseService,
+    private supabase: ApiService,
     private navCtrl: NavController
-  ) {addIcons({ arrowBack });}
+  ) { addIcons({ arrowBack }); }
 
   async ngOnInit() {
     this.slug = this.route.snapshot.paramMap.get('slug') || '';
@@ -44,43 +44,15 @@ export class CategoriaPage implements OnInit {
     this.loading = true;
 
     try {
-      // 1) Buscar categoría por slug
-      const { data: cat, error: catError } = await this.supabase.client
-        .from('categorias')
-        .select('id, nombre, slug')
-        .eq('slug', this.slug)
-        .single();
+      // Obtener todos los chollos y filtrar por categoría
+      const todosLosChollos = await this.supabase.getChollos();
 
-      if (catError) {
-        console.error('❌ Error cargando categoría:', catError);
-        this.productos = [];
-        return;
-      }
+      this.productos = todosLosChollos.filter((c: any) => {
+        const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
+        return cats.some((cat: any) => cat.slug === this.slug);
+      });
 
-      if (!cat?.id) {
-        console.warn('⚠️ No se encontró la categoría:', this.slug);
-        this.productos = [];
-        return;
-      }
-
-      const categoriaId = cat.id;
-      console.log('✅ Categoría encontrada. ID:', categoriaId);
-
-      // 2) Buscar chollos por categoria_id
-      const { data: chollos, error: chollosError } = await this.supabase.client
-        .from('chollos')
-        .select('*, proveedores(nombre, logo)')
-        .eq('categoria_id', categoriaId)
-        .order('created_at', { ascending: false });
-
-      if (chollosError) {
-        console.error('❌ Error cargando chollos:', chollosError);
-        this.productos = [];
-        return;
-      }
-
-      this.productos = chollos ?? [];
-      console.log('✅ Chollos cargados:', this.productos.length);
+      console.log('✅ Chollos filtrados por categoría:', this.productos.length);
 
     } catch (error) {
       console.error('🔥 Error crítico:', error);
@@ -95,7 +67,7 @@ export class CategoriaPage implements OnInit {
     this.router.navigate(['/tabs/producto', id]);
   }
 
-    volverAtras() {
+  volverAtras() {
     this.navCtrl.back();
   }
 }

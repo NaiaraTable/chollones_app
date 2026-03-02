@@ -18,7 +18,7 @@ import {
   openOutline
 } from 'ionicons/icons';
 
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 import { FavoritosEvent } from '../services/favoritos-event';
 
 @Component({
@@ -62,7 +62,7 @@ export class Tab1Page implements OnInit {
   favoritosIds: Set<string> = new Set();
 
   constructor(
-    private supabaseService: SupabaseService,
+    private supabaseService: ApiService,
     private favoritosEvent: FavoritosEvent,
     public router: Router
   ) {

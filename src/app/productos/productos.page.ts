@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { NavController } from '@ionic/angular/standalone';
@@ -20,7 +20,7 @@ export class ProductosPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private supabase: SupabaseService,
+    private supabase: ApiService,
     private navCtrl: NavController
   ) {
     //Registramos los iconos para que se vean en el HTML
@@ -30,13 +30,7 @@ export class ProductosPage implements OnInit {
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      const { data } = await this.supabase.client
-        .from('chollos')
-        .select('*, proveedores(*)') 
-        .eq('id', id)
-        .single();
-      
-      this.producto = data;
+      this.producto = await this.supabase.getCholloById(id);
 
       //Una vez cargado el producto, verificamos si es favorito
       if (this.producto) {
@@ -45,53 +39,31 @@ export class ProductosPage implements OnInit {
     }
   }
 
-  //Función para comprobar el estado inicial en la tabla 'guardados'
+  //Función para comprobar el estado inicial
   async comprobarSiEsFavorito() {
     try {
-      const { data: { user } } = await this.supabase.client.auth.getUser();
-      if (!user) return;
-
-      const { data } = await this.supabase.client
-        .from('guardados')
-        .select('id')
-        .eq('chollo_id', this.producto.id)
-        .eq('usuario_temp_id', user.id)
-        .maybeSingle(); // Usamos maybeSingle para que no de error si no existe
-
-      this.esFavorito = !!data; // true si existe, false si no
+      const ids = await this.supabase.getFavoritosIds();
+      this.esFavorito = ids.includes(this.producto.id);
     } catch (error) {
       console.error('Error al comprobar favorito:', error);
     }
   }
 
-  //Función para añadir o quitar de la base de datos
+  //Función para añadir o quitar de favoritos
   async toggleFavorito() {
     try {
-      const { data: { user } } = await this.supabase.client.auth.getUser();
-      
+      const user = this.supabase.userValue;
+
       if (!user) {
         alert('Debes iniciar sesión para guardar favoritos');
         return;
       }
 
       if (this.esFavorito) {
-        // Si ya es favorito, lo eliminamos
-        await this.supabase.client
-          .from('guardados')
-          .delete()
-          .eq('chollo_id', this.producto.id)
-          .eq('usuario_temp_id', user.id);
-        
+        await this.supabase.eliminarCholloFavorito(this.producto.id);
         this.esFavorito = false;
       } else {
-        // Si no es favorito, lo insertamos
-        await this.supabase.client
-          .from('guardados')
-          .insert({ 
-            chollo_id: this.producto.id, 
-            usuario_temp_id: user.id 
-          });
-        
+        await this.supabase.guardarCholloFavorito(this.producto.id);
         this.esFavorito = true;
       }
     } catch (error) {

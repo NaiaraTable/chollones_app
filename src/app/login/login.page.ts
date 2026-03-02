@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
-  IonContent, IonItem, IonLabel, IonInput, IonButton 
+import {
+  IonContent, IonItem, IonLabel, IonInput, IonButton
 } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router'; // Añadido RouterLink
 import { AlertController, LoadingController } from '@ionic/angular';
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -14,8 +14,8 @@ import { SupabaseService } from '../services/supabase.service';
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
+    CommonModule,
+    FormsModule,
     RouterLink, // Necesario para usar [routerLink] en el HTML
     IonContent, IonItem, IonLabel, IonInput, IonButton
   ]
@@ -25,13 +25,13 @@ export class LoginPage implements OnInit {
   password = '';
 
   constructor(
-    private supabase: SupabaseService,
+    private supabase: ApiService,
     private router: Router,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   // Función principal de Login unificada y blindada
   async handleLogin() {
@@ -46,7 +46,7 @@ export class LoginPage implements OnInit {
     try {
       // Llamada segura sin desestructurar {} directamente para evitar errores de red
       const respuesta = await this.supabase.login(this.email, this.password);
-      
+
       await loading.dismiss();
 
       if (respuesta && respuesta.error) {

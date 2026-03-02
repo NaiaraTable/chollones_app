@@ -10,7 +10,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { pricetagsOutline, ticketOutline } from 'ionicons/icons';
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
     selector: 'app-mis-alertas',
@@ -33,7 +33,7 @@ export class MisAlertasPage implements OnInit {
     cupones: any[] = [];
 
     constructor(
-        private supabase: SupabaseService,
+        private supabase: ApiService,
         private toastCtrl: ToastController
     ) {
         addIcons({ pricetagsOutline, ticketOutline });

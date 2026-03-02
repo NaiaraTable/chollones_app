@@ -8,7 +8,7 @@ import {
 import { addIcons } from 'ionicons';
 import { addOutline, removeOutline, trashOutline, bagCheckOutline, bagOutline } from 'ionicons/icons';
 
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-carrito',
@@ -25,7 +25,7 @@ export class CarritoPage implements OnInit {
   total = 0;
 
   constructor(
-    private supabaseService: SupabaseService,
+    private supabaseService: ApiService,
     private router: Router
   ) {
     addIcons({ addOutline, removeOutline, trashOutline, bagCheckOutline, bagOutline });

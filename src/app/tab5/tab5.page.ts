@@ -1,32 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Necesario para *ngIf
 import { RouterLink } from '@angular/router'; // Necesario para navegar al login
-import { 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
-  IonContent, 
-  IonList, 
-  IonItem, 
-  IonLabel, 
-  IonIcon, 
-  IonAvatar, 
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonIcon,
+  IonAvatar,
   IonButton,
   IonButtons,
   IonNote
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
-  personCircleOutline, 
-  settingsOutline, 
-  logOutOutline, 
+import {
+  personCircleOutline,
+  settingsOutline,
+  logOutOutline,
   chevronForwardOutline,
   notificationsOutline,
   shieldCheckmarkOutline
 } from 'ionicons/icons';
 
-// Importamos tu servicio de Supabase
-import { SupabaseService } from '../services/supabase.service';
+// Importamos el servicio de la API (MySQL)
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-tab5',
@@ -36,7 +36,7 @@ import { SupabaseService } from '../services/supabase.service';
   imports: [
     CommonModule, // 1. Añadido para gestionar el estado de usuario/invitado
     RouterLink,   // 2. Añadido para el botón de "Iniciar Sesión"
-    IonHeader, IonToolbar, IonTitle, IonContent, 
+    IonHeader, IonToolbar, IonTitle, IonContent,
     IonList, IonItem, IonLabel, IonIcon, IonAvatar, IonButton,
     IonButtons, IonNote
   ],
@@ -45,11 +45,11 @@ export class Tab5Page implements OnInit {
   usuario: any = null;
 
   // Un solo constructor donde inyectamos el servicio
-  constructor(private supabase: SupabaseService) {
-    addIcons({ 
-      personCircleOutline, 
-      settingsOutline, 
-      logOutOutline, 
+  constructor(private supabase: ApiService) {
+    addIcons({
+      personCircleOutline,
+      settingsOutline,
+      logOutOutline,
       chevronForwardOutline,
       notificationsOutline,
       shieldCheckmarkOutline

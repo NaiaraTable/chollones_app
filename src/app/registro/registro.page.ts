@@ -7,7 +7,7 @@ import {
 } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-registro',
@@ -26,7 +26,7 @@ export class RegistroPage {
   nombre = '';
 
   constructor(
-    private supabase: SupabaseService,
+    private supabase: ApiService,
     private router: Router,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController

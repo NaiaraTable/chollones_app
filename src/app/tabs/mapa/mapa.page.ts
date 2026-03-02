@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular/standalone';
 import * as L from 'leaflet';
 import { LocationService } from '../../services/location.service';
-import { SupabaseService } from '../../services/supabase.service'; // Importamos el servicio de la bbdd
+import { ApiService } from '../../services/api.service'; // Importamos el servicio de la API
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,17 +15,17 @@ import { Router } from '@angular/router';
 })
 export class MapaPage implements OnInit {
   map!: L.Map;
-  chollos: any[] = []; // Aquí guardaremos los datos de Supabase
+  chollos: any[] = []; // Aquí guardaremos los datos de MySQL
 
   constructor(
     private location: LocationService,
-    private supabase: SupabaseService, // Inyectamos Supabase
+    private supabase: ApiService, // Inyectamos ApiService
     private router: Router
-  ) {}
+  ) { }
 
   async ngOnInit() {
     await this.configurarIconos(); // Arregla los errores 404 de los iconos
-    
+
     try {
       // 1. Obtener ubicación del usuario
       const coords = await this.location.getPosition();
@@ -42,8 +42,8 @@ export class MapaPage implements OnInit {
   async obtenerChollos() {
     try {
       // 1. Obtenemos la respuesta completa sin desestructurar {}
-      const respuesta = await this.supabase.getChollos(); 
-      
+      const respuesta = await this.supabase.getChollos();
+
       // 2. Si la respuesta es nula o indefinida, abortamos
       if (!respuesta) {
         console.warn('No se recibió respuesta de Supabase en el mapa');
@@ -53,7 +53,7 @@ export class MapaPage implements OnInit {
       // 3. Extraemos los datos de forma segura
       // Esto evita el error "Cannot destructure property data"
       const data = (respuesta as any).data || (Array.isArray(respuesta) ? respuesta : null);
-      
+
       if (data && Array.isArray(data)) {
         this.chollos = data;
         this.pintarMarcadores();
@@ -68,7 +68,7 @@ export class MapaPage implements OnInit {
       // Sacamos lat y lng del proveedor
       const latitud = chollo.proveedores?.lat;
       const longitud = chollo.proveedores?.lng;
-      
+
       if (latitud && longitud) {
         // 1. Extraemos datos
         const nombreProveedor = chollo.proveedores?.nombre || 'Proveedor desconocido';
@@ -79,7 +79,7 @@ export class MapaPage implements OnInit {
         popupContent.style.textAlign = 'center';
 
         // 3. Le metemos el diseño y el botón
-      popupContent.innerHTML = `
+        popupContent.innerHTML = `
         <div class="map-popup-container">
           <b class="popup-title">${chollo.titulo}</b>
           <span class="popup-vendor">${nombreProveedor}</span>
@@ -110,16 +110,16 @@ export class MapaPage implements OnInit {
 
     this.map = L.map('map', mapOptions).setView([lat, lng], 13);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-      }).addTo(this.map);
-      
-      L.marker([lat, lng]).addTo(this.map).bindPopup('Tú estás aquí').openPopup();
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(this.map);
 
-      // Forzamos un re-cálculo del tamaño para que no se vea el mapa gris o bloqueado
-      setTimeout(() => {
-        this.map.invalidateSize();
-      }, 500);
+    L.marker([lat, lng]).addTo(this.map).bindPopup('Tú estás aquí').openPopup();
+
+    // Forzamos un re-cálculo del tamaño para que no se vea el mapa gris o bloqueado
+    setTimeout(() => {
+      this.map.invalidateSize();
+    }, 500);
   }
 
   private configurarIconos() {

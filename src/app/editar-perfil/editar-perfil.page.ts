@@ -14,7 +14,7 @@ import {
     locationOutline, lockClosedOutline, calendarOutline
 } from 'ionicons/icons';
 
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
     selector: 'app-editar-perfil',
@@ -43,7 +43,7 @@ export class EditarPerfilPage implements OnInit {
     savingPassword = false;
 
     constructor(
-        private supabase: SupabaseService,
+        private supabase: ApiService,
         private toastCtrl: ToastController
     ) {
         addIcons({ cameraOutline, personOutline, callOutline, locationOutline, lockClosedOutline, calendarOutline });

@@ -1,11 +1,11 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { SupabaseService } from '../services/supabase.service'; // Asegúrate que la ruta sea correcta
+import { ApiService } from '../services/api.service';
 import { map, take } from 'rxjs/operators';
 
 export const authGuard: CanActivateFn = (route, state) => {
   // Inyectamos los servicios (estilo moderno de Angular)
-  const supabase = inject(SupabaseService);
+  const supabase = inject(ApiService);
   const router = inject(Router);
 
   return supabase.currentUser$.pipe(

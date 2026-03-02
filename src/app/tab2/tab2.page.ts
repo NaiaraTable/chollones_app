@@ -7,7 +7,7 @@ import {
   IonGrid, IonRow, IonCol, IonCard, IonText
 } from '@ionic/angular/standalone';
 
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-tab2',
@@ -24,9 +24,9 @@ export class Tab2Page implements OnInit {
   loading = true;
 
   constructor(
-    private supabase: SupabaseService,
+    private supabase: ApiService,
     private router: Router
-  ) {}
+  ) { }
 
   async ngOnInit() {
     await this.cargarCategorias();
@@ -36,25 +36,29 @@ export class Tab2Page implements OnInit {
     this.loading = true;
 
     try {
-      const hidden = ['', '', '']; //aqui escribimos los slug de las categorias que no queremos que se muestren
+      const hidden = ['', '', '']; // slug de categorías a ocultar
 
-      const { data, error } = await this.supabase.client
-        .from('categorias')
-        .select('id, nombre, slug, icono')
-        .not('slug', 'in', `(${hidden.join(',')})`)
-        .order('nombre', { ascending: true });
+      // Obtenemos chollos y extraemos categorías únicas
+      const chollos = await this.supabase.getChollos();
 
-      if (error) {
-        console.error('Error cargando categorias:', error);
-        this.categorias = [];
-        return;
-      }
+      const catsMap = new Map<string, any>();
+      chollos.forEach((c: any) => {
+        const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
+        cats.forEach((cat: any) => {
+          if (cat && cat.slug && !catsMap.has(cat.slug) && !hidden.includes(cat.slug)) {
+            catsMap.set(cat.slug, {
+              id: cat.id,
+              nombre: cat.nombre,
+              slug: cat.slug,
+              img: cat.icono || null,
+            });
+          }
+        });
+      });
 
-      // Adaptamos para que tu HTML pueda seguir usando "img"
-      this.categorias = (data ?? []).map(c => ({
-        ...c,
-        img: c.icono, // la columna en supabase se llama icono
-      }));
+      this.categorias = Array.from(catsMap.values()).sort((a, b) =>
+        a.nombre.localeCompare(b.nombre)
+      );
 
     } finally {
       this.loading = false;
