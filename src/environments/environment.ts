@@ -5,8 +5,8 @@
 export const environment = {
   apiUrl: 'http://localhost/chollones-api',
   // Credenciales de Supabase (desactivadas, ahora usamos MySQL local)
-  // supabaseUrl: 'https://bgifebyzxnvpghljmiad.supabase.co',
-  // supabaseKey: '...'
+  supabaseUrl: 'https://disabled.supabase.co',
+  supabaseKey: 'disabled-key'
 };
 
 /*

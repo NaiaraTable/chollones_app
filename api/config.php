@@ -29,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // -- Conexión PDO --
-function getDB(): PDO {
+function getDB(): PDO
+{
     static $pdo = null;
     if ($pdo === null) {
         try {
@@ -49,18 +50,21 @@ function getDB(): PDO {
 }
 
 // -- Helpers --
-function jsonResponse($data, int $code = 200): void {
+function jsonResponse($data, int $code = 200): void
+{
     http_response_code($code);
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit();
 }
 
-function jsonError(string $message, int $code = 400): void {
+function jsonError(string $message, int $code = 400): void
+{
     jsonResponse(['error' => $message], $code);
 }
 
 // -- JWT simple --
-function createJWT(array $payload): string {
+function createJWT(array $payload): string
+{
     $header = base64_encode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
     $payload['iat'] = time();
     $payload['exp'] = time() + (60 * 60 * 24 * 7); // 7 días
@@ -69,28 +73,55 @@ function createJWT(array $payload): string {
     return "$header.$payloadEncoded.$signature";
 }
 
-function verifyJWT(string $token): ?array {
+function verifyJWT(string $token): ?array
+{
     $parts = explode('.', $token);
-    if (count($parts) !== 3) return null;
+    if (count($parts) !== 3)
+        return null;
 
     [$header, $payload, $signature] = $parts;
     $expectedSig = base64_encode(hash_hmac('sha256', "$header.$payload", JWT_SECRET, true));
 
-    if (!hash_equals($expectedSig, $signature)) return null;
+    if (!hash_equals($expectedSig, $signature))
+        return null;
 
     $data = json_decode(base64_decode($payload), true);
-    if (!$data || ($data['exp'] ?? 0) < time()) return null;
+    if (!$data || ($data['exp'] ?? 0) < time())
+        return null;
 
     return $data;
 }
 
-function getAuthenticatedUser(): ?array {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    if (!preg_match('/Bearer\s+(.+)/', $authHeader, $matches)) return null;
+function getAuthenticatedUser(): ?array
+{
+    $authHeader = '';
+
+    // Prioridad 1: Token explícito por URL (a prueba de fallos de Apache)
+    if (!empty($_GET['token'])) {
+        $authHeader = 'Bearer ' . $_GET['token'];
+    } else {
+        // Prioridad 2: Cabeceras
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        if (empty($authHeader) && function_exists('apache_request_headers')) {
+            $headers = apache_request_headers();
+            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        }
+        if (empty($authHeader)) {
+            $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        }
+        if (empty($authHeader)) {
+            $authHeader = $_SERVER['HTTP_X_AUTHORIZATION'] ?? '';
+        }
+    }
+
+    if (!preg_match('/Bearer\s+(.+)/i', $authHeader, $matches))
+        return null;
+
     return verifyJWT($matches[1]);
 }
 
-function requireAuth(): array {
+function requireAuth(): array
+{
     $user = getAuthenticatedUser();
     if (!$user) {
         jsonError('No autenticado', 401);
@@ -99,7 +130,8 @@ function requireAuth(): array {
 }
 
 // -- Verificación de contraseña WordPress (phpass) --
-function wp_check_password(string $password, string $hash): bool {
+function wp_check_password(string $password, string $hash): bool
+{
     // WordPress usa phpass con prefijo $P$
     if (strpos($hash, '$P$') === 0 || strpos($hash, '$H$') === 0) {
         $itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -118,12 +150,16 @@ function wp_check_password(string $password, string $hash): bool {
         do {
             $value = ord($checkHash[$i++]);
             $encoded .= $itoa64[$value & 0x3f];
-            if ($i < $hashLen) $value |= ord($checkHash[$i]) << 8;
+            if ($i < $hashLen)
+                $value |= ord($checkHash[$i]) << 8;
             $encoded .= $itoa64[($value >> 6) & 0x3f];
-            if ($i++ >= $hashLen) break;
-            if ($i < $hashLen) $value |= ord($checkHash[$i]) << 16;
+            if ($i++ >= $hashLen)
+                break;
+            if ($i < $hashLen)
+                $value |= ord($checkHash[$i]) << 16;
             $encoded .= $itoa64[($value >> 12) & 0x3f];
-            if ($i++ >= $hashLen) break;
+            if ($i++ >= $hashLen)
+                break;
             $encoded .= $itoa64[($value >> 18) & 0x3f];
         } while ($i < $hashLen);
 
@@ -135,6 +171,7 @@ function wp_check_password(string $password, string $hash): bool {
     return password_verify($password, $hash);
 }
 
-function wp_hash_password(string $password): string {
+function wp_hash_password(string $password): string
+{
     return password_hash($password, PASSWORD_BCRYPT);
 }

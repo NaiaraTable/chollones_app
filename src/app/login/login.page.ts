@@ -50,7 +50,8 @@ export class LoginPage implements OnInit {
       await loading.dismiss();
 
       if (respuesta && respuesta.error) {
-        this.showAlert('Error', 'Credenciales incorrectas o usuario no encontrado.');
+        const errorMsg = respuesta.error.message || 'Credenciales incorrectas o usuario no encontrado.';
+        this.showAlert('Error de Login', errorMsg);
       } else if (respuesta && respuesta.data) {
         console.log('✅ Login exitoso');
         // Redirigimos a la página principal
