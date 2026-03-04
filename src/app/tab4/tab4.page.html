@@ -44,7 +44,11 @@
           </span>
         </p>
 
-        <p class="description-text">{{ chollo.descripcion }}</p>
+        <ion-card-content class="card-content-ios">
+          <p class="description-text">
+            {{ chollo.descripcionCorta }}
+          </p>
+        </ion-card-content>
 
         <div class="price-row">
           <span class="current-price">{{ chollo.precio_actual }}€</span>

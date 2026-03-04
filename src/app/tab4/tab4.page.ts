@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IonList, IonContent,
-  IonItem, IonThumbnail, IonLabel, IonBadge, IonIcon, IonButton, IonTitle, IonToolbar, IonHeader
+  IonItem, IonThumbnail, IonLabel, IonBadge, IonIcon, IonButton, IonTitle, IonToolbar, IonHeader, IonCardContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -23,7 +23,7 @@ import { LocationService } from '../services/location.service';
   standalone: true,
   imports: [
     CommonModule,
-    IonList, IonItem, IonThumbnail, IonLabel, IonBadge, IonIcon, IonButton, IonContent, IonTitle, IonToolbar, IonHeader
+    IonList, IonItem, IonThumbnail, IonLabel, IonBadge, IonIcon, IonButton, IonContent, IonTitle, IonToolbar, IonHeader, IonCardContent
   ]
 })
 export class Tab4Page implements OnInit {
@@ -114,27 +114,50 @@ export class Tab4Page implements OnInit {
 
   async cargarChollos() {
     try {
-      // 1. LLAMADA LIMPIA: El servicio ya nos devuelve un array seguro (o [])
       const chollos = await this.supabaseService.getChollos();
 
-      // 2. VALIDACIÓN SIMPLE: Solo comprobamos que sea un array
-      // Ya no hace falta buscar .data ni hacer casting raro
       if (chollos && Array.isArray(chollos)) {
 
         this.listadoChollos = chollos.map(c => {
           const pLat = c.proveedores?.lat;
           const pLng = c.proveedores?.lng;
-          // Lógica de distancia
+
+          // --- LÓGICA DE LAS 15 PALABRAS ---
+          // 1. Intentamos pillar 'descripcion' o 'description' (ajusta según tu DB)
+          let textoOriginal = c.descripcion || c.description || '';
+
+          // 2. Limpiamos HTML
+          textoOriginal = textoOriginal.replace(/<[^>]*>/g, '');
+
+          // 3. Convertimos el texto en un array de palabras
+          const palabras = textoOriginal.split(/\s+/); // Divide por espacios
+
+          let textoProcesado = '';
+          if (palabras.length > 15) {
+            // Si tiene más de 15, agarramos las primeras 15 y añadimos "..."
+            textoProcesado = palabras.slice(0, 15).join(' ') + '...';
+          } else {
+            // Si tiene menos, lo dejamos tal cual
+            textoProcesado = textoOriginal;
+          }
+          // ---------------------------------
 
           let distancia = '?';
           if (pLat && pLng) {
             const d = this.locationService.calcularDistancia(this.miLat, this.miLng, pLat, pLng);
             distancia = d.toFixed(1);
           }
-          return { ...c, distanciaKM: distancia, lat: pLat, lng: pLng };
+
+          return {
+            ...c,
+            descripcionCorta: textoProcesado, // Esta es la que usaremos en el HTML
+            distanciaKM: distancia,
+            lat: pLat,
+            lng: pLng
+          };
         });
 
-        // Ordenar por cercanía
+        // Ordenar por cercanía (mantenemos tu lógica original)
         this.listadoChollos.sort((a, b) => {
           if (a.distanciaKM === '?') return 1;
           if (b.distanciaKM === '?') return -1;
@@ -143,14 +166,12 @@ export class Tab4Page implements OnInit {
 
         this.filtrados = [...this.listadoChollos];
 
-        // Iniciar vigilancia
         if (this.listadoChollos.length > 0) {
           this.locationService.iniciarVigilancia(this.listadoChollos);
         }
       }
     } catch (error) {
       console.error('Error al cargar chollos:', error);
-      // Gracias al servicio blindado, es raro llegar aquí, pero no rompemos la app
     }
   }
 
