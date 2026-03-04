@@ -145,12 +145,18 @@ ion-list {
       margin: 0;
       line-height: 1.2;
       display: block;
+
+      margin-left: 0px !important;
+      margin-right: 0px !important;
     }
 
     //Contenerdor de la descripcion
     .card-content-ios {
-      -webkit-padding-end: 0.5rem;
-      padding-inline-end: 0.5rem;
+      --padding-start: 0px !important;
+      --padding-end: 0px !important;
+      padding-inline-start: 0px !important;
+      padding-inline-end: 0px !important;
+      
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
       font-size: 1rem;
