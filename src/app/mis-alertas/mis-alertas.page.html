@@ -39,7 +39,8 @@
         <div *ngIf="!cargando && ofertas.length > 0">
             <ion-card *ngFor="let chollo of ofertas" class="alert-card">
                 <div class="card-row">
-                    <img [src]="chollo.imagen_url || 'assets/placeholder.png'" class="thumb" />
+                    <img [src]="chollo.imagen_url || 'assets/placeholder.png'" class="thumb"
+                        (error)="$any($event.target).src='assets/placeholder.png'" />
                     <div class="info">
                         <h3 class="title">{{ chollo.titulo }}</h3>
                         <div class="prices">

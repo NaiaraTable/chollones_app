@@ -47,7 +47,7 @@
           <ion-icon name="heart"></ion-icon>
         </div>
 
-        <img class="product-img" [src]="p.imagen" />
+        <img class="product-img" [src]="p.imagen" (error)="$any($event.target).src='assets/placeholder.png'" />
 
         <div class="product-body">
           <div class="product-cat">{{ p.categoria }}</div>
@@ -88,8 +88,8 @@
           <ion-icon name="heart"></ion-icon>
         </div>
 
-        <img class="product-img"
-          [src]="c?.imagen_url || c?.imagen || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200&auto=format&fit=crop'" />
+        <img class="product-img" [src]="c?.imagen_url || c?.imagen || 'assets/placeholder.png'"
+          (error)="$any($event.target).src='assets/placeholder.png'" />
 
         <div class="product-body">
           <div class="product-prov" *ngIf="c?.proveedores || c?.proveedor">

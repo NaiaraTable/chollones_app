@@ -1,7 +1,9 @@
 <ion-content *ngIf="producto" [fullscreen]="true">
 
-  <div class="header-image" [style.background-image]="'url(' + producto.imagen_url + ')'">
-    
+  <div class="header-image">
+    <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'"
+      (error)="$any($event.target).src='assets/placeholder.png'" />
+
     <div class="back-button-float">
       <ion-button (click)="volverAtras()" fill="clear">
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
@@ -19,7 +21,7 @@
 
   <div class="ion-padding content-container">
     <h1 class="product-title">{{ producto.titulo }}</h1>
-    
+
     <ion-item lines="none" class="vendor-info">
       <ion-avatar slot="start">
         <img [src]="producto.proveedores?.logo || 'assets/placeholder.png'" />

@@ -24,8 +24,8 @@
   <div *ngIf="!cargando && articulos.length > 0">
     <div class="cart-item" *ngFor="let item of articulos">
       <div class="item-img">
-        <img
-          [src]="item.chollos?.imagen_url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=200&auto=format&fit=crop'" />
+        <img [src]="item.chollos?.imagen_url || 'assets/placeholder.png'"
+          (error)="$any($event.target).src='assets/placeholder.png'" />
       </div>
       <div class="item-details">
         <div class="item-header">

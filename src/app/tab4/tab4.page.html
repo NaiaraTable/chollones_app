@@ -25,7 +25,8 @@
     <ion-item *ngFor="let chollo of filtrados" (click)="irADetalle(chollo.id)" class="chollo-item">
 
       <ion-thumbnail slot="start" class="thumbnail-container">
-        <img [src]="chollo.imagen_url || 'assets/placeholder.png'" />
+        <img [src]="chollo.imagen_url || 'assets/placeholder.png'"
+          (error)="$any($event.target).src='assets/placeholder.png'" />
       </ion-thumbnail>
 
       <ion-label>
@@ -68,7 +69,8 @@
             Añadir al carrito
           </ion-button>
 
-          <div class="fav-icon" [class.active]="esFavorito(chollo.id)" (click)="toggleFavorito(chollo, $event); $event.stopPropagation()">
+          <div class="fav-icon" [class.active]="esFavorito(chollo.id)"
+            (click)="toggleFavorito(chollo, $event); $event.stopPropagation()">
             <ion-icon name="heart"></ion-icon>
           </div>
 

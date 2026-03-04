@@ -30,8 +30,8 @@
           {{ calcDescuento(chollo) }}%
         </div>
 
-        <img class="cover"
-          [src]="chollo?.imagen_url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200&auto=format&fit=crop'" />
+        <img class="cover" [src]="chollo?.imagen_url || 'assets/placeholder.png'"
+          (error)="$any($event.target).src='assets/placeholder.png'" />
 
         <div class="meta">
           <div class="provider">
