@@ -1,0 +1,85 @@
+<ion-header class="header-red">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/tabs/tab5" text="" color="light"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Mis Alertas</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="--background: #f4f5f8;">
+
+    <!-- Segmento para cambiar entre Ofertas y Cupones -->
+    <ion-segment [(ngModel)]="segmento" mode="ios" class="custom-segment">
+        <ion-segment-button value="cupones">
+            <ion-label>Mis Cupones</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="ofertas">
+            <ion-label>Ofertas Guardadas</ion-label>
+        </ion-segment-button>
+    </ion-segment>
+
+    <div class="spacer-top"></div>
+
+    <!-- SECCIÓN: OFERTAS GUARDADAS (con descuento) -->
+    <div *ngIf="segmento === 'ofertas'">
+
+        <div *ngIf="cargando" class="ion-text-center ion-padding">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Buscando bajadas de precio...</p>
+        </div>
+
+        <div *ngIf="!cargando && ofertas.length === 0" class="empty-state">
+            <ion-icon name="pricetags-outline" class="empty-icon"></ion-icon>
+            <h2>Sin alertas de precio</h2>
+            <p>Ninguno de tus guardados ha bajado de precio recientemente.</p>
+            <ion-button routerLink="/tabs/tab4" fill="outline" class="mt-4">Explorar Chollos</ion-button>
+        </div>
+
+        <div *ngIf="!cargando && ofertas.length > 0">
+            <ion-card *ngFor="let chollo of ofertas" class="alert-card">
+                <div class="card-row">
+                    <img [src]="chollo.imagen_url || 'assets/placeholder.png'" class="thumb"
+                        (error)="$any($event.target).src='assets/placeholder.png'" />
+                    <div class="info">
+                        <h3 class="title">{{ chollo.titulo }}</h3>
+                        <div class="prices">
+                            <span class="new-price">{{ chollo.precio_actual }}€</span>
+                            <span class="old-price">{{ chollo.precio_original }}€</span>
+                        </div>
+                        <ion-badge color="danger" class="d-badge">
+                            Bajada: -{{ calcDescuento(chollo) }}%
+                        </ion-badge>
+                    </div>
+                    <div class="actions">
+                        <ion-button fill="clear" color="primary" routerLink="/tabs/tab1">Ver</ion-button>
+                    </div>
+                </div>
+            </ion-card>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: CUPONES (Mock) -->
+    <div *ngIf="segmento === 'cupones'">
+        <p class="section-hint">Cupones exclusivos para ti</p>
+
+        <ion-card *ngFor="let cupon of cupones" class="coupon-card">
+            <div class="coupon-content">
+                <div class="left-side">
+                    <ion-icon name="ticket-outline"></ion-icon>
+                </div>
+                <div class="center-side">
+                    <h3>{{ cupon.codigo }}</h3>
+                    <p>{{ cupon.descripcion }}</p>
+                    <small>Válido hasta: {{ cupon.valido_hasta }}</small>
+                </div>
+                <div class="right-side">
+                    <ion-button fill="outline" size="small" (click)="copiarCupon(cupon.codigo)">
+                        Copiar
+                    </ion-button>
+                </div>
+            </div>
+        </ion-card>
+    </div>
+
+</ion-content>

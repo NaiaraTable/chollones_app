@@ -1,0 +1,53 @@
+<ion-header class="header-red" [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Guardados</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <div class="guardados-container">
+    <!-- Estado de carga -->
+    <div *ngIf="cargando" class="loading">
+      <p>Cargando tus chollos guardados...</p>
+    </div>
+
+    <!-- Sin guardados -->
+    <div *ngIf="!cargando && chollosGuardados.length === 0" class="empty-state">
+      <ion-icon name="heart-outline" class="empty-icon"></ion-icon>
+      <h2>No tienes chollos guardados</h2>
+      <p>Guarda tus chollos favoritos para verlos aquí</p>
+    </div>
+
+    <!-- Lista de guardados -->
+    <div *ngIf="!cargando && chollosGuardados.length > 0" class="guardados-list">
+      <div class="chollo-card" *ngFor="let chollo of chollosGuardados">
+
+        <div class="fav-icon" (click)="quitarDeGuardados(chollo)">
+          <ion-icon name="heart"></ion-icon>
+        </div>
+
+        <div class="badge" *ngIf="calcDescuento(chollo) > 0">
+          {{ calcDescuento(chollo) }}%
+        </div>
+
+        <img class="cover" [src]="chollo?.imagen_url || 'assets/placeholder.png'"
+          (error)="$any($event.target).src='assets/placeholder.png'" />
+
+        <div class="meta">
+          <div class="provider">
+            <span>{{ chollo?.proveedor }}</span>
+          </div>
+
+          <div class="title">{{ chollo?.titulo }}</div>
+
+          <div class="prices">
+            <span class="now">{{ chollo?.precio_actual | number:'1.2-2' }}€</span>
+            <span class="old" *ngIf="chollo?.precio_original">{{ chollo?.precio_original | number:'1.2-2' }}€</span>
+          </div>
+
+          <button class="btn-cart" (click)="anadirAlCarrito(chollo)">Añadir al carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,21 @@
+// For information on how to create your own theme, please refer to:
+// https://ionicframework.com/docs/theming/
+
+:root {
+  /* El Rojo Coral de la cabecera */
+  --ion-color-primary: #f05a5e;
+  --ion-color-primary-rgb: 240, 90, 94;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: #d34f53;
+  --ion-color-primary-tint: #f26b6e;
+
+  /* El Verde Menta de los botones de puntos */
+  --ion-color-secondary: #40c9a2;
+  --ion-color-secondary-rgb: 64, 201, 162;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-shade: #38b18e;
+  --ion-color-secondary-tint: #53ceab;
+
+  /* Fondo gris muy neutro */
+  --ion-background-color: #fcfcfc;
+}

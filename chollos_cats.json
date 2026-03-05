@@ -1,0 +1,58 @@
+[
+  {
+    "titulo": "Freidora sin aceite negra digital KÜKEN",
+    "categorias": {
+      "slug": "electronica",
+      "nombre": "Electrónica"
+    }
+  },
+  {
+    "titulo": "Xiaomi Redmi Watch 5 Lite (Light Gold) ",
+    "categorias": {
+      "slug": "electronica",
+      "nombre": "Electrónica"
+    }
+  },
+  {
+    "titulo": "Pack 2x Warnlight Baliza 3.0 GEO",
+    "categorias": {
+      "slug": "electronica",
+      "nombre": "Electrónica"
+    }
+  },
+  {
+    "titulo": "10% Dto. en Nueva Colección y Precios Especiales en Outlet",
+    "categorias": {
+      "slug": "moda",
+      "nombre": "Moda"
+    }
+  },
+  {
+    "titulo": "Tratamiento Capilar GLICO HYALUROX COMPLEX",
+    "categorias": {
+      "slug": "belleza-bienestar",
+      "nombre": "Belleza y bienestar"
+    }
+  },
+  {
+    "titulo": "Pack Dúo Perfecto: Limpieza Facial Profunda + Sesión de Dermapen",
+    "categorias": {
+      "slug": "servicios-esteticos",
+      "nombre": "Servicios Estéticos"
+    }
+  },
+  {
+    "titulo": "Pack Combo Total Body: 2 Zonas Criolipólisis + 8 Sesiones iSHAPE (Reductor y Reafirmante)",
+    "categorias": {
+      "slug": "servicios-esteticos",
+      "nombre": "Servicios Estéticos"
+    }
+  },
+  {
+    "titulo": "Pack Bodytop10: 5 Sesiones Corporales + REGALO Tratamiento Facial Pre-verano",
+    "categorias": {
+      "slug": "servicios-esteticos",
+      "nombre": "Servicios Estéticos"
+    }
+  }
+]

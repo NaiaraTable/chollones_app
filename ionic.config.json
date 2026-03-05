@@ -1,0 +1,7 @@
+{
+  "name": "chollones_app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

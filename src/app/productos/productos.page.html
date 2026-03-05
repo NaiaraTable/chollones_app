@@ -1,0 +1,53 @@
+<ion-content *ngIf="producto" [fullscreen]="true">
+
+  <div class="header-image">
+    <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'"
+      (error)="$any($event.target).src='assets/placeholder.png'" />
+
+    <div class="back-button-float">
+      <ion-button (click)="volverAtras()" fill="clear">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()">
+      <ion-icon [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon>
+    </div>
+
+    <div class="discount-badge" *ngIf="producto.precio_original">
+      -{{ (((producto.precio_original - producto.precio_actual) / producto.precio_original) * 100).toFixed(0) }}% DTO
+    </div>
+  </div>
+
+  <div class="ion-padding content-container">
+    <h1 class="product-title">{{ producto.titulo }}</h1>
+
+    <ion-item lines="none" class="vendor-info">
+      <ion-avatar slot="start">
+        <img [src]="producto.proveedores?.logo || 'assets/placeholder.png'" />
+      </ion-avatar>
+      <ion-label>
+        <p>Vendido por</p>
+        <h3>{{ producto.proveedores?.nombre }}</h3>
+      </ion-label>
+    </ion-item>
+
+    <div class="price-section">
+      <span class="current-price">{{ producto.precio_actual }}€</span>
+      <span class="old-price" *ngIf="producto.precio_original">{{ producto.precio_original }}€</span>
+    </div>
+
+    <div class="details-card" *ngIf="producto?.descripcion_larga">
+      <div class="details-header">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <h3>Detalles de la oferta</h3>
+      </div>
+      <p class="description-long">{{ producto.descripcion_larga }}</p>
+    </div>
+
+    <ion-button expand="block" color="primary" class="ion-margin-top btn-action" (click)="anadirAlCarrito()">
+      AÑADIR AL CARRITO
+    </ion-button>
+  </div>
+
+</ion-content>

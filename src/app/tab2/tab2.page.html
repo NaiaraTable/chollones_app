@@ -1,0 +1,22 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Explorar Categorías</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let cat of categorias">
+        <ion-card class="category-card" [style.background-color]="cat.color" [routerLink]="['/tabs', 'categoria', cat.slug]" button>
+          <div class="category-content">
+            <img [src]="cat.img" [alt]="cat.nombre" />
+              <ion-text>
+                <h2>{{ cat.nombre }}</h2>
+              </ion-text>
+          </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

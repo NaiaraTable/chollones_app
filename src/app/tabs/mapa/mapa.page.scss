@@ -1,0 +1,51 @@
+#map {
+  height: 100%;
+  width: 100%;
+  min-height: 300px; /* Asegura que tenga espacio */
+}
+
+/* 🔥 CLAVE: cuando el tab no está activo, que no capture eventos */
+:host(.ion-page-hidden) #map,
+:host(.ion-page-hidden) .leaflet-container {
+  pointer-events: none !important;
+}
+
+// En mapa.page.scss
+
+::ng-deep {
+  .map-popup-container {
+    text-align: center;
+    font-family: var(--ion-font-family, inherit);
+
+    .popup-title {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 4px;
+      color: #333;
+    }
+
+    .popup-vendor {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .popup-price {
+      color: var(--ion-color-secondary, #3880ff);
+      font-size: 15px;
+      display: block;
+      margin: 8px 0;
+    }
+
+    .popup-btn {
+      background: var(--ion-color-primary, #3880ff);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      width: 100%;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+  }
+}

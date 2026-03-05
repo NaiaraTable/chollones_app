@@ -1,0 +1,96 @@
+<ion-header class="header-red">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/tabs/tab5" text="" color="light"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Editar Perfil</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+    <!-- Avatar -->
+    <div class="avatar-section">
+        <div class="avatar-wrapper" (click)="fileInput.click()">
+            <ion-avatar>
+                <img [src]="avatarUrl || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+            </ion-avatar>
+            <div class="camera-overlay">
+                <ion-icon name="camera-outline"></ion-icon>
+            </div>
+        </div>
+        <input #fileInput type="file" accept="image/*" hidden (change)="onAvatarSelected($event)" />
+        <p class="avatar-hint">Toca para cambiar la foto</p>
+    </div>
+
+    <!-- Datos personales -->
+    <div class="form-section">
+        <div class="section-label">Datos personales</div>
+
+        <ion-list lines="full" class="form-list">
+            <ion-item>
+                <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                <ion-input label="Nombre completo" labelPlacement="floating" [(ngModel)]="fullName"
+                    placeholder="Tu nombre"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+                <ion-input label="Teléfono" labelPlacement="floating" type="tel" [(ngModel)]="phone"
+                    placeholder="+34 600 000 000"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Fecha de Nacimiento</ion-label>
+                <ion-datetime-button datetime="datetime"></ion-datetime-button>
+                <ion-modal [keepContentsMounted]="true">
+                    <ng-template>
+                        <ion-datetime id="datetime" presentation="date" [(ngModel)]="birthDate"></ion-datetime>
+                    </ng-template>
+                </ion-modal>
+            </ion-item>
+
+            <ion-item>
+                <ion-icon slot="start" name="location-outline" color="primary"></ion-icon>
+                <ion-input label="Dirección" labelPlacement="floating" [(ngModel)]="address"
+                    placeholder="Calle, ciudad, CP"></ion-input>
+            </ion-item>
+        </ion-list>
+    </div>
+
+    <!-- Guardar datos -->
+    <div class="btn-section">
+        <ion-button expand="block" class="btn-save" (click)="guardarPerfil()" [disabled]="saving">
+            <ion-spinner *ngIf="saving" name="crescent" slot="start"></ion-spinner>
+            {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+        </ion-button>
+    </div>
+
+    <!-- Cambiar contraseña -->
+    <div class="form-section">
+        <div class="section-label">Cambiar contraseña</div>
+
+        <ion-list lines="full" class="form-list">
+            <ion-item>
+                <ion-icon slot="start" name="lock-closed-outline" color="primary"></ion-icon>
+                <ion-input label="Nueva contraseña" labelPlacement="floating" type="password" [(ngModel)]="newPassword"
+                    placeholder="Mínimo 6 caracteres"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-icon slot="start" name="lock-closed-outline" color="primary"></ion-icon>
+                <ion-input label="Confirmar contraseña" labelPlacement="floating" type="password"
+                    [(ngModel)]="confirmPassword" placeholder="Repite la contraseña"></ion-input>
+            </ion-item>
+        </ion-list>
+    </div>
+
+    <div class="btn-section">
+        <ion-button expand="block" class="btn-password" (click)="cambiarPassword()" [disabled]="savingPassword">
+            <ion-spinner *ngIf="savingPassword" name="crescent" slot="start"></ion-spinner>
+            {{ savingPassword ? 'Cambiando...' : 'Cambiar contraseña' }}
+        </ion-button>
+    </div>
+
+    <div class="spacer"></div>
+</ion-content>

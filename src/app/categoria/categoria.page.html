@@ -1,0 +1,49 @@
+<ion-content [fullscreen]="true">
+  <div class="header-container">
+    <div class="top-row">
+      <ion-button (click)="volverAtras()" fill="clear" class="back-btn">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+
+      <div class="title-wrapper">
+        <h1 class="category-title">{{ tituloCategoria }}</h1>
+        <p class="category-subtitle" *ngIf="!loading">
+          {{ productos.length }} {{ productos.length === 1 ? 'chollo disponible' : 'chollos encontrados' }} </p>
+        <!-- si hay uno, muestra chollo disponible, si hay mas de 1, muestra chollos encontrados -->
+      </div>
+    </div>
+  </div>
+
+  <div class="status-container" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Buscando las mejores ofertas...</p>
+  </div>
+
+  <div class="status-container" *ngIf="!loading && productos.length === 0">
+    <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+    <p>No hay productos en esta categoría todavía.</p>
+  </div>
+
+  <div class="product-grid" *ngIf="!loading">
+    <div class="product-card" *ngFor="let p of productos" (click)="irADetalle(p.id)">
+      <div class="discount-tag" *ngIf="p.precio_original && p.precio_actual">
+        -{{ (((p.precio_original - p.precio_actual) / p.precio_original) * 100).toFixed(0) }}% <!-- porcentaje dcto -->
+      </div>
+
+      <div class="image-container">
+        <img [src]="p.imagen_url || 'assets/placeholder.png'"
+          (error)="$any($event.target).src='assets/placeholder.png'" />
+      </div>
+
+      <div class="card-body">
+        <p class="vendor-name" *ngIf="p.proveedores">{{ p.proveedores.nombre }}</p>
+        <h2 class="item-title">{{ p.titulo }}</h2>
+
+        <div class="price-row">
+          <span class="price-now">{{ p.precio_actual }}€</span>
+          <span class="price-old" *ngIf="p.precio_original">{{ p.precio_original }}€</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,59 @@
+// Contenedor principal para centrar el contenido
+ion-content {
+  --background: #f4f5f8; // Un gris muy claro para que resalten los campos
+  --padding-top: 70px;
+
+  .registro-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 80%;
+  }
+}
+
+// Estilo para el título y descripción
+h2 {
+  font-weight: 800;
+  font-size: 24px;
+  color: var(--ion-color-primary);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+p {
+  color: #666;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+// Estilo de los campos de entrada
+ion-item {
+  --border-radius: 10px;
+  --padding-start: 15px;
+  --inner-padding-end: 15px;
+  --background: #ffffff;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+
+  ion-label {
+    font-weight: 500;
+    color: #888;
+  }
+}
+
+// Botón de registro
+ion-button {
+  --border-radius: 10px;
+  height: 50px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 20px;
+}
+
+// Botón de atrás (en el toolbar)
+ion-toolbar {
+  --background: #ffffff;
+  --border-style: none;
+}

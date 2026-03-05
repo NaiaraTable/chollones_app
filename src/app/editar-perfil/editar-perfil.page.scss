@@ -1,0 +1,102 @@
+/* ─── AVATAR ─────────────────────────────── */
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 20px 10px;
+    background: white;
+}
+
+.avatar-wrapper {
+    position: relative;
+    cursor: pointer;
+
+    ion-avatar {
+        width: 110px;
+        height: 110px;
+        border: 3px solid var(--ion-color-primary);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.camera-overlay {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--ion-color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+    ion-icon {
+        color: #fff;
+        font-size: 18px;
+    }
+}
+
+.avatar-hint {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+}
+
+/* ─── FORM SECTIONS ─────────────────────── */
+.form-section {
+    margin-top: 18px;
+}
+
+.section-label {
+    padding: 0 20px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+}
+
+.form-list {
+    background: white;
+
+    ion-item {
+        --padding-start: 14px;
+        --min-height: 58px;
+
+        ion-icon {
+            font-size: 22px;
+            margin-right: 8px;
+        }
+    }
+}
+
+/* ─── BUTTONS ────────────────────────────── */
+.btn-section {
+    padding: 16px 20px 0;
+}
+
+.btn-save {
+    --background: #40c9a2;
+    --color: white;
+    font-weight: 800;
+    --border-radius: 14px;
+    height: 48px;
+    font-size: 15px;
+}
+
+.btn-password {
+    --background: var(--ion-color-primary);
+    --color: white;
+    font-weight: 800;
+    --border-radius: 14px;
+    height: 48px;
+    font-size: 15px;
+}
+
+.spacer {
+    height: 40px;
+}

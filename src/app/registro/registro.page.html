@@ -1,0 +1,28 @@
+<ion-content class="ion-padding">
+  <div class="back-nav" style="margin-bottom: 10px;">
+    <ion-buttons>
+      <ion-back-button defaultHref="/tabs/login" text="Volver"></ion-back-button>
+    </ion-buttons>
+  </div>
+  <h2>Crear Cuenta</h2>
+  <p>Crea una cuenta para guardar tus chollos favoritos.</p>
+
+  <ion-item lines="full">
+    <ion-label position="floating">Nombre Completo</ion-label>
+    <ion-input [(ngModel)]="nombre" type="text"></ion-input>
+  </ion-item>
+
+  <ion-item lines="full">
+    <ion-label position="floating">Email</ion-label>
+    <ion-input [(ngModel)]="email" type="email"></ion-input>
+  </ion-item>
+
+  <ion-item lines="full">
+    <ion-label position="floating">Contraseña</ion-label>
+    <ion-input [(ngModel)]="password" type="password"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" (click)="registrarse()" class="ion-margin-top">
+    REGISTRARSE
+  </ion-button>
+</ion-content>

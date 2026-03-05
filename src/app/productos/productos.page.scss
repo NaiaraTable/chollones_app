@@ -1,0 +1,173 @@
+.header-image {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  .header-img-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .discount-badge {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: var(--ion-color-danger);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+}
+
+h1 {
+  font-weight: 800;
+  font-size: 1.6rem;
+  margin-top: 15px;
+  color: #333;
+}
+
+.price-section {
+  margin: 15px 0;
+  .current-price {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--ion-color-primary);
+  }
+  .old-price {
+    text-decoration: line-through;
+    color: #999;
+    margin-left: 10px;
+    font-size: 1.2rem;
+  }
+}
+
+.description {
+  line-height: 1.6;
+  color: #555;
+  font-size: 1.05rem;
+}
+
+.vendor-info {
+  --padding-start: 0;
+  margin: 10px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.details-card {
+  background-color: #f8f9fa; /* Fondo gris muy suave para diferenciarlo */
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 25px;
+  border: 1px solid #e0e0e0;
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+
+  ion-icon {
+    font-size: 1.4rem;
+    color: var(--ion-color-primary);
+    margin-right: 8px;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.description-long {
+  font-size: 0.95rem;
+  line-height: 1.8; /* Importante: da aire entre líneas para leer mejor */
+  color: #444;
+  
+  /* LA MAGIA: Respeta los saltos de línea y espacios de Supabase */
+  white-space: pre-wrap; 
+  
+  /* Opcional: Justifica el texto para que se vea cuadrado */
+  text-align: justify; 
+}
+
+//BOTON DE VOLVER ATRAS EN EL PRODUCTO
+.back-button-float {
+  position: absolute !important;
+  top: calc(10px + var(--ion-safe-area-top, 0px)) !important;
+  left: 15px !important;
+  z-index: 999 !important; // Para que siempre esté por encima de la imagen
+  width: 45px;
+  height: 45px;
+  
+  ion-button {
+    --border-radius: 50% !important;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    height: 40px !important;
+    width: 40px !important;
+    --background: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    --color: #000 !important;// Icono negro para contraste
+    margin-top: 50px !important;
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+}
+
+// BOTÓN DE FAVORITOS (Gemelo del de volver)
+.fav-button-float {
+  position: absolute !important;
+  top: calc(10px + var(--ion-safe-area-top, 0px)) !important;
+  right: 15px !important; // A la derecha
+  z-index: 999 !important;
+  width: 45px;
+  height: 45px;
+  
+  // Estilo idéntico al círculo blanco del back-button
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  margin-top: 50px !important; // Mismo margen que el botón de volver
+  cursor: pointer;
+  transition: transform 0.1s ease;
+
+  ion-icon {
+    font-size: 24px;
+    color: #000; 
+  }
+
+  // Clase que se activa desde el TS
+  &.active {
+    ion-icon {
+      color: var(--ion-color-primary) !important; // Rojo cuando es favorito
+    }
+  }
+
+  &:active {
+    transform: scale(0.9); // Efecto de pulsación
+  }
+}
+
+// Ajuste para que el icono de volver sea igual de grueso
+.back-button-float ion-button {
+  margin-top: 50px !important; // Aseguramos que coincidan
+}

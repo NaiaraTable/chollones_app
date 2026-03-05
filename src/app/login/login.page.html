@@ -1,0 +1,21 @@
+<ion-content class="ion-padding">
+  <h1>Bienvenido a Chollones</h1>
+
+  <ion-item>
+    <ion-label position="floating">Email</ion-label>
+    <ion-input type="email" [(ngModel)]="email"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Contraseña</ion-label>
+    <ion-input type="password" [(ngModel)]="password"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" (click)="handleLogin()" class="ion-margin-top">
+    Entrar
+  </ion-button>
+
+  <ion-button expand="block" fill="outline" color="medium" routerLink="/tabs/registro">
+    ¿No tienes cuenta? Crea una aquí
+  </ion-button>
+</ion-content>
