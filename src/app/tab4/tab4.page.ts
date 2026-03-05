@@ -29,7 +29,9 @@ import { LocationService } from '../services/location.service';
 export class Tab4Page implements OnInit {
 
   listadoChollos: any[] = [];
+  filtradosTotales: any[] = [];
   filtrados: any[] = [];
+  mostrarTodos: boolean = false;
   miLat: number = 0;
   miLng: number = 0;
 
@@ -224,11 +226,13 @@ export class Tab4Page implements OnInit {
 
   buscar(event: any) {
     this.textoBusqueda = (event.target.value || '').toLowerCase().trim();
+    this.mostrarTodos = false;
     this.aplicarFiltros();
   }
 
   seleccionarCategoria(slug: string) {
     this.categoriaSeleccionada = slug;
+    this.mostrarTodos = false;
     this.aplicarFiltros();
   }
 
@@ -238,6 +242,7 @@ export class Tab4Page implements OnInit {
     } else {
       this.filtroRapidoSeleccionado = id;
     }
+    this.mostrarTodos = false;
     this.aplicarFiltros();
   }
 
@@ -290,7 +295,18 @@ export class Tab4Page implements OnInit {
       });
     }
 
-    this.filtrados = resultado;
+    this.filtradosTotales = resultado;
+
+    if (this.mostrarTodos) {
+      this.filtrados = resultado;
+    } else {
+      this.filtrados = resultado.slice(0, 10);
+    }
+  }
+
+  verTodos() {
+    this.mostrarTodos = true;
+    this.aplicarFiltros();
   }
 
   abrirNavegacion(chollo: any) {

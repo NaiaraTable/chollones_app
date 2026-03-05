@@ -87,4 +87,10 @@
 
     </ion-item>
   </ion-list>
+
+  <div class="ver-todos-container" *ngIf="filtradosTotales.length > 10 && !mostrarTodos">
+    <ion-button expand="block" fill="outline" color="primary" (click)="verTodos()">
+      Ver todos ({{ filtradosTotales.length }})
+    </ion-button>
+  </div>
 </ion-content>
