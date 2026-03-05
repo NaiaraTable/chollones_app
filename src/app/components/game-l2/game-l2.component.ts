@@ -14,11 +14,11 @@ interface Card {
 }
 
 const BUBBLE_TYPES = [
-    { label: '5%', weight: 40, bg: '#ffb3ba', text: '#333' },
-    { label: '10%', weight: 30, bg: '#ffdfba', text: '#333' },
-    { label: '15%', weight: 25, bg: '#ffffba', text: '#333' },
-    { label: '20%', weight: 3, bg: '#baffc9', text: '#333' },
-    { label: '25%', weight: 2, bg: '#bae1ff', text: '#333' }
+    { label: '5%', weight: 40, bg: '#ff8a95', text: '#333' },
+    { label: '10%', weight: 30, bg: '#ffb86c', text: '#333' },
+    { label: '15%', weight: 25, bg: '#ffe066', text: '#333' },
+    { label: '20%', weight: 3, bg: '#69e29a', text: '#333' },
+    { label: '25%', weight: 2, bg: '#66b2ff', text: '#333' }
 ];
 
 @Component({
@@ -89,7 +89,7 @@ export class GameL2Component implements OnInit, OnDestroy {
                 backgroundSize: "70%",
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
-                backgroundColor: "transparent"
+                backgroundColor: "white" // Changed from transparent to white so it isn't completely see-through
             };
         }
         return {
@@ -214,7 +214,7 @@ export class GameL2Component implements OnInit, OnDestroy {
 
             this.shuffleUnmatchedCards();
             this.resetBoardState();
-        }, 1500);
+        }, 600);
     }
 
     checkForMatch(px: number, py: number) {

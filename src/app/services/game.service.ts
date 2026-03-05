@@ -60,11 +60,11 @@ export class GameService {
 
     private calculateExtraSpins() {
         const finalScore = this.score();
-        let spins = 0;
-        if (finalScore >= 180) spins = 3;
-        else if (finalScore >= 120) spins = 2;
-        else if (finalScore >= 60) spins = 1;
-        this.extraSpins.set(spins);
+        // 1 extra spin per 100 points
+        const extra = Math.floor(finalScore / 100);
+
+        // Base spin is 1, so the total spins allowed is 1 + extra
+        this.extraSpins.set(1 + extra);
     }
 
     startTimer() {

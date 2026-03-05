@@ -5,11 +5,12 @@ import { GameHomeComponent } from '../game-home/game-home.component';
 import { GameL1Component } from '../game-l1/game-l1.component';
 import { GameL2Component } from '../game-l2/game-l2.component';
 import { GameL3Component } from '../game-l3/game-l3.component';
+import { GameRuletaComponent } from '../game-ruleta/game-ruleta.component';
 
 @Component({
   selector: 'app-game-base',
   standalone: true,
-  imports: [CommonModule, GameHomeComponent, GameL1Component, GameL2Component, GameL3Component],
+  imports: [CommonModule, GameHomeComponent, GameL1Component, GameL2Component, GameL3Component, GameRuletaComponent],
   template: `
     <div class="game-wrapper level-bg">
       <div class="hud-panel" *ngIf="game.level() >= 1 && game.level() <= 3 && !game.isFinished()">
@@ -33,6 +34,7 @@ import { GameL3Component } from '../game-l3/game-l3.component';
           <app-game-l1 *ngSwitchCase="1"></app-game-l1>
           <app-game-l2 *ngSwitchCase="2"></app-game-l2>
           <app-game-l3 *ngSwitchCase="3"></app-game-l3>
+          <app-game-ruleta *ngSwitchCase="4"></app-game-ruleta>
           <div *ngSwitchDefault>Cargando...</div>
         </ng-container>
       </div>

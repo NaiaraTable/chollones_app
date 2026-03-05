@@ -1,0 +1,147 @@
+.ruleta-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Titan One', cursive;
+}
+
+.ruleta-title {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.ruleta-score,
+.ruleta-spins {
+    color: white;
+    font-size: 1.2rem;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.ruleta-wrapper {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 20px auto 40px;
+}
+
+.ruleta-wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    /* suave easing para ruleta */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    border: 5px solid white;
+    overflow: hidden;
+}
+
+.wheel-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.slice-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    margin-left: -50px;
+    margin-top: -15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 900;
+    color: #333;
+    z-index: 10;
+    transform-origin: 50% 15px;
+    /* pivote en el centro de la rueda */
+}
+
+.ruleta-pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: #ff4757;
+    clip-path: polygon(50% 100%, 0 0, 100% 0);
+    z-index: 20;
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+.spin-btn {
+    font-size: 1.5rem;
+    padding: 15px 40px;
+    margin-top: 10px;
+}
+
+.result-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    color: #333;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.result-box h2 {
+    color: #ff4757;
+    margin: 0 0 10px 0;
+    font-size: 2rem;
+}
+
+.discount-code {
+    background: #ffecb3;
+    border: 2px dashed #ffb300;
+    padding: 15px 30px;
+    font-size: 2rem;
+    font-weight: 900;
+    border-radius: 10px;
+    margin: 20px auto;
+    display: inline-block;
+    color: #f57c00;
+}
+
+.decision-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.decision-buttons p {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ff4d4d, #e60000);
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

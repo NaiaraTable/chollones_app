@@ -10,11 +10,11 @@ interface BubbleType {
 }
 
 const BUBBLE_TYPES: BubbleType[] = [
-  { label: '5%', weight: 40, bg: '#ffb3ba', text: '#333' }, // Pastel Pink - 40%
-  { label: '10%', weight: 30, bg: '#ffdfba', text: '#333' }, // Pastel Orange - 30%
-  { label: '15%', weight: 25, bg: '#ffffba', text: '#333' }, // Pastel Yellow - 25%
-  { label: '20%', weight: 3, bg: '#baffc9', text: '#333' },  // Pastel Green - 3%
-  { label: '25%', weight: 2, bg: '#bae1ff', text: '#333' }   // Pastel Blue - 2%
+  { label: '5%', weight: 40, bg: '#ff8a95', text: '#333' },
+  { label: '10%', weight: 30, bg: '#ffb86c', text: '#333' },
+  { label: '15%', weight: 25, bg: '#ffe066', text: '#333' },
+  { label: '20%', weight: 3, bg: '#69e29a', text: '#333' },
+  { label: '25%', weight: 2, bg: '#66b2ff', text: '#333' }
 ];
 
 @Component({

@@ -11,17 +11,15 @@ interface Candy {
     row: number;
     col: number;
     isBomb: boolean;
+    isDropping?: boolean;
 }
 
 const BUBBLE_TYPES = [
-    { label: 'Lidl', weight: 400, bg: '#0050aa', text: '#fff' },
-    { label: 'Mercadona', weight: 350, bg: '#00833a', text: '#fff' },
-    { label: 'Dia', weight: 300, bg: '#e52421', text: '#fff' },
-    { label: 'Carrefour', weight: 280, bg: '#00387b', text: '#fff' },
-    { label: 'Alcampo', weight: 250, bg: '#d41c1c', text: '#fff' },
-    { label: 'Aldi', weight: 200, bg: '#00287a', text: '#fff' },
-    { label: 'Hipercor', weight: 150, bg: '#0065a3', text: '#fff' },
-    { label: 'Ahorramas', weight: 120, bg: '#ffc107', text: '#000' }
+    { label: '5%', weight: 40, bg: '#ff8a95', text: '#333' },
+    { label: '10%', weight: 30, bg: '#ffb86c', text: '#333' },
+    { label: '15%', weight: 25, bg: '#ffe066', text: '#333' },
+    { label: '20%', weight: 3, bg: '#69e29a', text: '#333' },
+    { label: '25%', weight: 2, bg: '#66b2ff', text: '#333' }
 ];
 
 @Component({
@@ -34,11 +32,10 @@ const BUBBLE_TYPES = [
             <div *ngFor="let item of grid" 
                 class="match-candy" 
                 [class.marked]="item.marked"
+                [class.dropping]="item.isDropping"
                 [ngStyle]="getStyle(item)"
-                (mousedown)="onMouseDown(item, $event)"
-                (mouseenter)="onMouseEnter(item, $event)"
-                (touchstart)="onTouchStart(item, $event)">
-                <ng-container *ngIf="!item.isBomb">{{ item.type }}</ng-container>
+                (click)="clickCandy(item)">
+                <ng-container *ngIf="!item.isBomb && item.type !== 'empty'">{{ item.type }}</ng-container>
             </div>
         </div>
 
@@ -64,8 +61,8 @@ export class GameL3Component implements OnInit, OnDestroy {
     private particleIdCounter = 0;
     private idCounter = 0;
 
-    private isDragging = false;
-    private currentPath: Candy[] = [];
+    private selectedCandy: Candy | null = null;
+    private isAnimating = false;
 
     private audioCtx: any = null;
 
@@ -75,26 +72,22 @@ export class GameL3Component implements OnInit, OnDestroy {
         } catch (e) { }
 
         this.initGrid();
-
-        window.addEventListener('mouseup', this.onMouseUp.bind(this));
-        window.addEventListener('touchend', this.onMouseUp.bind(this));
-        window.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
     }
 
     ngOnDestroy() {
         if (this.audioCtx && this.audioCtx.state !== 'closed') {
             this.audioCtx.close();
         }
-        window.removeEventListener('mouseup', this.onMouseUp.bind(this));
-        window.removeEventListener('touchend', this.onMouseUp.bind(this));
-        // can't easily remove anonymous or binded touchmove here, but this is a rough conversion
     }
 
     getStyle(item: Candy): any {
         if (item.isBomb) {
             return {
                 backgroundImage: "url('assets/bomba.png')",
-                backgroundColor: 'transparent',
+                backgroundSize: "80%",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundColor: 'white',
                 border: 'none',
                 boxShadow: 'none'
             };
@@ -114,8 +107,8 @@ export class GameL3Component implements OnInit, OnDestroy {
 
         if (type === 'select') {
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(600 + (this.currentPath.length * 100), this.audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(800 + (this.currentPath.length * 100), this.audioCtx.currentTime + 0.1);
+            oscillator.frequency.setValueAtTime(600, this.audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(800, this.audioCtx.currentTime + 0.1);
             gainNode.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.1);
         } else if (type === 'pop') {
@@ -142,7 +135,9 @@ export class GameL3Component implements OnInit, OnDestroy {
         this.grid = [];
         for (let r = 0; r < this.ROWS; r++) {
             for (let c = 0; c < this.COLS; c++) {
-                this.grid.push(this.createRandomCandy(r, c));
+                const newCandy = this.createRandomCandy(r, c);
+                newCandy.isDropping = false; // no drop on init
+                this.grid.push(newCandy);
             }
         }
     }
@@ -150,7 +145,7 @@ export class GameL3Component implements OnInit, OnDestroy {
     createRandomCandy(r: number, c: number): Candy {
         const isBomb = Math.random() > 0.95;
         if (isBomb) {
-            return { id: this.idCounter++, type: 'bomb', bg: '#000', text: '#fff', marked: false, row: r, col: c, isBomb: true };
+            return { id: this.idCounter++, type: 'bomb', bg: 'white', text: '#fff', marked: false, row: r, col: c, isBomb: true, isDropping: true };
         }
 
         const type = BUBBLE_TYPES[Math.floor(Math.random() * BUBBLE_TYPES.length)];
@@ -162,168 +157,164 @@ export class GameL3Component implements OnInit, OnDestroy {
             marked: false,
             row: r,
             col: c,
-            isBomb: false
+            isBomb: false,
+            isDropping: true
         };
     }
 
-    canConnect(c1: Candy, c2: Candy): boolean {
-        if (c1.type !== c2.type) return false;
-        const rowDiff = Math.abs(c1.row - c2.row);
-        const colDiff = Math.abs(c1.col - c2.col);
-        return (rowDiff <= 1 && colDiff <= 1) && !(rowDiff === 0 && colDiff === 0);
-    }
-
-    onMouseDown(item: Candy, e: Event) {
-        if (e) e.preventDefault();
+    clickCandy(item: Candy) {
+        if (this.isAnimating) return;
         if (item.isBomb) {
             this.triggerBomb(item);
             return;
         }
-        this.isDragging = true;
-        this.currentPath = [item];
-        item.marked = true;
-        this.playSound('select');
-    }
 
-    onMouseEnter(item: Candy, e: Event) {
-        if (!this.isDragging) return;
-        if (item.isBomb) return;
+        if (!this.selectedCandy) {
+            this.selectedCandy = item;
+            item.marked = true;
+            this.playSound('select');
+        } else {
+            const first = this.selectedCandy;
+            first.marked = false;
+            this.selectedCandy = null;
 
-        const last = this.currentPath[this.currentPath.length - 1];
+            if (first === item) return;
 
-        if (this.currentPath.includes(item)) {
-            if (this.currentPath.length >= 2 && this.currentPath[this.currentPath.length - 2] === item) {
-                last.marked = false;
-                this.currentPath.pop();
+            const isAdjacent = (Math.abs(first.row - item.row) + Math.abs(first.col - item.col)) === 1;
+            if (isAdjacent) {
+                this.swap(first, item);
+                this.isAnimating = true;
+                setTimeout(() => {
+                    const hasMatch = this.checkAndResolveMatches();
+                    if (!hasMatch) {
+                        this.swap(first, item);
+                        this.isAnimating = false;
+                    }
+                }, 300);
+            } else {
+                this.selectedCandy = item;
+                item.marked = true;
                 this.playSound('select');
             }
-            return;
-        }
-
-        if (this.canConnect(last, item)) {
-            item.marked = true;
-            this.currentPath.push(item);
-            this.playSound('select');
         }
     }
 
-    onTouchStart(item: Candy, e: TouchEvent) {
-        this.onMouseDown(item, e);
+    swap(c1: Candy, c2: Candy) {
+        const idx1 = c1.row * this.COLS + c1.col;
+        const idx2 = c2.row * this.COLS + c2.col;
+
+        const tempRow = c1.row;
+        const tempCol = c1.col;
+        c1.row = c2.row;
+        c1.col = c2.col;
+        c2.row = tempRow;
+        c2.col = tempCol;
+
+        this.grid[idx1] = c2;
+        this.grid[idx2] = c1;
     }
 
-    onTouchMove(e: TouchEvent) {
-        if (!this.isDragging) return;
-        e.preventDefault();
-        const touch = e.touches[0];
-        const elem = document.elementFromPoint(touch.clientX, touch.clientY);
-        if (elem && elem.classList.contains('match-candy')) {
-            const idStr = Array.from(elem.attributes).find(attr => attr.name.startsWith('_ngcontent'))?.name; // Angular specific styling isolation check
+    getCandy(r: number, c: number): Candy | null {
+        if (r < 0 || r >= this.ROWS || c < 0 || c >= this.COLS) return null;
+        return this.grid[r * this.COLS + c];
+    }
 
-            // Better logic: match item by HTML iterating
-            // ... Since this is native angular component, finding the related object is a bit hard via DOM.
-            // We assume we don't have perfect touchmove trace on this simplistic native rewrite, unless we do math.
+    checkAndResolveMatches(): boolean {
+        let matchedSet = new Set<Candy>();
 
-            // Fast proxy for touchmove finding closest Candy:
-            const rects = Array.from(document.querySelectorAll('.match-candy')).map(el => {
-                const rect = el.getBoundingClientRect();
-                return { el, rect };
-            });
-            const match = rects.find(r =>
-                touch.clientX >= r.rect.left && touch.clientX <= r.rect.right &&
-                touch.clientY >= r.rect.top && touch.clientY <= r.rect.bottom
-            );
-
-            if (match) {
-                const idxStr = Array.from(match.el.parentElement!.children).indexOf(match.el);
-                const targetItem = this.grid[idxStr];
-                if (targetItem) {
-                    this.onMouseEnter(targetItem, e);
+        for (let r = 0; r < this.ROWS; r++) {
+            for (let c = 0; c < this.COLS - 2; c++) {
+                let c1 = this.getCandy(r, c);
+                let c2 = this.getCandy(r, c + 1);
+                let c3 = this.getCandy(r, c + 2);
+                if (c1 && c2 && c3 && !c1.isBomb && !c2.isBomb && !c3.isBomb && c1.type !== 'empty'
+                    && c1.type === c2.type && c2.type === c3.type) {
+                    matchedSet.add(c1); matchedSet.add(c2); matchedSet.add(c3);
+                    let c4 = this.getCandy(r, c + 3);
+                    if (c4 && !c4.isBomb && c1.type === c4.type) {
+                        matchedSet.add(c4);
+                        let c5 = this.getCandy(r, c + 4);
+                        if (c5 && !c5.isBomb && c1.type === c5.type) matchedSet.add(c5);
+                    }
                 }
             }
         }
-    }
 
-    onMouseUp() {
-        if (!this.isDragging) return;
-        this.isDragging = false;
-
-        if (this.currentPath.length >= 3) {
-            // Check bomb proximity
-            let hitBomb = false;
-            let minR = 99, maxR = -1, minC = 99, maxC = -1;
-            this.currentPath.forEach(c => {
-                if (c.row < minR) minR = c.row;
-                if (c.row > maxR) maxR = c.row;
-                if (c.col < minC) minC = c.col;
-                if (c.col > maxC) maxC = c.col;
-            });
-
-            minR = Math.max(0, minR - 1);
-            maxR = Math.min(this.ROWS - 1, maxR + 1);
-            minC = Math.max(0, minC - 1);
-            maxC = Math.min(this.COLS - 1, maxC + 1);
-
-            const bombsToExplode: Candy[] = [];
-            for (const item of this.grid) {
-                if (item.isBomb && item.row >= minR && item.row <= maxR && item.col >= minC && item.col <= maxC) {
-                    hitBomb = true;
-                    bombsToExplode.push(item);
+        for (let c = 0; c < this.COLS; c++) {
+            for (let r = 0; r < this.ROWS - 2; r++) {
+                let c1 = this.getCandy(r, c);
+                let c2 = this.getCandy(r + 1, c);
+                let c3 = this.getCandy(r + 2, c);
+                if (c1 && c2 && c3 && !c1.isBomb && !c2.isBomb && !c3.isBomb && c1.type !== 'empty'
+                    && c1.type === c2.type && c2.type === c3.type) {
+                    matchedSet.add(c1); matchedSet.add(c2); matchedSet.add(c3);
+                    let c4 = this.getCandy(r + 3, c);
+                    if (c4 && !c4.isBomb && c1.type === c4.type) {
+                        matchedSet.add(c4);
+                        let c5 = this.getCandy(r + 4, c);
+                        if (c5 && !c5.isBomb && c1.type === c5.type) matchedSet.add(c5);
+                    }
                 }
             }
-
-            if (hitBomb) {
-                this.playSound('bomb');
-                this.game.addScore(-10);
-
-                const pItem = this.currentPath[Math.floor(this.currentPath.length / 2)];
-                this.showParticleAtCell(pItem, '-10', '#ff4757');
-
-                bombsToExplode.forEach(b => {
-                    const idx = this.grid.indexOf(b);
-                    if (idx >= 0) {
-                        this.grid[idx] = this.createRandomCandy(b.row, b.col);
-                    }
-                });
-
-                this.currentPath.forEach(c => {
-                    c.marked = false;
-                    const idx = this.grid.indexOf(c);
-                    if (idx >= 0) {
-                        this.grid[idx] = this.createRandomCandy(c.row, c.col);
-                    }
-                });
-
-            } else {
-                this.playSound('pop');
-                const pts = (this.currentPath.length * 2);
-                this.game.addScore(pts);
-
-                const pItem = this.currentPath[Math.floor(this.currentPath.length / 2)];
-                this.showParticleAtCell(pItem, '+' + pts, this.currentPath[0].bg);
-
-                this.currentPath.forEach(c => {
-                    const idx = this.grid.indexOf(c);
-                    if (idx >= 0) {
-                        this.grid[idx] = this.createRandomCandy(c.row, c.col);
-                    }
-                });
-            }
-        } else {
-            this.currentPath.forEach(c => c.marked = false);
         }
 
-        this.currentPath = [];
+        if (matchedSet.size > 0) {
+            this.playSound('pop');
+            let pts = 5;
+            if (matchedSet.size === 4) pts = 10;
+            if (matchedSet.size >= 5) pts = 15;
+            this.game.addScore(pts);
+
+            matchedSet.forEach(c => {
+                this.showParticleAtCell(c, '+', c.bg);
+                c.type = 'empty';
+                c.bg = 'transparent';
+                c.text = 'transparent';
+            });
+
+            setTimeout(() => this.dropCandies(), 400);
+            return true;
+        }
+        return false;
+    }
+
+    dropCandies() {
+        for (let c = 0; c < this.COLS; c++) {
+            for (let r = this.ROWS - 1; r >= 0; r--) {
+                let candy = this.getCandy(r, c);
+                if (candy && candy.type === 'empty') {
+                    for (let above = r - 1; above >= 0; above--) {
+                        let topCandy = this.getCandy(above, c);
+                        if (topCandy && topCandy.type !== 'empty' && !topCandy.isBomb) {
+                            topCandy.isDropping = true;
+                            this.swap(candy, topCandy);
+                            break;
+                        }
+                    }
+                }
+            }
+            for (let r = this.ROWS - 1; r >= 0; r--) {
+                let candy = this.getCandy(r, c);
+                if (candy && candy.type === 'empty') {
+                    let newC = this.createRandomCandy(r, c);
+                    this.grid[r * this.COLS + c] = newC;
+                }
+            }
+        }
+
+        setTimeout(() => {
+            this.grid.forEach(c => c.isDropping = false);
+            if (!this.checkAndResolveMatches()) {
+                this.isAnimating = false;
+            }
+        }, 400);
     }
 
     triggerBomb(bomb: Candy) {
+        if (this.isAnimating) return;
         this.playSound('bomb');
-        this.game.addScore(-10);
-        this.showParticleAtCell(bomb, '-10', '#ff4757');
-
-        const idx = this.grid.indexOf(bomb);
-        if (idx >= 0) {
-            this.grid[idx] = this.createRandomCandy(bomb.row, bomb.col);
-        }
+        this.game.addScore(-20);
+        this.showParticleAtCell(bomb, '-20', '#ff4757');
     }
 
     showParticleAtCell(item: Candy, text: string, color: string) {
