@@ -17,12 +17,12 @@
   /* ocupa el espacio restante */
   max-width: 520px;
   width: 100%;
-  margin: 0 12px;
+   margin: 10px 1px 0 1px;
   --background: #ffffff;
   --color: #111;
-  --placeholder-color: #666;
-  --icon-color: #666;
-  --clear-button-color: #666;
+  --placeholder-color: #ffffff;
+  --icon-color: #ffffff;
+  --clear-button-color: #ffffff;
   border-radius: 12px;
 }
 
@@ -32,7 +32,7 @@
 }
 
 .top-actions ion-icon {
-  font-size: 22px;
+  font-size: 30px;
 }
 
 .tabs-root ion-router-outlet {
