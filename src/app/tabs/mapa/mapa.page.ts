@@ -115,7 +115,6 @@ export class MapaPage implements OnInit {
       console.log('Latitud:', latitud);
       console.log('Longitud:', longitud);
       console.log('Precio:', precio);
-      console.log('Objeto completo:', chollo);
       // Añadimos una pequeña tabla con los campos de interés
       console.table([{ id: chollo.id, titulo: chollo.titulo, proveedor: nombreProveedor, lat: latitud, lng: longitud, precio }]);
       console.groupEnd();

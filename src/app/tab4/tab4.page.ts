@@ -255,9 +255,10 @@ export class Tab4Page implements OnInit {
 
     // 2. Filtrar por categoría
     if (this.categoriaSeleccionada !== 'todas') {
-      resultado = resultado.filter(c =>
-        (c.categorias?.slug || '').toLowerCase() === this.categoriaSeleccionada
-      );
+      resultado = resultado.filter((c: any) => {
+        const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
+        return cats.some((cat: any) => (cat.slug || '').toLowerCase() === this.categoriaSeleccionada);
+      });
     }
 
     // 3. Filtros rápidos

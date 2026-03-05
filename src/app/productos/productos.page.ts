@@ -95,12 +95,13 @@ export class ProductosPage implements OnInit {
         toast.present();
       });
 
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error al añadir al carrito', e);
+      const msg = e && e.message ? e.message : 'Error desconocido al añadir';
       import('@ionic/angular/standalone').then(async ({ ToastController }) => {
         const toastCtrl = new ToastController();
         const toast = await toastCtrl.create({
-          message: 'Error al añadir. ¿Iniciaste sesión?',
+          message: 'Error: ' + msg,
           duration: 3000,
           position: 'top',
           cssClass: 'toast-carrito'
