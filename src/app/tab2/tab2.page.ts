@@ -73,7 +73,12 @@ async cargarCategorias() {
     'Servicios Estéticos': 'assets/img-categorias/servicios-esteticos.png',
     'Servicios Financieros': 'assets/img-categorias/servicios-financieros.png',
     'Tatuajes': 'assets/img-categorias/tatuajes.png',
-    'Training': 'assets/img-categorias/training.png'
+    'Training': 'assets/img-categorias/training.png',
+    'Moda' : 'assets/img-categorias/moda.png',
+    'Mascotas': 'assets/img-categorias/mascotas.png',
+    'Cocina' : 'assets/img-categorias/cocina.png',
+    'Marketing' : 'assets/img-categorias/marketing.png',
+    'Juguetes' : 'assets/img-categorias/juguetes.png' 
   };
 
     // Obtenemos chollos y extraemos categorías únicas
