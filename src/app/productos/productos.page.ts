@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ApiService } from '../services/api.service';
+import { SupabaseService } from '../services/supabase.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { NavController } from '@ionic/angular/standalone';
-import { arrowBack, heart, heartOutline } from 'ionicons/icons'; // Añadidos corazones
+import { arrowBack, heart, heartOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
 @Component({
@@ -20,7 +20,7 @@ export class ProductosPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private supabase: ApiService,
+    private supabase: SupabaseService,
     private navCtrl: NavController
   ) {
     //Registramos los iconos para que se vean en el HTML
@@ -52,13 +52,6 @@ export class ProductosPage implements OnInit {
   //Función para añadir o quitar de favoritos
   async toggleFavorito() {
     try {
-      const user = this.supabase.userValue;
-
-      if (!user) {
-        alert('Debes iniciar sesión para guardar favoritos');
-        return;
-      }
-
       if (this.esFavorito) {
         await this.supabase.eliminarCholloFavorito(this.producto.id);
         this.esFavorito = false;
