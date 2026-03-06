@@ -57,6 +57,10 @@ function getChollos(PDO $db, string $prefix): void
         // Asegurar tipos numéricos
         $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
         $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
+
+        if ($product['precio_original'] === $product['precio_actual']) {
+            $product['precio_original'] = null;
+        }
     }
 
     jsonResponse($products);
@@ -103,6 +107,10 @@ function getCholloById(PDO $db, string $prefix, string $id): void
 
     $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
     $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
+
+    if ($product['precio_original'] === $product['precio_actual']) {
+        $product['precio_original'] = null;
+    }
 
     jsonResponse($product);
 }
@@ -169,6 +177,10 @@ function getChollosSimilares(PDO $db, string $prefix): void
         unset($product['thumbnail_id'], $product['autor_id']);
         $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
         $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
+
+        if ($product['precio_original'] === $product['precio_actual']) {
+            $product['precio_original'] = null;
+        }
     }
 
     jsonResponse($products);

@@ -66,7 +66,7 @@ function getFavoritos(PDO $db, string $prefix): void
                 'id' => $item['chollo_id'],
                 'titulo' => $item['titulo'],
                 'precio_actual' => $item['precio_actual'] ? floatval($item['precio_actual']) : null,
-                'precio_original' => $item['precio_original'] ? floatval($item['precio_original']) : null,
+                'precio_original' => ($item['precio_original'] && floatval($item['precio_original']) !== floatval($item['precio_actual'])) ? floatval($item['precio_original']) : null,
                 'imagen_url' => getImageUrlFav($db, $prefix, $item['thumbnail_id']),
                 'proveedores' => getVendorFav($db, $prefix, $item['autor_id']),
             ]
