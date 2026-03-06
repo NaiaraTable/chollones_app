@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; // Importar Router
+import { Router } from '@angular/router';
 import {
   IonContent,
   IonIcon
@@ -18,7 +18,7 @@ import {
   openOutline
 } from 'ionicons/icons';
 
-import { ApiService } from '../services/api.service';
+import { SupabaseService } from '../services/supabase.service';
 import { FavoritosEvent } from '../services/favoritos-event';
 
 @Component({
@@ -62,7 +62,7 @@ export class Tab1Page implements OnInit {
   favoritosIds: Set<string> = new Set();
 
   constructor(
-    private supabaseService: ApiService,
+    private supabaseService: SupabaseService,
     private favoritosEvent: FavoritosEvent,
     public router: Router
   ) {

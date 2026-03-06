@@ -121,7 +121,7 @@ function addToCarrito(PDO $db, string $prefix): void
 
 // -------------------------------------------------------
 // POST /carrito.php?action=update
-// Body: { "carro_id": "...", "cantidad": 2 }
+// Body: { "id": "...", "cantidad": 2 }
 // -------------------------------------------------------
 function updateCarrito(PDO $db, string $prefix): void
 {
@@ -129,11 +129,11 @@ function updateCarrito(PDO $db, string $prefix): void
     $userId = $auth['user_id'];
 
     $input = json_decode(file_get_contents('php://input'), true);
-    $carroId = $input['carro_id'] ?? null;
+    $carroId = $input['id'] ?? $_GET['id'] ?? null;
     $cantidad = intval($input['cantidad'] ?? 0);
 
     if (!$carroId)
-        jsonError('carro_id es obligatorio');
+        jsonError('id es obligatorio');
 
     ensureCarritoTable($db, $prefix);
 
@@ -150,7 +150,7 @@ function updateCarrito(PDO $db, string $prefix): void
 
 // -------------------------------------------------------
 // POST /carrito.php?action=remove
-// Body: { "carro_id": "..." }
+// Body: { "id": "..." }
 // -------------------------------------------------------
 function removeFromCarrito(PDO $db, string $prefix): void
 {
@@ -158,10 +158,10 @@ function removeFromCarrito(PDO $db, string $prefix): void
     $userId = $auth['user_id'];
 
     $input = json_decode(file_get_contents('php://input'), true);
-    $carroId = $input['carro_id'] ?? $_GET['carro_id'] ?? null;
+    $carroId = $input['id'] ?? $_GET['id'] ?? null;
 
     if (!$carroId)
-        jsonError('carro_id es obligatorio');
+        jsonError('id es obligatorio');
 
     ensureCarritoTable($db, $prefix);
 
