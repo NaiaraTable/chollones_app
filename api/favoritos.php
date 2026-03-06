@@ -4,36 +4,47 @@
 // ======================================================
 require_once __DIR__ . '/config.php';
 
-$db = getDB();
-$prefix = TABLE_PREFIX;
-$action = $_GET['action'] ?? 'list';
+// Disable PHP error display, use JSON instead
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+set_error_handler(function($errno, $errstr) {
+    jsonError('Error: ' . $errstr, 500);
+});
 
-switch ($action) {
-    case 'list':
-        getFavoritos($db, $prefix);
-        break;
-    case 'ids':
-        getFavoritosIds($db, $prefix);
-        break;
-    case 'add':
-        addFavorito($db, $prefix);
-        break;
-    case 'remove':
-        removeFavorito($db, $prefix);
-        break;
-    default:
-        jsonError('Acción no válida');
+try {
+    $db = getDB();
+    $prefix = TABLE_PREFIX;
+    $action = $_GET['action'] ?? 'list';
+
+    switch ($action) {
+        case 'list':
+            getFavoritos($db, $prefix);
+            break;
+        case 'ids':
+            getFavoritosIds($db, $prefix);
+            break;
+        case 'add':
+            addFavorito($db, $prefix);
+            break;
+        case 'delete':
+        case 'remove':
+            removeFavorito($db, $prefix);
+            break;
+        default:
+            jsonError('Accion no valida', 400);
+    }
+} catch (Exception $e) {
+    jsonError('Error: ' . $e->getMessage(), 500);
 }
 
 // -------------------------------------------------------
-// GET /favoritos.php → Chollos guardados del usuario
+// GET /favoritos.php - Chollos guardados del usuario
 // -------------------------------------------------------
 function getFavoritos(PDO $db, string $prefix): void
 {
     $auth = requireAuth();
     $userId = $auth['user_id'];
 
-    // Obtener o crear la wishlist del usuario
     $wishlistId = getOrCreateWishlist($db, $prefix, $userId);
 
     $sql = "
@@ -49,15 +60,13 @@ function getFavoritos(PDO $db, string $prefix): void
         JOIN {$prefix}posts p ON wi.product_id = p.ID
         LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
         WHERE wi.wishlist_id = :wishlist_id
-          AND p.post_status = 'publish'
-        GROUP BY wi.item_id, p.ID
+        GROUP BY wi.item_id
     ";
 
     $stmt = $db->prepare($sql);
     $stmt->execute(['wishlist_id' => $wishlistId]);
     $items = $stmt->fetchAll();
 
-    // Formatear para que coincida con lo que espera la app
     $result = [];
     foreach ($items as $item) {
         $result[] = [
@@ -77,7 +86,7 @@ function getFavoritos(PDO $db, string $prefix): void
 }
 
 // -------------------------------------------------------
-// GET /favoritos.php?action=ids → Solo IDs de favoritos
+// GET /favoritos.php?action=ids - Solo IDs de favoritos
 // -------------------------------------------------------
 function getFavoritosIds(PDO $db, string $prefix): void
 {
@@ -94,54 +103,59 @@ function getFavoritosIds(PDO $db, string $prefix): void
     $stmt->execute(['wishlist_id' => $wishlistId]);
     $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    jsonResponse($ids);
+    jsonResponse(['ids' => $ids]);
 }
 
 // -------------------------------------------------------
-// POST /favoritos.php?action=add&chollo_id=X
+// POST /favoritos.php?action=add
+// Body: { "chollo_id": X }
 // -------------------------------------------------------
 function addFavorito(PDO $db, string $prefix): void
 {
     $auth = requireAuth();
     $userId = $auth['user_id'];
-    $cholloId = $_GET['chollo_id'] ?? null;
+
+    $input = json_decode(file_get_contents('php://input'), true);
+    $cholloId = $input['chollo_id'] ?? $_GET['chollo_id'] ?? null;
 
     if (!$cholloId)
-        jsonError('chollo_id es obligatorio');
+        jsonError('chollo_id es obligatorio', 400);
 
     $wishlistId = getOrCreateWishlist($db, $prefix, $userId);
 
-    // Verificar si ya existe
     $stmt = $db->prepare("
         SELECT item_id FROM {$prefix}wcboost_wishlist_items
         WHERE wishlist_id = :wid AND product_id = :pid
     ");
     $stmt->execute(['wid' => $wishlistId, 'pid' => $cholloId]);
     if ($stmt->fetch()) {
-        jsonResponse(['message' => 'Ya está en favoritos']);
+        jsonResponse(['message' => 'Ya esta en favoritos']);
         return;
     }
 
     $stmt = $db->prepare("
-        INSERT INTO {$prefix}wcboost_wishlist_items (wishlist_id, product_id, quantity, added_date)
+        INSERT INTO {$prefix}wcboost_wishlist_items (wishlist_id, product_id, quantity, date_added)
         VALUES (:wid, :pid, 1, NOW())
     ");
     $stmt->execute(['wid' => $wishlistId, 'pid' => $cholloId]);
 
-    jsonResponse(['message' => 'Añadido a favoritos'], 201);
+    jsonResponse(['message' => 'Anadido a favoritos'], 201);
 }
 
 // -------------------------------------------------------
-// POST /favoritos.php?action=remove&chollo_id=X
+// POST /favoritos.php?action=delete or remove
+// Body: { "chollo_id": X }
 // -------------------------------------------------------
 function removeFavorito(PDO $db, string $prefix): void
 {
     $auth = requireAuth();
     $userId = $auth['user_id'];
-    $cholloId = $_GET['chollo_id'] ?? null;
+
+    $input = json_decode(file_get_contents('php://input'), true);
+    $cholloId = $input['chollo_id'] ?? $_GET['chollo_id'] ?? null;
 
     if (!$cholloId)
-        jsonError('chollo_id es obligatorio');
+        jsonError('chollo_id es obligatorio', 400);
 
     $wishlistId = getOrCreateWishlist($db, $prefix, $userId);
 
@@ -168,12 +182,12 @@ function getOrCreateWishlist(PDO $db, string $prefix, string $userId): string
     if ($wishlist)
         return $wishlist['wishlist_id'];
 
-    // Crear wishlist para el usuario
+    $token = md5($userId . time() . uniqid());
     $stmt = $db->prepare("
-        INSERT INTO {$prefix}wcboost_wishlists (user_id, title, status, created_date)
-        VALUES (:uid, 'Favoritos', 'publish', NOW())
+        INSERT INTO {$prefix}wcboost_wishlists (user_id, wishlist_title, status, date_created, wishlist_token)
+        VALUES (:uid, 'Favoritos', 'private', NOW(), :token)
     ");
-    $stmt->execute(['uid' => $userId]);
+    $stmt->execute(['uid' => $userId, 'token' => $token]);
     return $db->lastInsertId();
 }
 
@@ -195,3 +209,4 @@ function getVendorFav(PDO $db, string $prefix, ?string $authorId): ?array
     $stmt->execute(['id' => $authorId]);
     return $stmt->fetch() ?: null;
 }
+?>

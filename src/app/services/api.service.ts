@@ -54,7 +54,7 @@ export class ApiService {
 
   // --- HELPERS HTTP ---
 
-  private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
+  async request(endpoint: string, options: RequestInit = {}): Promise<any> {
     const headers: any = {
       'Content-Type': 'application/json',
       ...(options.headers || {}),
@@ -212,13 +212,19 @@ export class ApiService {
   async guardarCholloFavorito(cholloId: string) {
     const user = this.userValue;
     if (!user) throw new Error('Debes estar logueado');
-    await this.request(`favoritos.php?action=add&chollo_id=${cholloId}`, { method: 'POST' });
+    await this.request('favoritos.php?action=add', {
+      method: 'POST',
+      body: JSON.stringify({ chollo_id: cholloId })
+    });
   }
 
   async eliminarCholloFavorito(cholloId: string) {
     const user = this.userValue;
     if (!user) return;
-    await this.request(`favoritos.php?action=remove&chollo_id=${cholloId}`, { method: 'POST' });
+    await this.request('favoritos.php?action=remove', {
+      method: 'POST',
+      body: JSON.stringify({ chollo_id: cholloId })
+    });
   }
 
   // --- CUPONES ---
@@ -256,7 +262,7 @@ export class ApiService {
 
     await this.request('carrito.php?action=update', {
       method: 'POST',
-      body: JSON.stringify({ carro_id: carroId, cantidad }),
+      body: JSON.stringify({ id: carroId, cantidad }),
     });
   }
 
@@ -265,7 +271,7 @@ export class ApiService {
 
     await this.request('carrito.php?action=remove', {
       method: 'POST',
-      body: JSON.stringify({ carro_id: carroId }),
+      body: JSON.stringify({ id: carroId }),
     });
   }
 

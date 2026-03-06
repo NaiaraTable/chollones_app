@@ -13,7 +13,7 @@ import {
   navigateOutline,
   heart, heartOutline
 } from 'ionicons/icons';
-import { ApiService } from '../services/api.service';
+import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
 
 @Component({
@@ -53,7 +53,7 @@ export class Tab4Page implements OnInit {
   ];
 
   constructor(
-    private supabaseService: ApiService,
+    private supabaseService: SupabaseService,
     private locationService: LocationService,
     private router: Router,
     private route: ActivatedRoute
@@ -167,12 +167,6 @@ export class Tab4Page implements OnInit {
   // Toggle de favorito (usa ApiService)
   async toggleFavorito(chollo: any, event: Event) {
     event.stopPropagation();
-
-    const user = this.supabaseService.userValue;
-    if (!user) {
-      alert('Debes iniciar sesión para guardar favoritos');
-      return;
-    }
 
     const isFav = this.favoritosIds.has(chollo.id);
 
