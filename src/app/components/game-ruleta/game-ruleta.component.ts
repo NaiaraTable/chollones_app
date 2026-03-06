@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameService } from '../../services/game.service';
 
@@ -18,14 +18,13 @@ interface RouletteSlice {
     template: `
     <div class="ruleta-container">
         <h1 class="ruleta-title">Ruleta Final</h1>
-        <p class="ruleta-score">Puntos totales: {{ game.score() }}</p>
-        <p class="ruleta-spins" *ngIf="!wonCode">Tiradas extra disponibles: {{ game.extraSpins() }}</p>
+        <p class="ruleta-score" style="color: #444;">Puntos totales: {{ game.score() }}</p>
+        <p class="ruleta-spins" *ngIf="!spinResult && !showCode" style="color: #444;">Tiradas extra disponibles: {{ game.extraSpins() }}</p>
 
-        <div class="ruleta-wrapper" *ngIf="!wonCode">
+        <div class="ruleta-wrapper" *ngIf="!showCode">
             <div class="ruleta-wheel" [style.transform]="'rotate(' + currentRotation + 'deg)'">
                 <div class="slice-label" *ngFor="let s of slices" 
                      [style.transform]="'rotate(' + getLabelRotation(s) + 'deg) translate(0, -90px)'">
-                    {{ s.label }}
                 </div>
                 <!-- Drawing slices with conic-gradient via TS style injection -->
                 <div class="wheel-bg" [style.background]="wheelGradient"></div>
@@ -33,27 +32,36 @@ interface RouletteSlice {
             <div class="ruleta-pointer"></div>
         </div>
 
-        <button class="btn-pill spin-btn" *ngIf="!isSpinning && !wonCode && canSpin" (click)="spin()">
+        <button class="btn-pill spin-btn" *ngIf="!isSpinning && !spinResult && !showCode && canSpin" (click)="spin()">
             Girar Ruleta
         </button>
 
-        <div class="result-box" *ngIf="wonCode">
+        <!-- Paso 1 de Premio: Tirada finaliza pero el código aún NO se muestra -->
+        <div class="result-box" *ngIf="spinResult && !showCode">
             <h2>¡Enhorabuena!</h2>
-            <p>Has ganado el código:</p>
-            <div class="discount-code">{{ wonCode }}</div>
+            <p>Has ganado un código de descuento.</p>
             
             <div class="decision-buttons" *ngIf="game.extraSpins() > 0">
                 <p>Aún tienes {{ game.extraSpins() }} tiradas más.</p>
-                <button class="btn-pill" (click)="keepCode()">Me quedo este código</button>
+                <button class="btn-pill" (click)="keepCode()">Me quedo este premio</button>
                 <button class="btn-pill btn-danger" (click)="spinAgain()">Arriesgar y tirar de nuevo</button>
             </div>
             <div class="decision-buttons" *ngIf="game.extraSpins() === 0">
-                <button class="btn-pill" (click)="keepCode()">Volver a Jugar</button>
+                <button class="btn-pill" (click)="keepCode()">Ver mi Código</button>
+            </div>
+        </div>
+
+        <!-- Paso 2 de Premio: El usuario acepta el premio y SE MUESTRA el código -->
+        <div class="result-box" *ngIf="showCode">
+            <h2>Este es tu código:</h2>
+            <div class="discount-code">{{ spinResult }}</div>
+            <div class="decision-buttons">
+                <button class="btn-pill" (click)="finishGame()">Aceptar y Salir</button>
             </div>
         </div>
         
-        <div *ngIf="!canSpin && !wonCode" style="margin-top: 20px;">
-            <p>No tienes más tiradas.</p>
+        <div *ngIf="!canSpin && !spinResult && !showCode" style="margin-top: 20px;">
+            <p style="color: #444; font-weight: bold;">No tienes más tiradas.</p>
             <button class="btn-pill" (click)="finishGame()">Volver a Jugar</button>
         </div>
     </div>
@@ -62,10 +70,14 @@ interface RouletteSlice {
 })
 export class GameRuletaComponent implements OnInit, OnDestroy {
     public game = inject(GameService);
+    private cdr = inject(ChangeDetectorRef);
 
     isSpinning = false;
     currentRotation = 0;
-    wonCode: string | null = null;
+
+    // Cambiamos 'wonCode' por dos variables para manejar si conocemos el premio y si debemos mostrarlo
+    spinResult: string | null = null;
+    showCode = false;
 
     slices: RouletteSlice[] = [
         { label: '5%', weight: 40, bg: '#ff8a95', text: '#333', startAngle: 0, endAngle: 0 },
@@ -139,34 +151,50 @@ export class GameRuletaComponent implements OnInit, OnDestroy {
 
         const sliceCenterAngle = this.getLabelRotation(selectedSlice);
 
-        // El puntero está arriba (0 deg). Para que el sector caiga sobre el puntero,
-        // necesitamos rotar la rueda de manera que el slice center llegue a 360 - 0.
-        // Haremos 5 vueltas completas (1800 deg) + la rotación necesaria.
+        // Para evitar problemas con la transición CSS, simplemente añadimos vueltas completas sobre 
+        // la rotación actual en lugar de intentar resetear a 0, ya que CSS no anima bien "saltos".
+        // Eliminamos el comportamiento anterior y forzamos siempre mínimo 5 vueltas extra + el ajuste exacto al nuevo slice.
 
-        const extraSpinsRotation = 360 * 5;
-        const targetRotation = extraSpinsRotation + (360 - sliceCenterAngle);
+        // Calculamos cuánto necesitamos girar adicionalmente para caer en el slice a partir de la nueva posición base.
+        const currentMod = this.currentRotation % 360; // Dónde está apuntando ahora mismo en [0, 360)
 
-        this.currentRotation += targetRotation;
+        // Queremos que acabe en (360 - sliceCenterAngle).
+        let adjustment = (360 - sliceCenterAngle) - currentMod;
+        if (adjustment < 0) {
+            adjustment += 360;
+        }
+
+        const extraSpinsRotation = 360 * 5; // 5 vueltas completas
+        this.currentRotation += (extraSpinsRotation + adjustment);
 
         setTimeout(() => {
             this.isSpinning = false;
             let numeric = selectedSlice.label.replace('%', '');
-            this.wonCode = `CHOLLO${numeric}`;
+            this.spinResult = `CHOLLO${numeric}`;
+
+            // Forzar actualización de vista en caso de que ChangeDetection pierda el hilo en OnPush/Zoneless
+            this.cdr.detectChanges();
+
             this.playSound('win');
         }, 3000); // matches CSS animation duration
     }
 
     keepCode() {
-        // En una app real, guardaríamos el código en base de datos aquí.
-        // Para este prototipo, volvemos a empezar.
-        this.finishGame();
+        // En lugar de salir directamente, mostramos el código oculto al usuario.
+        this.showCode = true;
+        this.cdr.detectChanges();
     }
 
     spinAgain() {
-        this.wonCode = null; // Reiniciamos el premio y mostramos ruleta de nuevo
+        // El usuario arriesga: perdemos el código de esta tirada y volvemos a mostrar la ruleta
+        this.spinResult = null;
+        this.showCode = false;
+        this.cdr.detectChanges();
     }
 
     finishGame() {
+        // Reiniciamos todo el juego ahora que el usuario vio y aceptó su código,
+        // lo cual automáticamente cerrará esta vista y volverá a home.
         this.game.restart();
     }
 

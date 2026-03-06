@@ -26,8 +26,8 @@ const BUBBLE_TYPES: BubbleType[] = [
       <div *ngFor="let target of targets" 
            class="logo-target" 
            [class.bomb-target]="target.isBomb"
-           [style.left.px]="target.x" 
-           [style.top.px]="target.y"
+           [style.left.%]="target.x" 
+           [style.top.%]="target.y"
            [ngStyle]="getTargetStyle(target)"
            (mousedown)="onTargetClick(target.id, $event)"
            (touchstart)="onTargetClick(target.id, $event)">
@@ -40,8 +40,8 @@ const BUBBLE_TYPES: BubbleType[] = [
       <div *ngFor="let p of particles" 
            class="pop-particle"
            [class.bad]="p.isBad" 
-           [style.left.px]="p.x" 
-           [style.top.px]="p.y"
+           [style.left.%]="p.x" 
+           [style.top.%]="p.y"
            [style.color]="p.color">
         {{ p.text }}
       </div>
@@ -115,11 +115,11 @@ export class GameL1Component implements OnInit, OnDestroy {
 
   spawnTarget() {
     const isBomb = Math.random() > 0.8;
-    const safeW = window.innerWidth - 120;
-    const safeH = window.innerHeight - 150 - 50;
 
-    const x = Math.random() * safeW + 20;
-    const y = Math.random() * safeH + 90;
+    // Utilizamos porcentajes en lugar de píxeles absolutos 
+    // para que las burbujas no se salgan nunca de la ventana emergente
+    const x = Math.random() * 80 + 5; // 5% a 85% del ancho
+    const y = Math.random() * 70 + 15; // 15% a 85% del alto
 
     let type = BUBBLE_TYPES[0];
     if (!isBomb) {
@@ -150,28 +150,21 @@ export class GameL1Component implements OnInit, OnDestroy {
     const target = this.targets.find(t => t.id === id);
     if (!target) return;
 
-    let px = 0, py = 0;
-    if (e instanceof MouseEvent) {
-      px = e.pageX; py = e.pageY;
-    } else if (e instanceof TouchEvent) {
-      px = e.touches[0].pageX; py = e.touches[0].pageY;
-    }
-
     if (target.isBomb) {
       this.game.addScore(-5);
       this.playSound('bomb');
-      this.createParticle(px, py, '-5', true, '#ff4757');
+      this.createParticle(target.x, target.y, '-5', true, '#ff4757');
     } else {
       this.game.addScore(2);
       this.playSound('coin');
-      this.createParticle(px, py, '+2', false, target.type.bg);
+      this.createParticle(target.x, target.y, '+2', false, target.type.bg);
     }
 
     this.targets = this.targets.filter(t => t.id !== id);
   }
 
   createParticle(x: number, y: number, text: string, isBad: boolean, color: string) {
-    const p = { id: this.particleIdCounter++, x: x - 20, y, text, isBad, color };
+    const p = { id: this.particleIdCounter++, x, y, text, isBad, color };
     this.particles.push(p);
     setTimeout(() => {
       this.particles = this.particles.filter(item => item.id !== p.id);

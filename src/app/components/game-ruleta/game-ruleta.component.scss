@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
 .ruleta-container {
     width: 100%;
     height: 100%;
@@ -12,10 +14,15 @@
 }
 
 .ruleta-title {
-    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #444;
+    /* Dark gray instead of black */
     font-size: 2.5rem;
     margin-bottom: 5px;
-    text-shadow: 2px 2px 0 #000;
+    /* text-shadow removed */
 }
 
 .ruleta-score,
@@ -88,6 +95,11 @@
     font-size: 1.5rem;
     padding: 15px 40px;
     margin-top: 10px;
+    color: #444;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .result-box {

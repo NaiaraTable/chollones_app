@@ -11,8 +11,8 @@
 
 .match-grid {
     display: grid;
-    grid-template-columns: repeat(7, min(13vw, 50px));
-    grid-template-rows: repeat(7, min(13vw, 50px));
+    grid-template-columns: repeat(7, min(11vw, 45px));
+    grid-template-rows: repeat(7, min(11vw, 45px));
     gap: 4px;
     background: rgba(255, 255, 255, 0.1);
     padding: 10px;

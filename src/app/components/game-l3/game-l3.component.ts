@@ -265,6 +265,31 @@ export class GameL3Component implements OnInit, OnDestroy {
             if (matchedSet.size >= 5) pts = 15;
             this.game.addScore(pts);
 
+            let bombsToExplode = new Set<Candy>();
+            matchedSet.forEach(c => {
+                const neighbors = [
+                    this.getCandy(c.row - 1, c.col),
+                    this.getCandy(c.row + 1, c.col),
+                    this.getCandy(c.row, c.col - 1),
+                    this.getCandy(c.row, c.col + 1)
+                ];
+                neighbors.forEach(n => {
+                    if (n && n.isBomb && !bombsToExplode.has(n)) {
+                        bombsToExplode.add(n);
+                    }
+                });
+            });
+
+            bombsToExplode.forEach(b => {
+                this.playSound('bomb');
+                this.game.addScore(-20);
+                this.showParticleAtCell(b, '-20', '#ff4757');
+                b.type = 'empty';
+                b.bg = 'transparent';
+                b.text = 'transparent';
+                b.isBomb = false;
+            });
+
             matchedSet.forEach(c => {
                 this.showParticleAtCell(c, '+', c.bg);
                 c.type = 'empty';

@@ -11,9 +11,9 @@
 
 .memory-grid {
     display: grid;
-    grid-template-columns: repeat(5, min(17vw, 100px));
-    grid-template-rows: repeat(5, min(17vw, 100px));
-    gap: 12px;
+    grid-template-columns: repeat(5, min(14vw, 65px));
+    grid-template-rows: repeat(5, min(14vw, 65px));
+    gap: 8px;
     perspective: 1000px;
     z-index: 50;
     margin-top: 10px;
