@@ -1,0 +1,50 @@
+﻿a791661 script geolocalizacion
+2858364 filtro arreglado
+c5098b0 Merge branch 'main' into origin/ruben
+a9ba1ee Cambio color barra busqueda
+7b30833 filtro arreglado
+7edb64a Merge branch 'main' of https://github.com/NaiaraTable/chollones_app into naiara
+621747a Merge branch 'main' of https://github.com/NaiaraTable/chollones_app
+21c272f Retoque en los logs.
+22af4ff Merge branch 'origin/ruben'
+18a77af Icono Perfil quitado y mejorado barra busqueda
+eeb49d0 Merge branch 'main' into origin/joseAntonio
+9f559fc Debug rapido para mapa.
+93a88b1 Merge branch 'main' of https://github.com/NaiaraTable/chollones_app into naiara
+298b4ea Actualizo iconos Categorias Populares
+26055a6 Merge branch 'main' of https://github.com/NaiaraTable/chollones_app into naiara
+346ba84 Terminado categorias
+13ca26f Solucion margenes en el contenedor de la descripcion.
+0776fb7 Cambio en el estilo del contenedor.
+17a850d carrito arreglado
+2e7d8d7 Merge branch 'main' into origin/joseAntonio
+32821f7 Merge branch 'origin/ruben'
+b42f84f A├▒adimos iconos a categorias
+cba0d50 Solucion texto planos e imagenes chollos
+9cd1149 imagenes no encontradas
+0f4456f MIGRACION A MYSQL + PHP
+074c664 estilos boton me gusta
+7bbfb1f Merge branch 'main' of https://github.com/espmarchena/chollones_app
+21fa5f0 a├▒adido boton me gusta en 'chollos' y 'productos' y peque├▒as actualizaciones
+9684d47 enlaces
+7201221 a├▒adido que al clicar en el logo te lleva al tab1 (inicio)
+ddb7162 quitando warnings para descargar el compilador
+ab3657f 'a├▒adir al carrito' en vez de 'canjear cupon' en el detalle del producto
+96c9069 actualizacion carrito
+fd35b98 Merge remote-tracking branch 'origin/main' into naiara
+1f12e21 carrito
+812533e a├▒adido boton de ir hacia atras cuando entras en una categoria
+ee431cd a├▒adido boton de ir hacia atras cuando entras en el detalle del producto
+0cc09fe a├▒adiendo componente detalle producto a popups mapa
+bb3e280 arreglando pines en mapa (atributos mal llamados a la bbdd)
+8cd3958 arreglando delete del chollo en favs
+66ac9c8 arreglando el nombre de las tablas
+8d46b49 implementado componente producto en categorias
+2391497 style: ajustes colores home y t├¡tulos secciones
+3f03749 fix: arreglo rutas y conflictos productos/tab4
+a5a0304 Merge origin/main into main
+a825541 Juanmi
+99842d1 estilo descripcion larga productos
+2d37efc mostrar descripcion larga
+f0cbc16 prueba productos
+7b771fe a├▒ado carpeta productos
