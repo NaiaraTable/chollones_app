@@ -47,6 +47,7 @@ export class Tab1Page implements OnInit {
 
   productosPopulares: any[] = [];
   chollosFiltrados: any[] = [];
+  topVentas: any[] = [];
   categorias = [
     { nombre: 'Belleza y Bienestar', slug: 'belleza-bienestar', img: 'assets/img-categorias/belleza-bienestar.png' },
     { nombre: 'Moda', slug: 'moda', img: 'assets/img-categorias/moda.png' },
@@ -84,27 +85,41 @@ export class Tab1Page implements OnInit {
 
   async cargarDatos() {
     try {
-      const res = await this.supabaseService.getChollos();
+      const [res, resTopVentas] = await Promise.all([
+        this.supabaseService.getChollos(),
+        this.supabaseService.getTopVentas()
+      ]);
+
+      const mapProduct = (c: any) => ({
+        ...c,
+        titulo: c.titulo,
+        precioActual: c.precio_actual,
+        precioOriginal: c.precio_original,
+        imagen: c.imagen_url,
+        proveedor: c.proveedores?.nombre,
+        nuevo: this.esReciente(c.created_at)
+      });
 
       // Validamos que res no sea nulo y que sea un array (o contenga data como array)
       const dataRaw = Array.isArray(res) ? res : (res as any)?.data;
 
       if (dataRaw && Array.isArray(dataRaw)) {
-        const dataMapeada = dataRaw.map((c: any) => ({
-          ...c,
-          titulo: c.titulo,
-          precioActual: c.precio_actual,
-          precioOriginal: c.precio_original,
-          imagen: c.imagen_url,
-          proveedor: c.proveedores?.nombre,
-          nuevo: this.esReciente(c.created_at)
-        }));
+        const dataMapeada = dataRaw.map(mapProduct);
 
         this.productosPopulares = dataMapeada;
         this.chollosFiltrados = [...dataMapeada];
       } else {
         console.warn('No se pudieron cargar los datos o el formato es incorrecto');
       }
+
+      // Procesar Top Ventas
+      const topRaw = Array.isArray(resTopVentas) ? resTopVentas : (resTopVentas as any)?.data;
+      if (topRaw && Array.isArray(topRaw)) {
+        this.topVentas = topRaw.map(mapProduct);
+      } else {
+        console.warn('No se pudo cargar el Top Ventas');
+      }
+
     } catch (error) {
       console.error('Error al cargar datos:', error);
     }

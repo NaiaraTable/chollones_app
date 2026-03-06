@@ -161,6 +161,15 @@ export class ApiService {
     }
   }
 
+  async getTopVentas(): Promise<any[]> {
+    try {
+      return await this.request('chollos.php?top_ventas=1');
+    } catch (err) {
+      console.error('Error en getTopVentas:', err);
+      return [];
+    }
+  }
+
   async getCholloById(id: string): Promise<any | null> {
     try {
       return await this.request(`chollos.php?id=${id}`);
