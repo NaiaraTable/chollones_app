@@ -48,14 +48,14 @@ export class Tab1Page implements OnInit {
   productosPopulares: any[] = [];
   chollosFiltrados: any[] = [];
   categorias = [
-    { nombre: 'Belleza y Bienestar', slug: 'belleza-bienestar', img: 'https://cdn-icons-png.flaticon.com/512/1005/1005786.png' },
-    { nombre: 'Moda', slug: 'moda', img: 'https://cdn-icons-png.flaticon.com/512/892/892458.png' },
-    { nombre: 'Mascotas', slug: 'mascotas', img: 'https://cdn-icons-png.flaticon.com/512/616/616408.png' },
-    { nombre: 'Cocina', slug: 'cocina', img: 'https://cdn-icons-png.flaticon.com/512/1046/1046784.png' },
-    { nombre: 'Marketing', slug: 'marketing', img: 'https://cdn-icons-png.flaticon.com/512/3135/3135683.png' },
-    { nombre: 'Juguetes', slug: 'juguetes', img: 'https://cdn-icons-png.flaticon.com/512/3082/3082060.png' },
-    { nombre: 'Electrónica', slug: 'electronica', img: 'https://cdn-icons-png.flaticon.com/512/1006/1006363.png' },
-    { nombre: 'Servicios Estéticos', slug: 'servicios-esteticos', img: 'https://cdn-icons-png.flaticon.com/512/7060/7060999.png' },
+    { nombre: 'Belleza y Bienestar', slug: 'belleza-bienestar', img: 'assets/img-categorias/belleza-bienestar.png' },
+    { nombre: 'Moda', slug: 'moda', img: 'assets/img-categorias/moda.png' },
+    { nombre: 'Mascotas', slug: 'mascotas', img: 'assets/img-categorias/mascotas.png' },
+    { nombre: 'Cocina', slug: 'cocina', img: 'assets/img-categorias/cocina.png' },
+    { nombre: 'Marketing', slug: 'marketing', img: 'assets/img-categorias/marketing.png' },
+    { nombre: 'Juguetes', slug: 'juguetes', img: 'assets/img-categorias/juguetes.png' },
+    { nombre: 'Electrónica', slug: 'electronica', img: 'assets/img-categorias/electronica.png' },
+    { nombre: 'Servicios Estéticos', slug: 'servicios-esteticos', img: 'assets/img-categorias/servicios-esteticos.png' },
   ];
 
   // Set para trackear IDs de favoritos

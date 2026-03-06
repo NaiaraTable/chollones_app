@@ -44,7 +44,11 @@
           </span>
         </p>
 
-        <p class="description-text">{{ chollo.descripcion }}</p>
+        <ion-card-content class="card-content-ios">
+          <p class="description-text">
+            {{ chollo.descripcionCorta }}
+          </p>
+        </ion-card-content>
 
         <div class="price-row">
           <span class="current-price">{{ chollo.precio_actual }}€</span>
@@ -83,4 +87,10 @@
 
     </ion-item>
   </ion-list>
+
+  <div class="ver-todos-container" *ngIf="filtradosTotales.length > 10 && !mostrarTodos">
+    <ion-button expand="block" fill="outline" color="primary" (click)="verTodos()">
+      Ver todos ({{ filtradosTotales.length }})
+    </ion-button>
+  </div>
 </ion-content>

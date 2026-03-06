@@ -1,13 +1,18 @@
 .category-card {
-  margin: 8px;
+  margin: 12px;
   height: 140px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 16px;
-  box-shadow: none;
-  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 18px;
+
+  background: linear-gradient(145deg, #ffffff, #f8f9fb);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  transition: all 0.3s ease;
+  cursor: pointer;
 
   .category-content {
     text-align: center;
@@ -17,13 +22,29 @@
       height: 50px;
       margin-bottom: 12px;
       object-fit: contain;
+      transition: transform 0.3s ease;
     }
 
     h2 {
       margin: 0;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
-      color: #333;
+      color: #2c3e50; 
+      letter-spacing: 0.3px;
+      transition: color 0.3s ease;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+
+    .category-content img {
+      transform: scale(1.1);
+    }
+
+    .category-content h2 {
+      color: #6a5acd; 
     }
   }
 }
