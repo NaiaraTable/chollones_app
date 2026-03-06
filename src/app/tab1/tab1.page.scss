@@ -230,6 +230,7 @@ ion-button {
 .product-card {
   min-width: 250px;
   max-width: 250px;
+  min-height: 300px;
   background: #fff;
   border-radius: 18px;
   border: 1px solid #efefef;
@@ -290,6 +291,7 @@ ion-button {
   display: flex;
   flex-direction: column;
   flex: 1;
+  justify-content: space-between;
 }
 
 .product-cat {
@@ -310,6 +312,7 @@ ion-button {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 2.6em;
 }
 
 .product-prov {
@@ -326,6 +329,7 @@ ion-button {
   align-items: baseline;
   gap: 8px;
   margin-bottom: 16px;
+  margin-top: auto;
 }
 
 .p-now {
