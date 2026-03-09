@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({
     providedIn: 'root'
@@ -16,6 +17,7 @@ export class GameService {
     extraSpins = signal<number>(0);
 
     private timerInterval: any;
+    private supabase = inject(SupabaseService);
 
     constructor() { }
 
@@ -33,6 +35,45 @@ export class GameService {
         this.isFinished.set(false);
         this.extraSpins.set(0);
         this.startLevel1();
+    }
+
+    async canPlayToday(): Promise<boolean> {
+        const user = this.supabase.userValue;
+        const today = new Date().toDateString();
+
+        // Bloqueo rápido por LocalStorage (evita problemas de sincronización)
+        const localKey = 'ultima_partida_' + (user ? user.id : 'anon');
+        const localPlayed = localStorage.getItem(localKey);
+
+        if (localPlayed === today) {
+            return false;
+        }
+
+        if (!user) {
+            return true; // Si no hay usuario, permitimos jugar basado en LocalStorage
+        }
+
+        // Verificamos también en Supabase por si jugó en otro dispositivo
+        const lastPlayed = user.user_metadata?.['ultima_partida'];
+        return lastPlayed !== today;
+    }
+
+    async registerPlay(): Promise<void> {
+        const today = new Date().toDateString();
+        const user = this.supabase.userValue;
+
+        // Guardar rápido en LocalStorage
+        const localKey = 'ultima_partida_' + (user ? user.id : 'anon');
+        localStorage.setItem(localKey, today);
+
+        if (user) {
+            try {
+                // Guardar en Supabase para persistencia en nube
+                await this.supabase.updateProfile({ ultima_partida: today });
+            } catch (error) {
+                console.error('Error registrando la partida:', error);
+            }
+        }
     }
 
     private startLevel1() {

@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AlertController } from '@ionic/angular';
 import { GameService } from '../../services/game.service';
 
 @Component({
@@ -36,8 +37,22 @@ import { GameService } from '../../services/game.service';
 })
 export class GameHomeComponent {
     public game = inject(GameService);
+    private alertController = inject(AlertController);
 
-    play() {
-        this.game.startGame();
+    async play() {
+        const canPlay = await this.game.canPlayToday();
+
+        if (canPlay) {
+            await this.game.registerPlay();
+            this.game.startGame();
+        } else {
+            const alert = await this.alertController.create({
+                header: '¡Vuelve mañana!',
+                message: 'Solo puedes jugar a Atrapar Chollones una vez al día. ¡Te esperamos mañana para más premios!',
+                buttons: ['Entendido'],
+                cssClass: 'custom-alert'
+            });
+            await alert.present();
+        }
     }
 }
