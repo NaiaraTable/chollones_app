@@ -187,9 +187,9 @@ ion-tab-bar {
 
 /* 1. Hacemos que el fondo negro sea totalmente transparente */
 .toast-carrito {
-  --background: transparent !important; 
+  --background: transparent !important;
   --box-shadow: none !important;
-  
+
   /* Bajamos el aviso para que no tape los iconos rojos */
   margin-top: calc(var(--ion-safe-area-top, 0px) + 90px) !important;
 }
@@ -199,13 +199,13 @@ ion-tab-bar {
   background: #ffffff !important;
   border: 1.5px solid #40c9a2 !important;
   border-radius: 30px !important;
-  
+
   /* Forzamos que la cápsula sea pequeña y centrada */
   width: fit-content !important;
   min-width: 150px !important;
   max-width: 80% !important;
   margin: 0 auto !important;
-  
+
   /* Sombra para que flote sobre el contenido */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
   padding: 8px 16px !important;
@@ -217,4 +217,50 @@ ion-tab-bar {
   text-align: center !important;
   font-weight: 600 !important;
   opacity: 1 !important;
+}
+
+/* =========================================
+   ESTILOS ORIGINALES DE BOTONES DE JUEGOS
+   ========================================= */
+
+.btn-pill {
+  background-color: #ff6b6b;
+  /* Rojo Pastel */
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  transition: transform 0.1s, box-shadow 0.2s, background 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+}
+
+.btn-pill:active {
+  transform: scale(0.95);
+}
+
+/* Tarjetas */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Glassmorphism Title */
+.glass-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }

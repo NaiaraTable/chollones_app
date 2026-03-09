@@ -7,7 +7,7 @@ require_once __DIR__ . '/config.php';
 // Disable PHP error display, use JSON instead
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
-set_error_handler(function($errno, $errstr) {
+set_error_handler(function ($errno, $errstr) {
     jsonError('Error: ' . $errstr, 500);
 });
 
@@ -33,7 +33,8 @@ try {
         default:
             jsonError('Accion no valida', 400);
     }
-} catch (Exception $e) {
+}
+catch (Exception $e) {
     jsonError('Error: ' . $e->getMessage(), 500);
 }
 

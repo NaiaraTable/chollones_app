@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { GameBaseComponent } from '../components/game-base/game-base.component';
 
 import {
   IonHeader,
@@ -12,7 +13,12 @@ import {
   IonTabButton,
   IonLabel,
   IonSearchbar,
-  IonButton
+  IonButton,
+  IonModal,
+  IonTitle,
+  IonContent,
+  IonFab,
+  IonFabButton
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -23,7 +29,8 @@ import {
   flameOutline,
   gridOutline,
   notificationsOutline,
-  locationOutline
+  locationOutline,
+  close
 } from 'ionicons/icons';
 
 import { Router } from '@angular/router';
@@ -45,10 +52,19 @@ import { Router } from '@angular/router';
     IonTabBar,
     IonTabButton,
     IonLabel,
-    IonButton
+    IonButton,
+    IonModal,
+    IonTitle,
+    IonContent,
+    IonFab,
+    IonFabButton,
+    GameBaseComponent
   ]
 })
 export class TabsPage {
+  private cdr = inject(ChangeDetectorRef);
+
+  modalJuegosAbierto = false;
   constructor(public router: Router) {
     addIcons({
       heartOutline,
@@ -57,11 +73,24 @@ export class TabsPage {
       flameOutline,
       gridOutline,
       notificationsOutline,
-      locationOutline
+      locationOutline,
+      close
     });
   }
 
   navegar(ruta: string) {
     this.router.navigate([ruta]);
+  }
+
+  abrirJuegos() {
+    console.log('🐒 Clic en el mono detectado: abriendo modal');
+    this.modalJuegosAbierto = true;
+    this.cdr.detectChanges();
+  }
+
+  cerrarJuegos() {
+    console.log('Cerrando modal de juegos');
+    this.modalJuegosAbierto = false;
+    this.cdr.detectChanges();
   }
 }
