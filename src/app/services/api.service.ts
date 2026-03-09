@@ -265,18 +265,18 @@ export class ApiService {
       body: JSON.stringify({ chollo_id: cholloId, cantidad }),
     });
   }
-
   async actualizarCantidadCarrito(carroId: string, cantidad: number) {
     if (!this.token) throw new Error('Debes estar logueado');
+    console.log('Sending actualizaCantidad:', { id: carroId, cantidad });
 
     await this.request('carrito.php?action=update', {
       method: 'POST',
       body: JSON.stringify({ id: carroId, cantidad }),
     });
   }
-
   async eliminarDelCarrito(carroId: string) {
     if (!this.token) throw new Error('Debes estar logueado');
+    console.log('Sending eliminarCarrito:', { id: carroId });
 
     await this.request('carrito.php?action=remove', {
       method: 'POST',
