@@ -13,9 +13,11 @@ $similares = isset($_GET['similares']);
 
 if ($id) {
     getCholloById($db, $prefix, $id);
-} elseif ($similares) {
+}
+elseif ($similares) {
     getChollosSimilares($db, $prefix);
-} else {
+}
+else {
     getChollos($db, $prefix);
 }
 
@@ -140,7 +142,8 @@ function getChollosSimilares(PDO $db, string $prefix): void
             WHERE tt.term_id = :filter_id AND tt.taxonomy = 'product_cat'
         )";
         $params['filter_id'] = $categoriaId;
-    } elseif ($proveedorId) {
+    }
+    elseif ($proveedorId) {
         $extraWhere = "AND p.post_author = :filter_id";
         $params['filter_id'] = $proveedorId;
     }

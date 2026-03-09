@@ -1,0 +1,57 @@
+.game-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.hud-panel {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    z-index: 100;
+}
+
+.hud-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hud-label {
+    font-size: 0.8rem;
+    color: #ccc;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+}
+
+.hud-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Titan One', cursive;
+}
+
+.game-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.finish-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}

@@ -1,5 +1,4 @@
 <ion-content fullscreen>
-
   <!-- Banner grande -->
   <div class="banner" [style.background-image]="'url(' + bannerUrl + ')'">
     <div class="banner-overlay">
@@ -17,7 +16,6 @@
     <div class="section-title">
       <h3>Nuestros Chollos</h3>
     </div>
-
     <div class="quick-row">
       <div class="quick-circle-item" *ngFor="let q of quickLinks"
         (click)="router.navigate(['/tabs/tab4'], { queryParams: { filtro: q.id } })">
@@ -114,7 +112,6 @@
           (error)="$any($event.target).src='assets/placeholder.png'" />
 
         <div class="product-body">
-
           <div class="product-prov" *ngIf="c?.proveedores || c?.proveedor">
             <img class="logo" [src]="(c?.proveedores?.logo || c?.proveedor?.logo)"
               style="width:20px;height:20px;border-radius:50%;object-fit:cover;"
