@@ -37,7 +37,8 @@ function getChollos(PDO $db, string $prefix): void
             MAX(CASE WHEN pm.meta_key = '_price' THEN pm.meta_value END) as precio_actual,
             MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) as precio_original,
             MAX(CASE WHEN pm.meta_key = '_sale_price' THEN pm.meta_value END) as precio_oferta,
-            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id
+            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id,
+            CAST(MAX(CASE WHEN pm.meta_key = 'total_sales' THEN pm.meta_value END) AS UNSIGNED) as ventas
         FROM {$prefix}posts p
         LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
         WHERE p.post_type = 'product'
@@ -55,6 +56,7 @@ function getChollos(PDO $db, string $prefix): void
         $product['proveedores'] = getVendor($db, $prefix, $product['autor_id']);
 
         // Limpiar campos auxiliares
+        $product['ventas'] = intval($product['ventas'] ?? 0);
         unset($product['thumbnail_id'], $product['autor_id']);
 
         // Asegurar tipos numéricos

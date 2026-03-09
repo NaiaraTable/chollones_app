@@ -51,7 +51,8 @@ export class Tab4Page implements OnInit {
     { id: 'destacados', nombre: 'Destacados' },
     { id: 'distancia', nombre: 'Distancia' },
     { id: 'valorados', nombre: 'Mejor valorados' },
-    { id: 'descuento', nombre: 'Mejor descuento' }
+    { id: 'descuento', nombre: 'Mejor descuento' },
+    { id: 'top_ventas', nombre: 'Top ventas' }
   ];
 
   constructor(
@@ -284,6 +285,8 @@ export class Tab4Page implements OnInit {
           if (b.distanciaKM === '?') return -1;
           return parseFloat(a.distanciaKM) - parseFloat(b.distanciaKM);
         });
+      } else if (this.filtroRapidoSeleccionado === 'top_ventas') {
+        resultado.sort((a, b) => (b.ventas || 0) - (a.ventas || 0));
       }
       // 'valorados' can either be sorted by an average rating if exists, otherwise do nothing
     } else {
