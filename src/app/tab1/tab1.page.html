@@ -5,7 +5,9 @@
       <div class="banner-kicker">CHOLLONES</div>
       <div class="banner-title">Los mejores chollos cerca de ti</div>
       <div class="banner-sub">Ahorra en productos y servicios en un solo clic</div>
-      <button class="banner-btn" (click)="router.navigate(['/tabs/tab4'])">Ver ofertas</button>
+      <button class="banner-btn" (click)="router.navigate(['/tabs/tab4'])">
+        Ver ofertas
+      </button>
     </div>
   </div>
 
@@ -26,96 +28,7 @@
     </div>
   </div>
 
-  <!-- Productos populares -->
-  <div class="section">
-    <div class="section-title">
-      <h3>Productos populares</h3>
-      <a class="link" (click)="router.navigate(['/tabs/tab4'])">Ver todos</a>
-    </div>
-
-    <div class="popular-row">
-      <div class="product-card" *ngFor="let p of productosPopulares" (click)="irAProducto(p)">
-
-        <!-- ✅ DESCUENTO CALCULADO (porque p.descuento NO existe) -->
-        <div class="disc" *ngIf="calcDescuentoPopular(p) > 0">
-          -{{ calcDescuentoPopular(p) }}%
-        </div>
-
-        <!-- ✅ NO NAVEGAR AL CLICKAR CORAZÓN -->
-        <div class="fav-icon" (click)="toggleFavorito(p, $event); $event.stopPropagation()"
-          [class.active]="isFavorito(p.id)">
-          <ion-icon name="heart"></ion-icon>
-        </div>
-
-        <img class="product-img" [src]="p.imagen" (error)="$any($event.target).src='assets/placeholder.png'" />
-
-        <div class="product-body">
-          <div class="product-cat">{{ p.categoria }}</div>
-          <div class="product-title">{{ p.titulo }}</div>
-          <div class="product-prov">{{ p.proveedor }}</div>
-
-          <div class="product-prices">
-            <span class="p-now">{{ p.precioActual | number:'1.2-2' }}€</span>
-            <span class="p-old" *ngIf="p.precioOriginal">{{ p.precioOriginal | number:'1.2-2' }}€</span>
-          </div>
-
-          <!-- ✅ NO NAVEGAR AL CLICKAR BOTÓN -->
-          <button class="btn-cart" (click)="$event.stopPropagation(); anadirAlCarrito(p)">
-            Añadir al carrito
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Nuestros chollos más recientes (Supabase) -->
-  <div class="section">
-    <div class="section-title">
-      <h3>Nuestros chollos</h3>
-      <a class="link" (click)="router.navigate(['/tabs/tab4'])">Ver todos</a>
-    </div>
-
-    <div class="cards-row">
-      <!-- ✅ CARD CLICABLE -->
-      <div class="product-card" *ngFor="let c of chollosFiltrados" (click)="irAProducto(c)">
-        <div class="disc" [class.badge-hot]="c?.punto?.estado === 'Caliente'">
-          -{{ calcDescuento(c) }}%
-        </div>
-
-        <!-- ✅ NO NAVEGAR AL CLICKAR CORAZÓN -->
-        <div class="fav-icon" (click)="toggleFavorito(c, $event); $event.stopPropagation()"
-          [class.active]="isFavorito(c.id)">
-          <ion-icon name="heart"></ion-icon>
-        </div>
-
-        <img class="product-img" [src]="c?.imagen_url || c?.imagen || 'assets/placeholder.png'"
-          (error)="$any($event.target).src='assets/placeholder.png'" />
-
-        <div class="product-body">
-          <div class="product-prov" *ngIf="c?.proveedores || c?.proveedor">
-            <img class="logo" [src]="(c?.proveedores?.logo || c?.proveedor?.logo)"
-              style="width:20px;height:20px;border-radius:50%;object-fit:cover;"
-              *ngIf="(c?.proveedores?.logo || c?.proveedor?.logo)" (click)="$event.stopPropagation()" />
-            <span>{{ (c?.proveedores?.nombre || c?.proveedor?.nombre) }}</span>
-          </div>
-
-          <div class="product-title">{{ c?.titulo }}</div>
-
-          <div class="product-prices">
-            <span class="p-now">{{ c?.precio_actual | number:'1.2-2' }}€</span>
-            <span class="p-old" *ngIf="c?.precio_original">{{ c?.precio_original | number:'1.2-2' }}€</span>
-          </div>
-
-          <!-- ✅ NO NAVEGAR AL CLICKAR BOTÓN -->
-          <button class="btn-cart" (click)="$event.stopPropagation(); anadirAlCarrito(c)">
-            Añadir al carrito
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Categorías -->
+  <!-- ✅ CATEGORÍAS AHORA VA JUSTO DEBAJO -->
   <div class="section">
     <div class="section-title">
       <h3>Categorías más populares</h3>
@@ -129,4 +42,105 @@
       </div>
     </div>
   </div>
+
+  <!-- Productos populares -->
+  <div class="section">
+    <div class="section-title">
+      <h3>Productos populares</h3>
+      <a class="link" (click)="router.navigate(['/tabs/tab4'])">Ver todos</a>
+    </div>
+
+    <div class="popular-row">
+      <div class="product-card" *ngFor="let p of productosPopulares" (click)="irAProducto(p)">
+
+        <!-- Descuento -->
+        <div class="disc" *ngIf="calcDescuentoPopular(p) > 0">
+          -{{ calcDescuentoPopular(p) }}%
+        </div>
+
+        <!-- Favoritos -->
+        <div class="fav-icon" (click)="toggleFavorito(p, $event); $event.stopPropagation()"
+          [class.active]="isFavorito(p.id)">
+          <ion-icon name="heart"></ion-icon>
+        </div>
+
+        <img class="product-img" [src]="p.imagen" (error)="$any($event.target).src='assets/placeholder.png'" />
+
+        <div class="product-body">
+          <div class="product-cat">{{ p.categoria }}</div>
+          <div class="product-title">{{ p.titulo }}</div>
+          <div class="product-prov">{{ p.proveedor }}</div>
+          <div class="product-prices">
+            <span class="p-now">
+              {{ p.precioActual | number:'1.2-2' }}€
+            </span>
+
+            <span class="p-old" *ngIf="calcDescuentoPopular(p) > 0">
+              {{ p.precioOriginal | number:'1.2-2' }}€
+            </span>
+          </div>
+        </div>
+
+        <button class="btn-cart" (click)="$event.stopPropagation(); anadirAlCarrito(p)">
+          Añadir al carrito
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nuestros chollos más recientes -->
+  <div class="section">
+    <div class="section-title">
+      <h3>Nuestros chollos</h3>
+      <a class="link" (click)="router.navigate(['/tabs/tab4'])">Ver todos</a>
+    </div>
+
+    <div class="cards-row">
+      <div class="product-card" *ngFor="let c of chollosFiltrados" (click)="irAProducto(c)">
+
+        <div class="disc" *ngIf="calcDescuento(c) > 0" [class.badge-hot]="c?.punto?.estado === 'Caliente'"> -{{
+          calcDescuento(c) }}%
+        </div>
+
+        <!-- Favoritos -->
+        <div class="fav-icon" (click)="toggleFavorito(c, $event); $event.stopPropagation()"
+          [class.active]="isFavorito(c.id)">
+          <ion-icon name="heart"></ion-icon>
+        </div>
+
+        <img class="product-img" [src]="c?.imagen_url || c?.imagen || 'assets/placeholder.png'"
+          (error)="$any($event.target).src='assets/placeholder.png'" />
+
+        <div class="product-body">
+          <div class="product-prov" *ngIf="c?.proveedores || c?.proveedor">
+            <img class="logo" [src]="(c?.proveedores?.logo || c?.proveedor?.logo)"
+              style="width:20px;height:20px;border-radius:50%;object-fit:cover;"
+              *ngIf="(c?.proveedores?.logo || c?.proveedor?.logo)" (click)="$event.stopPropagation()" />
+
+            <span>
+              {{ (c?.proveedores?.nombre || c?.proveedor?.nombre) }}
+            </span>
+          </div>
+
+          <div class="product-title">{{ c?.titulo }}</div>
+
+          <div class="product-prices">
+            <span class="p-now">
+              {{ c?.precio_actual | number:'1.2-2' }}€
+            </span>
+
+            <span class="p-old" *ngIf="calcDescuento(c) > 0">
+              {{ c?.precio_original | number:'1.2-2' }}€
+            </span>
+          </div>
+        </div>
+
+        <button class="btn-cart" (click)="$event.stopPropagation(); anadirAlCarrito(c)">
+          Añadir al carrito
+        </button>
+
+      </div>
+    </div>
+  </div>
+
 </ion-content>

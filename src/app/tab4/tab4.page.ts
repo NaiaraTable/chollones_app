@@ -13,7 +13,7 @@ import {
   navigateOutline,
   heart, heartOutline
 } from 'ionicons/icons';
-import { ApiService } from '../services/api.service';
+import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
 
 @Component({
@@ -29,7 +29,9 @@ import { LocationService } from '../services/location.service';
 export class Tab4Page implements OnInit {
 
   listadoChollos: any[] = [];
+  filtradosTotales: any[] = [];
   filtrados: any[] = [];
+  mostrarTodos: boolean = false;
   miLat: number = 0;
   miLng: number = 0;
 
@@ -53,7 +55,7 @@ export class Tab4Page implements OnInit {
   ];
 
   constructor(
-    private supabaseService: ApiService,
+    private supabaseService: SupabaseService,
     private locationService: LocationService,
     private router: Router,
     private route: ActivatedRoute
@@ -189,12 +191,6 @@ export class Tab4Page implements OnInit {
   async toggleFavorito(chollo: any, event: Event) {
     event.stopPropagation();
 
-    const user = this.supabaseService.userValue;
-    if (!user) {
-      alert('Debes iniciar sesión para guardar favoritos');
-      return;
-    }
-
     const isFav = this.favoritosIds.has(chollo.id);
 
     try {
@@ -224,11 +220,13 @@ export class Tab4Page implements OnInit {
 
   buscar(event: any) {
     this.textoBusqueda = (event.target.value || '').toLowerCase().trim();
+    this.mostrarTodos = false;
     this.aplicarFiltros();
   }
 
   seleccionarCategoria(slug: string) {
     this.categoriaSeleccionada = slug;
+    this.mostrarTodos = false;
     this.aplicarFiltros();
   }
 
@@ -238,6 +236,7 @@ export class Tab4Page implements OnInit {
     } else {
       this.filtroRapidoSeleccionado = id;
     }
+    this.mostrarTodos = false;
     this.aplicarFiltros();
   }
 
@@ -255,9 +254,10 @@ export class Tab4Page implements OnInit {
 
     // 2. Filtrar por categoría
     if (this.categoriaSeleccionada !== 'todas') {
-      resultado = resultado.filter(c =>
-        (c.categorias?.slug || '').toLowerCase() === this.categoriaSeleccionada
-      );
+      resultado = resultado.filter((c: any) => {
+        const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
+        return cats.some((cat: any) => (cat.slug || '').toLowerCase() === this.categoriaSeleccionada);
+      });
     }
 
     // 3. Filtros rápidos
@@ -289,7 +289,18 @@ export class Tab4Page implements OnInit {
       });
     }
 
-    this.filtrados = resultado;
+    this.filtradosTotales = resultado;
+
+    if (this.mostrarTodos) {
+      this.filtrados = resultado;
+    } else {
+      this.filtrados = resultado.slice(0, 10);
+    }
+  }
+
+  verTodos() {
+    this.mostrarTodos = true;
+    this.aplicarFiltros();
   }
 
   abrirNavegacion(chollo: any) {

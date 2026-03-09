@@ -54,44 +54,61 @@ export class ApiService {
 
   // --- HELPERS HTTP ---
 
-  private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
+  async request(endpoint: string, options: RequestInit = {}): Promise<any> {
     const headers: any = {
       'Content-Type': 'application/json',
       ...(options.headers || {}),
     };
 
+    let url = `${this.apiUrl}/${endpoint}`;
+
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
+
+      // Fallback a prueba de balas contra Apache: pasar el token por URL
+      const separator = url.includes('?') ? '&' : '?';
+      url += `${separator}token=${this.token}`;
     }
 
-    const response = await fetch(`${this.apiUrl}/${endpoint}`, {
-      ...options,
-      headers,
-    });
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error || 'Error en la petición');
+      if (!response.ok) {
+        throw new Error(data.error || 'Error en la petición');
+      }
+
+      return data;
+    } catch (err) {
+      console.error(`Error en petición a ${endpoint}:`, err);
+      throw err;
     }
-
-    return data;
   }
 
   private async loadUser(): Promise<void> {
     try {
       const user = await this.request('auth.php?action=me');
       this.currentUser.next(user);
-    } catch {
-      this.token = null;
-      localStorage.removeItem('chollones_token');
-      this.currentUser.next(null);
+    } catch (error: any) {
+      console.error('Error al cargar al usuario con token:', error);
+      // Solo borramos el token si el servidor respondió explícitamente que no es válido
+      // O si hay un problema y por seguridad deslogueamos
+      if (error && error.message && (error.message.includes('No autenticado') || error.message.includes('Usuario no encontrado'))) {
+        this.token = null;
+        localStorage.removeItem('chollones_token');
+        this.currentUser.next(null);
+      }
     }
   }
 
   // --- MÉTODOS DE AUTENTICACIÓN ---
 
   async login(email: string, pass: string) {
+    this.token = null; // Evitar enviar un token viejo e inválido que pueda causar ruido
     try {
       const result = await this.request('auth.php?action=login', {
         method: 'POST',
@@ -105,6 +122,7 @@ export class ApiService {
       // Devolver en el mismo formato que Supabase
       return { data: { user: result.user, session: { access_token: result.token } }, error: null };
     } catch (error: any) {
+      console.error('Error interno en login:', error);
       return { data: { user: null, session: null }, error: { message: error.message } };
     }
   }
@@ -194,13 +212,19 @@ export class ApiService {
   async guardarCholloFavorito(cholloId: string) {
     const user = this.userValue;
     if (!user) throw new Error('Debes estar logueado');
-    await this.request(`favoritos.php?action=add&chollo_id=${cholloId}`, { method: 'POST' });
+    await this.request('favoritos.php?action=add', {
+      method: 'POST',
+      body: JSON.stringify({ chollo_id: cholloId })
+    });
   }
 
   async eliminarCholloFavorito(cholloId: string) {
     const user = this.userValue;
     if (!user) return;
-    await this.request(`favoritos.php?action=remove&chollo_id=${cholloId}`, { method: 'POST' });
+    await this.request('favoritos.php?action=remove', {
+      method: 'POST',
+      body: JSON.stringify({ chollo_id: cholloId })
+    });
   }
 
   // --- CUPONES ---
@@ -225,8 +249,7 @@ export class ApiService {
   }
 
   async anadirAlCarrito(cholloId: string, cantidad: number = 1) {
-    const user = this.userValue;
-    if (!user) throw new Error('Debes estar logueado para añadir al carrito');
+    if (!this.token) throw new Error('Debes estar logueado para añadir al carrito');
 
     await this.request('carrito.php?action=add', {
       method: 'POST',
@@ -235,22 +258,20 @@ export class ApiService {
   }
 
   async actualizarCantidadCarrito(carroId: string, cantidad: number) {
-    const user = this.userValue;
-    if (!user) throw new Error('Debes estar logueado');
+    if (!this.token) throw new Error('Debes estar logueado');
 
     await this.request('carrito.php?action=update', {
       method: 'POST',
-      body: JSON.stringify({ carro_id: carroId, cantidad }),
+      body: JSON.stringify({ id: carroId, cantidad }),
     });
   }
 
   async eliminarDelCarrito(carroId: string) {
-    const user = this.userValue;
-    if (!user) throw new Error('Debes estar logueado');
+    if (!this.token) throw new Error('Debes estar logueado');
 
     await this.request('carrito.php?action=remove', {
       method: 'POST',
-      body: JSON.stringify({ carro_id: carroId }),
+      body: JSON.stringify({ id: carroId }),
     });
   }
 

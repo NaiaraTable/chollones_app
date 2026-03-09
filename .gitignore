@@ -58,6 +58,22 @@ yarn-error.log
 /.angular/cache
 .sass-cache/
 /.nx
+
+# PHP duplicates en raíz (deben estar solo en api/)
+/auth.php
+/carrito.php
+/categorias.php
+/chollos.php
+/config.php
+/cupones.php
+/favoritos.php
+/perfil.php
+
+# Archivos de debug/test
+/api/test-*.php
+
+# Android build reports
+/android/build/
 /.nx/cache
 /connect.lock
 /coverage

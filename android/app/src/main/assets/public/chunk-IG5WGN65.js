@@ -1,0 +1,1 @@
+import{a as r,j as i}from"./chunk-5MEF2J7Q.js";var c=(()=>{let t=class t{constructor(){this.favoritosChanged=new r,this.favoritosChanged$=this.favoritosChanged.asObservable()}notificarCambio(){this.favoritosChanged.next()}};t.\u0275fac=function(a){return new(a||t)},t.\u0275prov=i({token:t,factory:t.\u0275fac,providedIn:"root"});let o=t;return o})();export{c as a};

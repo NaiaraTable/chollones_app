@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,9 +14,9 @@ export class SupabaseService {
   private currentUser = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUser.asObservable();
 
-  constructor() {
+  constructor(private apiService: ApiService) {
     // CLIENTE MINIMALISTA: Desactivamos persistencia y locks para evitar conflictos en el navegador
-    this.supabase = createClient((environment as any).supabaseUrl || 'https://x.supabase.co', (environment as any).supabaseKey || 'x', {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
       auth: {
         persistSession: false, // Evita conflictos con LocalStorage/Preferences
         autoRefreshToken: false,
@@ -34,26 +35,30 @@ export class SupabaseService {
   }
 
   get userValue() {
-    return this.currentUser.value;
+    return this.apiService.userValue ?? this.currentUser.value;
   }
 
   // --- MÉTODOS DE AUTENTICACIÓN ---
 
   async login(email: string, pass: string) {
-    return await this.supabase.auth.signInWithPassword({ email, password: pass });
+    const result = await this.apiService.login(email, pass);
+    if (result.data?.user) {
+      this.currentUser.next(result.data.user);
+    }
+    return result;
   }
 
   async registro(email: string, pass: string, nombre: string) {
-    return await this.supabase.auth.signUp({
-      email,
-      password: pass,
-      options: { data: { full_name: nombre } },
-    });
+    const result = await this.apiService.registro(email, pass, nombre);
+    if (result.data?.user) {
+      this.currentUser.next(result.data.user);
+    }
+    return result;
   }
 
   async logout() {
     try {
-      await this.supabase.auth.signOut();
+      await this.apiService.logout();
       this.currentUser.next(null);
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
@@ -64,112 +69,55 @@ export class SupabaseService {
 
   async getChollos(): Promise<any[]> {
     try {
-      const response = await this.supabase
-        .from('chollos')
-        .select(`
-          *,
-          categorias (nombre, slug),
-          proveedores (nombre, lat, lng)`)
-        .order('created_at', { ascending: false });
-
-      if (!response || response.error) {
-        console.warn('Error u omisión de datos en getChollos:', response?.error);
-        return [];
-      }
-      return response.data || [];
+      return await this.apiService.getChollos();
     } catch (err) {
-      console.error("Fallo crítico en getChollos:", err);
+      console.error("Error al obtener chollos:", err);
       return [];
     }
   }
 
   async getChollosGuardados() {
-    const user = this.userValue;
-    if (!user) return [];
-
     try {
-      const response = await this.supabase
-        .from('guardados')
-        .select(`
-          id,
-          chollos (
-            id, titulo, precio_actual, precio_original, imagen_url,
-            proveedores ( nombre )
-          )
-        `)
-        .eq('usuario_temp_id', user.id);
-
-      if (!response || response.error) return [];
-      return response.data || [];
+      return await this.apiService.getChollosGuardados();
     } catch (error) {
+      console.error('Error al cargar guardados:', error);
       return [];
     }
   }
 
   async getFavoritosIds() {
-    const user = this.userValue;
-    if (!user) return [];
-
     try {
-      const response = await this.supabase
-        .from('guardados')
-        .select('chollo_id')
-        .eq('usuario_temp_id', user.id);
-
-      if (!response || response.error) return [];
-      const data = response.data || [];
-      return data.map((f: any) => f.chollo_id);
+      const response = await this.apiService.getFavoritosIds();
+      return Array.isArray(response) ? response : response.ids || [];
     } catch (error) {
+      console.error('Error al cargar favoritos:', error);
       return [];
     }
   }
 
   async guardarCholloFavorito(cholloId: string) {
-    const user = this.userValue;
-    if (!user) throw new Error('Debes estar logueado');
-
     try {
-      await this.supabase
-        .from('guardados')
-        .insert({ usuario_temp_id: user.id, chollo_id: cholloId });
+      await this.apiService.guardarCholloFavorito(cholloId);
     } catch (e) {
-      console.error("Error al guardar favorito", e);
+      console.error("Error al guardar favorito:", e);
+      throw e;
     }
   }
 
   async eliminarCholloFavorito(cholloId: string) {
-    const user = this.userValue;
-    if (!user) return;
-
     try {
-      // Le pedimos a Supabase que borre y nos diga si ha habido error
-      const { error } = await this.supabase
-        .from('guardados')
-        .delete()
-        .eq('usuario_temp_id', user.id)
-        .eq('chollo_id', cholloId);
-
-      // Si hay error (como falta de permisos), lanzamos la alerta
-      if (error) throw error;
-
-      console.log('✅ Chollo desmarcado correctamente de la BD');
+      await this.apiService.eliminarCholloFavorito(cholloId);
     } catch (e) {
-      console.error("❌ Error al eliminar favorito de Supabase:", e);
-      throw e; // Importantísimo para que el Tab1 deshaga el cambio visual
+      console.error("❌ Error al eliminar favorito:", e);
+      throw e;
     }
   }
 
   async getCupones() {
-    const today = new Date().toISOString().split('T')[0];
     try {
-      const response = await this.supabase
-        .from('cupones')
-        .select('*')
-        .or(`valido_hasta.is.null,valido_hasta.gte.${today}`)
-        .order('created_at', { ascending: false });
-
-      return response.data || [];
+      return await this.apiService.getCupones();
     } catch (e) {
+      console.error('Error al cargar cupones:', e);
       return [];
     }
   }
@@ -177,67 +125,23 @@ export class SupabaseService {
   // --- CARRITO DE COMPRAS ---
 
   async getCarrito() {
-    const user = this.userValue;
-    if (!user) return [];
-
     try {
-      const response = await this.supabase
-        .from('carro')
-        .select(`
-          id,
-          cantidad,
-          chollos (
-            id, titulo, precio_actual, precio_original, imagen_url,
-            proveedores ( nombre )
-          )
-        `)
-        .eq('usuario_id', user.id)
-        .order('creado_en', { ascending: false });
-
-      if (!response || response.error) {
-        console.warn('Error al cargar carrito:', response?.error);
-        return [];
-      }
-      return response.data || [];
+      return await this.apiService.request('carrito.php');
     } catch (error) {
-      console.error('Excepción al cargar carrito:', error);
+      console.error('Error al cargar carrito:', error);
       return [];
     }
   }
 
   async anadirAlCarrito(cholloId: string, cantidad: number = 1) {
-    const user = this.userValue;
+    const user = this.apiService.userValue;
     if (!user) throw new Error('Debes estar logueado para añadir al carrito');
 
     try {
-      // Verificar si ya existe en el carrito
-      const { data: existente, error: errorBusqueda } = await this.supabase
-        .from('carro')
-        .select('id, cantidad')
-        .eq('usuario_id', user.id)
-        .eq('chollo_id', cholloId)
-        .maybeSingle();
-
-      if (errorBusqueda) {
-        console.error('Error al buscar en carrito:', errorBusqueda);
-        throw errorBusqueda;
-      }
-
-      if (existente) {
-        // Ya existe: solo actualizar cantidad
-        const nuevaCantidad = existente.cantidad + cantidad;
-        const { error: errorUpdate } = await this.supabase
-          .from('carro')
-          .update({ cantidad: nuevaCantidad })
-          .eq('id', existente.id);
-        if (errorUpdate) throw errorUpdate;
-      } else {
-        // No existe: insertar nuevo
-        const { error: errorInsert } = await this.supabase
-          .from('carro')
-          .insert({ usuario_id: user.id, chollo_id: cholloId, cantidad });
-        if (errorInsert) throw errorInsert;
-      }
+      await this.apiService.request('carrito.php?action=add', {
+        method: 'POST',
+        body: JSON.stringify({ chollo_id: cholloId, cantidad }),
+      });
     } catch (e) {
       console.error("Error al añadir al carrito", e);
       throw e;
@@ -245,18 +149,17 @@ export class SupabaseService {
   }
 
   async actualizarCantidadCarrito(carroId: string, cantidad: number) {
-    const user = this.userValue;
+    const user = this.apiService.userValue;
     if (!user) throw new Error('Debes estar logueado');
 
     try {
       if (cantidad <= 0) {
         await this.eliminarDelCarrito(carroId);
       } else {
-        await this.supabase
-          .from('carro')
-          .update({ cantidad })
-          .eq('id', carroId)
-          .eq('usuario_id', user.id); // Seguridad
+        await this.apiService.request('carrito.php?action=update', {
+          method: 'POST',
+          body: JSON.stringify({ id: carroId, cantidad }),
+        });
       }
     } catch (e) {
       console.error("Error al actualizar cantidad", e);
@@ -265,16 +168,14 @@ export class SupabaseService {
   }
 
   async eliminarDelCarrito(carroId: string) {
-    const user = this.userValue;
+    const user = this.apiService.userValue;
     if (!user) throw new Error('Debes estar logueado');
 
     try {
-      const { error } = await this.supabase
-        .from('carro')
-        .delete()
-        .eq('id', carroId)
-        .eq('usuario_id', user.id);
-      if (error) throw error;
+      await this.apiService.request('carrito.php?action=remove', {
+        method: 'POST',
+        body: JSON.stringify({ id: carroId }),
+      });
     } catch (e) {
       console.error("Error al eliminar del carrito", e);
       throw e;
@@ -284,79 +185,58 @@ export class SupabaseService {
   // --- PERFIL Y AVATAR ---
 
   async updateProfile(data: any) {
-    const response = await this.supabase.auth.updateUser({ data });
-    if (response.data?.user) {
-      this.currentUser.next(response.data.user);
+    try {
+      await this.apiService.request('perfil.php?action=update', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      return { data: {}, error: null };
+    } catch (e) {
+      console.error('Error al actualizar perfil:', e);
+      return { data: null, error: e };
     }
-    return response.data?.user;
   }
 
   async updatePassword(newPassword: string) {
-    const { error } = await this.supabase.auth.updateUser({
-      password: newPassword
-    });
-    if (error) throw error;
-  }
-
-  async uploadAvatar(file: File): Promise<string> {
-    const user = this.userValue;
-    if (!user) throw new Error('Debes estar logueado');
-
-    const fileExt = file.name.split('.').pop();
-    const filePath = `${user.id}/avatar.${fileExt}`;
-
     try {
-      const upload = await this.supabase.storage
-        .from('avatars')
-        .upload(filePath, file, { upsert: true });
-
-      if (upload.error) throw upload.error;
-
-      const { data } = this.supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      const avatarUrl = data.publicUrl + '?t=' + Date.now();
-      await this.updateProfile({ avatar_url: avatarUrl });
-      return avatarUrl;
-    } catch (err) {
-      const base64 = await this.fileToBase64(file);
-      await this.updateProfile({ avatar_url: base64 });
-      return base64;
+      await this.apiService.request('perfil.php?action=password', {
+        method: 'POST',
+        body: JSON.stringify({ password: newPassword }),
+      });
+      return { data: {}, error: null };
+    } catch (e) {
+      console.error('Error al cambiar contraseña:', e);
+      return { data: null, error: e };
     }
   }
 
-  private fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  async uploadAvatar(file: File): Promise<string> {
+    const user = this.apiService.userValue;
+    if (!user) throw new Error('Debes estar logueado');
 
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      const response = await this.apiService.request('perfil.php?action=avatar', {
+        method: 'POST',
+        body: formData,
+      });
+
+      return response.avatar_url || '';
+    } catch (err) {
+      console.error('Error al subir avatar:', err);
+      throw err;
+    }
   }
+
   // --- DETALLE DE CHOLLO (PÁGINA PRODUCTO) ---
 
   async getCholloById(id: string): Promise<any | null> {
     try {
-      const response = await this.supabase
-        .from('chollos')
-        .select(`
-          *,
-          categorias (id, nombre, slug),
-          proveedores (id, nombre, lat, lng)
-        `)
-        .eq('id', id)
-        .single();
-
-      if (!response || response.error) {
-        console.warn('Error u omisión de datos en getCholloById:', response?.error);
-        return null;
-      }
-
-      return response.data ?? null;
+      return await this.apiService.getCholloById(id);
     } catch (err) {
-      console.error('Fallo crítico en getCholloById:', err);
+      console.error('Error al obtener chollo:', err);
       return null;
     }
   }
@@ -367,35 +247,10 @@ export class SupabaseService {
     excludeId: string;
     limit?: number;
   }): Promise<any[]> {
-    const { categoriaId = null, proveedorId = null, excludeId, limit = 10 } = params;
-
     try {
-      // Preferimos similares por categoría, si no por proveedor
-      let query = this.supabase
-        .from('chollos')
-        .select(`
-          id, titulo, descripcion, precio_actual, precio_original, imagen_url, created_at,
-          categorias (id, nombre, slug),
-          proveedores (id, nombre)
-        `)
-        .neq('id', excludeId)
-        .order('created_at', { ascending: false })
-        .limit(limit);
-
-      if (categoriaId) query = query.eq('categoria_id', categoriaId);
-      else if (proveedorId) query = query.eq('proveedor_id', proveedorId);
-      else return [];
-
-      const response = await query;
-
-      if (!response || response.error) {
-        console.warn('Error u omisión de datos en getChollosSimilares:', response?.error);
-        return [];
-      }
-
-      return response.data ?? [];
+      return await this.apiService.getChollosSimilares(params);
     } catch (err) {
-      console.error('Fallo crítico en getChollosSimilares:', err);
+      console.error('Error al obtener chollos similares:', err);
       return [];
     }
   }

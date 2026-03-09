@@ -13,9 +13,11 @@ $similares = isset($_GET['similares']);
 
 if ($id) {
     getCholloById($db, $prefix, $id);
-} elseif ($similares) {
+}
+elseif ($similares) {
     getChollosSimilares($db, $prefix);
-} else {
+}
+else {
     getChollos($db, $prefix);
 }
 
@@ -57,6 +59,10 @@ function getChollos(PDO $db, string $prefix): void
         // Asegurar tipos numéricos
         $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
         $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
+
+        if ($product['precio_original'] === $product['precio_actual']) {
+            $product['precio_original'] = null;
+        }
     }
 
     jsonResponse($products);
@@ -104,6 +110,10 @@ function getCholloById(PDO $db, string $prefix, string $id): void
     $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
     $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
 
+    if ($product['precio_original'] === $product['precio_actual']) {
+        $product['precio_original'] = null;
+    }
+
     jsonResponse($product);
 }
 
@@ -132,7 +142,8 @@ function getChollosSimilares(PDO $db, string $prefix): void
             WHERE tt.term_id = :filter_id AND tt.taxonomy = 'product_cat'
         )";
         $params['filter_id'] = $categoriaId;
-    } elseif ($proveedorId) {
+    }
+    elseif ($proveedorId) {
         $extraWhere = "AND p.post_author = :filter_id";
         $params['filter_id'] = $proveedorId;
     }
@@ -169,6 +180,10 @@ function getChollosSimilares(PDO $db, string $prefix): void
         unset($product['thumbnail_id'], $product['autor_id']);
         $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
         $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
+
+        if ($product['precio_original'] === $product['precio_actual']) {
+            $product['precio_original'] = null;
+        }
     }
 
     jsonResponse($products);
