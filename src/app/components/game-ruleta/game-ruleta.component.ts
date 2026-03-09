@@ -18,8 +18,8 @@ interface RouletteSlice {
     template: `
     <div class="ruleta-container">
         <h1 class="ruleta-title">Ruleta Final</h1>
-        <p class="ruleta-score" style="color: #444;">Puntos totales: {{ game.score() }}</p>
-        <p class="ruleta-spins" *ngIf="!spinResult && !showCode" style="color: #444;">Tiradas extra disponibles: {{ game.extraSpins() }}</p>
+        <p class="ruleta-score">Puntos totales: {{ game.score() }}</p>
+        <p class="ruleta-spins" *ngIf="!spinResult && !showCode">Tiradas extra disponibles: {{ game.extraSpins() }}</p>
 
         <div class="ruleta-wrapper" *ngIf="!showCode">
             <div class="ruleta-wheel" [style.transform]="'rotate(' + currentRotation + 'deg)'">
@@ -61,7 +61,7 @@ interface RouletteSlice {
         </div>
         
         <div *ngIf="!canSpin && !spinResult && !showCode" style="margin-top: 20px;">
-            <p style="color: #444; font-weight: bold;">No tienes más tiradas.</p>
+            <p>No tienes más tiradas.</p>
             <button class="btn-pill" (click)="finishGame()">Volver a Jugar</button>
         </div>
     </div>

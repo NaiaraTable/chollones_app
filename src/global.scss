@@ -218,3 +218,49 @@ ion-tab-bar {
   font-weight: 600 !important;
   opacity: 1 !important;
 }
+
+/* =========================================
+   ESTILOS ORIGINALES DE BOTONES DE JUEGOS
+   ========================================= */
+
+.btn-pill {
+  background-color: #ff6b6b;
+  /* Rojo Pastel */
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  transition: transform 0.1s, box-shadow 0.2s, background 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+}
+
+.btn-pill:active {
+  transform: scale(0.95);
+}
+
+/* Tarjetas */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Glassmorphism Title */
+.glass-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}

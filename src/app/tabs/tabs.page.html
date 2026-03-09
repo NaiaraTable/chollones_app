@@ -53,6 +53,23 @@
   </ion-tab-bar>
 </ion-tabs>
 
-<div class="contenedor-mascota" style="pointer-events: none;">
-  <img src="assets/chololo.png" class="monito-animado" alt="Mascota Chollones">
+<div class="contenedor-mascota" style="z-index: 999999; pointer-events: none;">
+  <img src="assets/chololo.png" class="monito-animado" alt="Mascota Chollones" (click)="abrirJuegos()"
+    style="cursor: pointer; pointer-events: auto; position: relative; z-index: 999999;">
 </div>
+
+<ion-modal id="modal-juegos" [isOpen]="modalJuegosAbierto" (didDismiss)="cerrarJuegos()">
+  <ng-template>
+    <ion-content class="ion-no-padding" [scrollY]="false">
+      <!-- Botón flotante para cerrar el juego -->
+      <ion-fab vertical="top" horizontal="end" slot="fixed" style="margin: 10px; z-index: 99999;">
+        <ion-fab-button size="small" color="light" (click)="cerrarJuegos()">
+          <ion-icon name="close"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+
+      <!-- Contenedor principal de los juegos (Nativo Angular Reconstruido) -->
+      <app-game-base></app-game-base>
+    </ion-content>
+  </ng-template>
+</ion-modal>
