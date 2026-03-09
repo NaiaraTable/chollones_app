@@ -40,7 +40,8 @@ function getDB(): PDO
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Error de conexión a la base de datos']);
             exit();
@@ -94,29 +95,30 @@ function verifyJWT(string $token): ?array
 
 function getAuthenticatedUser(): ?array
 {
-    $authHeader = '';
+    // Intenta obtener el token de varias fuentes
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 
-    // Prioridad 1: Token explícito por URL (a prueba de fallos de Apache)
-    if (!empty($_GET['token'])) {
+    // Si no está en el header, intenta desde query param (bypass de Apache)
+    if (empty($authHeader) && !empty($_GET['token'])) {
         $authHeader = 'Bearer ' . $_GET['token'];
-    } else {
-        // Prioridad 2: Cabeceras
-        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-        if (empty($authHeader) && function_exists('apache_request_headers')) {
-            $headers = apache_request_headers();
-            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
-        }
-        if (empty($authHeader)) {
-            $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
-        }
-        if (empty($authHeader)) {
-            $authHeader = $_SERVER['HTTP_X_AUTHORIZATION'] ?? '';
-        }
+    }
+
+    // Si sigue vacío, intenta otras variantes de header
+    if (empty($authHeader) && function_exists('apache_request_headers')) {
+        $headers = apache_request_headers();
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+    }
+
+    if (empty($authHeader)) {
+        $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+    }
+
+    if (empty($authHeader)) {
+        $authHeader = $_SERVER['HTTP_X_AUTHORIZATION'] ?? '';
     }
 
     if (!preg_match('/Bearer\s+(.+)/i', $authHeader, $matches))
         return null;
-
     return verifyJWT($matches[1]);
 }
 

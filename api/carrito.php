@@ -108,7 +108,8 @@ function addToCarrito(PDO $db, string $prefix): void
         $nuevaCantidad = intval($existente['cantidad']) + $cantidad;
         $stmt = $db->prepare("UPDATE {$prefix}app_carro SET cantidad = :cant WHERE id = :id");
         $stmt->execute(['cant' => $nuevaCantidad, 'id' => $existente['id']]);
-    } else {
+    }
+    else {
         $stmt = $db->prepare("
             INSERT INTO {$prefix}app_carro (usuario_id, chollo_id, cantidad, creado_en)
             VALUES (:uid, :cid, :cant, NOW())
@@ -121,7 +122,7 @@ function addToCarrito(PDO $db, string $prefix): void
 
 // -------------------------------------------------------
 // POST /carrito.php?action=update
-// Body: { "carro_id": "...", "cantidad": 2 }
+// Body: { "id": "...", "cantidad": 2 }
 // -------------------------------------------------------
 function updateCarrito(PDO $db, string $prefix): void
 {
@@ -129,18 +130,19 @@ function updateCarrito(PDO $db, string $prefix): void
     $userId = $auth['user_id'];
 
     $input = json_decode(file_get_contents('php://input'), true);
-    $carroId = $input['carro_id'] ?? null;
+    $carroId = $input['id'] ?? $_GET['id'] ?? null;
     $cantidad = intval($input['cantidad'] ?? 0);
 
     if (!$carroId)
-        jsonError('carro_id es obligatorio');
+        jsonError('id es obligatorio');
 
     ensureCarritoTable($db, $prefix);
 
     if ($cantidad <= 0) {
         $stmt = $db->prepare("DELETE FROM {$prefix}app_carro WHERE id = :id AND usuario_id = :uid");
         $stmt->execute(['id' => $carroId, 'uid' => $userId]);
-    } else {
+    }
+    else {
         $stmt = $db->prepare("UPDATE {$prefix}app_carro SET cantidad = :cant WHERE id = :id AND usuario_id = :uid");
         $stmt->execute(['cant' => $cantidad, 'id' => $carroId, 'uid' => $userId]);
     }
@@ -150,7 +152,7 @@ function updateCarrito(PDO $db, string $prefix): void
 
 // -------------------------------------------------------
 // POST /carrito.php?action=remove
-// Body: { "carro_id": "..." }
+// Body: { "id": "..." }
 // -------------------------------------------------------
 function removeFromCarrito(PDO $db, string $prefix): void
 {
@@ -158,10 +160,10 @@ function removeFromCarrito(PDO $db, string $prefix): void
     $userId = $auth['user_id'];
 
     $input = json_decode(file_get_contents('php://input'), true);
-    $carroId = $input['carro_id'] ?? $_GET['carro_id'] ?? null;
+    $carroId = $input['id'] ?? $_GET['id'] ?? null;
 
     if (!$carroId)
-        jsonError('carro_id es obligatorio');
+        jsonError('id es obligatorio');
 
     ensureCarritoTable($db, $prefix);
 

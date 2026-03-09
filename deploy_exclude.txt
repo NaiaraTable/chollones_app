@@ -1,0 +1,6 @@
+node_modules\
+.git\
+.vscode\
+deploy_exclude.txt
+deploy_to_xampp.bat
+android\
