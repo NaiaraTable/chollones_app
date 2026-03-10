@@ -78,7 +78,7 @@ export class CarritoPage implements OnInit {
       this.calcularTotal();
       await this.supabaseService.actualizarCantidadCarrito(item.id, item.cantidad);
     } catch (e) {
-      item.cantidad++; // Revert
+      item.cantidad++;
       this.calcularTotal();
     }
   }
