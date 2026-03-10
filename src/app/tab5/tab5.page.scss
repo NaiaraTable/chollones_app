@@ -1,14 +1,19 @@
+ion-content {
+  --background: #ffffff;
+}
+
 .profile-header {
   text-align: center;
   padding: 30px 20px;
-  background: white;
+  background: #ffffff;
   margin-bottom: 10px;
 
   ion-avatar {
     width: 100px;
     height: 100px;
     margin: 0 auto 15px;
-    border: 3px solid var(--ion-color-primary);
+    border: 3px solid #e53935;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.15);
   }
 
   h2 {
@@ -25,23 +30,49 @@
 }
 
 ion-list {
-  background: white;
+  background: #ffffff;
   padding: 0;
 }
 
 ion-item {
   --padding-start: 16px;
   --min-height: 56px;
-  font-weight: 600;
+  font-weight: 700;
+  --background: #ffffff;
+  --color: #000000 !important;
+  color: #000000 !important;
 
-  ion-icon {
+  ion-icon[slot="start"] {
     font-size: 24px;
+    color: #e53935;
   }
 }
 
 .logout-item {
   margin-top: 20px;
   --border-style: none;
+  --color: #e53935 !important;
+
+  ion-label, ion-icon {
+    color: #e53935 !important;
+  }
+}
+
+.logout-btn-wrapper {
+  margin-top: 30px;
+  margin-bottom: 30px;
+
+  .btn-logout-profesional {
+    --border-width: 2px;
+    font-weight: 700;
+    height: 50px;
+    --border-radius: 8px;
+    box-shadow: none;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
 }
 
 .guest-container {
@@ -54,7 +85,8 @@ ion-item {
   .guest-icon-wrapper ion-icon {
     font-size: 100px;
     margin-bottom: 20px;
-    opacity: 0.3;
+    color: #e53935;
+    opacity: 0.8;
   }
 
   h2 {
@@ -70,15 +102,13 @@ ion-item {
     margin: 10px auto;
   }
 
-  .btn-verde {
-    --background: #40c9a2;
+  .btn-rojo {
+    --background: #e53935;
+    --background-hover: #c62828;
     --color: white;
     font-weight: 800;
     margin-top: 20px;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2);
   }
-}
-
-.logout-item {
-  margin-top: 20px;
-  --border-style: none;
 }
