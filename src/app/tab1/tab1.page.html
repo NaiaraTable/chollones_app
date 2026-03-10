@@ -43,6 +43,50 @@
     </div>
   </div>
 
+  <!-- Top Ventas -->
+  <div class="section">
+    <div class="section-title">
+      <h3>Top ventas</h3>
+    </div>
+
+    <div class="popular-row">
+      <div class="product-card" *ngFor="let p of topVentas" (click)="irAProducto(p)">
+
+        <!-- Descuento -->
+        <div class="disc" *ngIf="calcDescuentoPopular(p) > 0">
+          -{{ calcDescuentoPopular(p) }}%
+        </div>
+
+        <!-- Favoritos -->
+        <div class="fav-icon" (click)="toggleFavorito(p, $event); $event.stopPropagation()"
+          [class.active]="isFavorito(p.id)">
+          <ion-icon name="heart"></ion-icon>
+        </div>
+
+        <img class="product-img" [src]="p.imagen" (error)="$any($event.target).src='assets/placeholder.png'" />
+
+        <div class="product-body">
+          <div class="product-cat">{{ p.categoria || 'Top' }}</div>
+          <div class="product-title">{{ p.titulo }}</div>
+          <div class="product-prov">{{ p.proveedor }}</div>
+          <div class="product-prices">
+            <span class="p-now">
+              {{ p.precioActual | number:'1.2-2' }}€
+            </span>
+
+            <span class="p-old" *ngIf="calcDescuentoPopular(p) > 0">
+              {{ p.precioOriginal | number:'1.2-2' }}€
+            </span>
+          </div>
+        </div>
+
+        <button class="btn-cart" (click)="$event.stopPropagation(); anadirAlCarrito(p)">
+          Añadir al carrito
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Productos populares -->
   <div class="section">
     <div class="section-title">

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
-  IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonIcon, IonFooter, IonSpinner, IonButtons, IonBackButton
+  IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonIcon, IonFooter, IonSpinner, IonButtons, IonBackButton, AlertController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, removeOutline, trashOutline, bagCheckOutline, bagOutline } from 'ionicons/icons';
@@ -26,7 +26,9 @@ export class CarritoPage implements OnInit {
 
   constructor(
     private supabaseService: ApiService,
-    private router: Router
+    private router: Router,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController
   ) {
     addIcons({ addOutline, removeOutline, trashOutline, bagCheckOutline, bagOutline });
   }
@@ -86,8 +88,23 @@ export class CarritoPage implements OnInit {
       await this.supabaseService.eliminarDelCarrito(item.id);
       this.articulos = this.articulos.filter(a => a.id !== item.id);
       this.calcularTotal();
+
+      const toast = await this.toastCtrl.create({
+        message: 'Producto eliminado correctamente',
+        duration: 2000,
+        position: 'top',
+        cssClass: 'toast-carrito'
+      });
+      await toast.present();
     } catch (e) {
       console.error('Error al eliminar', e);
+      const toast = await this.toastCtrl.create({
+        message: 'Hubo un error al eliminar. Inténtalo de nuevo.',
+        duration: 3000,
+        position: 'top',
+        cssClass: 'toast-carrito'
+      });
+      await toast.present();
     }
   }
 
