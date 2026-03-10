@@ -185,10 +185,12 @@ export class Tab1Page implements OnInit {
     }
   }
 
+
   async cargarFavoritos() {
     try {
       const ids = await this.supabaseService.getFavoritosIds();
-      this.favoritosIds = new Set(ids);
+      const idsSeguros = Array.isArray(ids) ? ids : [];
+      this.favoritosIds = new Set(idsSeguros);
     } catch (error) {
       console.error('Error al cargar favoritos:', error);
     }
@@ -320,6 +322,5 @@ export class Tab1Page implements OnInit {
     if (!actual || !original || original <= actual) return 0;
     return Math.round(((original - actual) / original) * 100);
   }
-
 
 }
