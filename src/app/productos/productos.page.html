@@ -1,24 +1,4 @@
 <ion-content *ngIf="producto" [fullscreen]="true">
-
-  <div class="header-image">
-    <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'"
-      (error)="$any($event.target).src='assets/placeholder.png'" />
-
-    <div class="back-button-float">
-      <ion-button (click)="volverAtras()" fill="clear">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
-    </div>
-
-    <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()">
-      <ion-icon [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon>
-    </div>
-
-    <div class="discount-badge" *ngIf="producto.precio_original">
-      -{{ (((producto.precio_original - producto.precio_actual) / producto.precio_original) * 100).toFixed(0) }}% DTO
-    </div>
-  </div>
-
   <div class="ion-padding content-container">
     <h1 class="product-title">{{ producto.titulo }}</h1>
 
@@ -37,17 +17,57 @@
       <span class="old-price" *ngIf="producto.precio_original">{{ producto.precio_original }}€</span>
     </div>
 
-    <div class="details-card" *ngIf="producto?.descripcion_larga">
-      <div class="details-header">
-        <ion-icon name="information-circle-outline"></ion-icon>
-        <h3>Detalles de la oferta</h3>
-      </div>
-      <p class="description-long">{{ producto.descripcion_larga }}</p>
-    </div>
-
-    <ion-button expand="block" color="primary" class="ion-margin-top btn-action" (click)="anadirAlCarrito()">
+    <ion-button expand="block" color="primary" class="btn-action" (click)="anadirAlCarrito()">
+      <ion-icon slot="start" name="cart-outline"></ion-icon>
       AÑADIR AL CARRITO
     </ion-button>
-  </div>
 
+    <div class="product-description" *ngIf="producto.descripcion_larga">
+      <h3>Descripción</h3>
+      <p>{{ producto.descripcionCorta }}</p>
+    </div>
+
+    <div class="reviews-container">
+      <div class="reviews-header">
+        <div class="header-top">
+          <h3>Opiniones ({{ comentarios.length }})</h3>
+          <div class="average-badge" *ngIf="comentarios.length > 0">
+            <ion-icon name="star"></ion-icon>
+            <span>{{ promedioEstrellas }}</span>
+          </div>
+        </div>
+
+        <ion-button fill="outline" size="small" (click)="mostrarFormulario = !mostrarFormulario">
+          {{ mostrarFormulario ? 'Cancelar' : 'Escribir comentario' }}
+        </ion-button>
+      </div>
+
+      <div class="review-form" *ngIf="mostrarFormulario">
+        <div class="star-rating-input">
+          <ion-icon *ngFor="let i of [1,2,3,4,5]"
+                    [name]="i <= nuevaResena.rating ? 'star' : 'star-outline'"
+                    (click)="setRating(i)"></ion-icon>
+        </div>
+        <ion-textarea [(ngModel)]="nuevaResena.comentario" placeholder="¿Qué te ha parecido este chollo?"></ion-textarea>
+        <ion-button expand="block" size="small" (click)="enviarResena()">Publicar</ion-button>
+      </div>
+
+      <div class="comments-list">
+        <div class="comment-item" *ngFor="let c of comentarios">
+          <div class="comment-header">
+            <span class="user-name">{{ c.comment_author }}</span>
+            <div class="user-rating">
+              <ion-icon name="star" *ngFor="let s of [1,2,3,4,5]"
+                        [class.active]="s <= c.rating"></ion-icon>
+            </div>
+          </div>
+          <p class="comment-text">{{ c.comment_content }}</p>
+          <span class="comment-date">{{ c.comment_date | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="no-comments" *ngIf="comentarios.length === 0">
+          Aún no hay comentarios. ¡Sé el primero!
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>
