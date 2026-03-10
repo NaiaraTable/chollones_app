@@ -171,3 +171,38 @@ h1 {
 .back-button-float ion-button {
   margin-top: 50px !important; // Aseguramos que coincidan
 }
+
+// REVIEW FUNNEL: Sección de caritas
+.rating-section {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border: 1px solid #e0e0e0;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 12px;
+    margin-top: 0;
+  }
+
+  .faces-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .face-icon {
+      font-size: 36px; // Emoticonos grandes y claros
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      filter: grayscale(20%); // Un tono base
+
+      &:hover, &:active {
+        transform: scale(1.25);
+        filter: grayscale(0%);
+      }
+    }
+  }
+}

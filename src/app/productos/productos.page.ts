@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../services/supabase.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { NavController } from '@ionic/angular/standalone';
+import { NavController, AlertController } from '@ionic/angular/standalone';
 import { arrowBack, heart, heartOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { Browser } from '@capacitor/browser';
 
 @Component({
   selector: 'app-productos',
@@ -21,7 +22,8 @@ export class ProductosPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private supabase: SupabaseService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private alertController: AlertController
   ) {
     //Registramos los iconos para que se vean en el HTML
     addIcons({ arrowBack, heart, heartOutline });
@@ -100,6 +102,61 @@ export class ProductosPage implements OnInit {
           cssClass: 'toast-carrito'
         });
         toast.present();
+      });
+    }
+  }
+
+  // --- REVIEW FUNNEL ---
+  async rateProduct(score: number) {
+    if (!this.producto) return;
+
+    if (score <= 3) {
+      // Negative feedback internal form
+      const alert = await this.alertController.create({
+        header: '¿Qué podríamos mejorar?',
+        message: 'Lamentamos que tu experiencia no haya sido de 5 estrellas. Por favor, cuéntanos qué falló.',
+        inputs: [
+          {
+            name: 'comentario',
+            type: 'textarea',
+            placeholder: 'Escribe tu comentario aquí...'
+          }
+        ],
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel'
+          },
+          {
+            text: 'Enviar',
+            handler: async (data) => {
+              try {
+                await this.supabase.enviarFeedbackNegativo(this.producto.id, score, data.comentario || '');
+                // Show success toast
+                import('@ionic/angular/standalone').then(async ({ ToastController }) => {
+                  const toastCtrl = new ToastController();
+                  const toast = await toastCtrl.create({
+                    message: 'Gracias por tu feedback.',
+                    duration: 2000,
+                    position: 'top',
+                    cssClass: 'toast-carrito'
+                  });
+                  toast.present();
+                });
+              } catch (e) {
+                console.error(e);
+              }
+            }
+          }
+        ]
+      });
+      await alert.present();
+
+    } else {
+      // Positive feedback -> Google Maps Review
+      await Browser.open({
+        url: 'https://search.google.com/local/writereview?placeid=TU_PLACE_ID',
+        presentationStyle: 'popover'
       });
     }
   }
