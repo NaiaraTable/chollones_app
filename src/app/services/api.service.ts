@@ -26,7 +26,6 @@ export class ApiService {
   currentUser$ = this.currentUser.asObservable();
 
   // Propiedad "client" simulada para compatibilidad con código existente
-  // que use supabaseService.client.auth.getUser()
   public client = {
     auth: {
       getUser: async () => {
@@ -65,9 +64,10 @@ export class ApiService {
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
 
-      // Fallback a prueba de balas contra Apache: pasar el token por URL
+      // SOLUCIÓN AL ERROR 401: Codificar el token en la URL
+      // encodeURIComponent protege símbolos como el '+' para que no se lean como espacios
       const separator = url.includes('?') ? '&' : '?';
-      url += `${separator}token=${this.token}`;
+      url += `${separator}token=${encodeURIComponent(this.token)}`;
     }
 
     try {
@@ -96,7 +96,6 @@ export class ApiService {
     } catch (error: any) {
       console.error('Error al cargar al usuario con token:', error);
       // Solo borramos el token si el servidor respondió explícitamente que no es válido
-      // O si hay un problema y por seguridad deslogueamos
       if (error && error.message && (error.message.includes('No autenticado') || error.message.includes('Usuario no encontrado'))) {
         this.token = null;
         localStorage.removeItem('chollones_token');
@@ -331,18 +330,27 @@ export class ApiService {
       throw new Error(data.error || 'Error al subir avatar');
     }
 
-    // Actualizar el usuario local con la nueva URL del avatar
     const avatarUrl = data.avatar_url;
     await this.updateProfile({ avatar_url: avatarUrl });
     return avatarUrl;
   }
 
-  async getComentariosByProducto(productoId: string) {
+  async getCategoriasFavoritasIds(): Promise<string[]> {
     try {
-      return await this.request(`comentarios.php?chollo_id=${productoId}`);
-    } catch (err) {
-      console.error('Error al obtener comentarios:', err);
+      const res = await this.request('categorias_favoritas.php');
+      return res.data ? res.data.map((id: any) => id.toString()) : [];
+    } catch (error) {
+      console.error('Error al obtener categorías favoritas', error);
       return [];
     }
   }
+
+  async guardarCategoriasFavoritas(categoriasIds: string[]): Promise<any> {
+    if (!this.token) throw new Error('Debes estar logueado para guardar preferencias');
+    return await this.request('categorias_favoritas.php', {
+      method: 'POST',
+      body: JSON.stringify({ categorias_ids: categoriasIds })
+    });
+  }
+
 }

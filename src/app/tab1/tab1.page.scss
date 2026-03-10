@@ -74,7 +74,7 @@ ion-button {
 }
 
 .section-title h3 {
-  color: #111;        // negro principal
+  color: #111; // negro principal
 }
 
 .section-title h3::after {
@@ -87,20 +87,20 @@ ion-button {
   border-radius: 10px;
 }
 
-  .link {
-    font-size: 13px;
-    text-decoration: underline;
-    font-weight: 700;
-    color: #111;
-  }
+.link {
+  font-size: 13px;
+  text-decoration: underline;
+  font-weight: 700;
+  color: #111;
+}
 
 
-  .link {
-    font-size: 13px;
-    text-decoration: underline;
-    font-weight: 700;
-    color: #111;
-  }
+.link {
+  font-size: 13px;
+  text-decoration: underline;
+  font-weight: 700;
+  color: #111;
+}
 
 /* Quick Links (Circulares) */
 .quick-row {
@@ -376,8 +376,11 @@ ion-button {
   }
 
   div {
-    font-weight: 900;
-    font-size: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c3e50;
+    letter-spacing: 0.3px;
+    margin-top: 8px;
   }
 
   /* Permite scroll vertical aunque estés encima de un carrusel horizontal */
