@@ -96,12 +96,179 @@ h1 {
   font-size: 0.95rem;
   line-height: 1.8; /* Importante: da aire entre líneas para leer mejor */
   color: #444;
-  
+
   /* LA MAGIA: Respeta los saltos de línea y espacios de Supabase */
-  white-space: pre-wrap; 
-  
+  white-space: pre-wrap;
+
   /* Opcional: Justifica el texto para que se vea cuadrado */
-  text-align: justify; 
+  text-align: justify;
+}
+
+/* --- SECCIÓN DE DESCRIPCIÓN --- */
+.product-description {
+  margin: 24px 0;
+  padding: 0 4px;
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  p {
+    line-height: 1.7;
+    color: #4a4a4a;
+    font-size: 1rem;
+    text-align: justify;
+  }
+}
+
+/* --- SECCIÓN DE REVIEWS --- */
+.reviews-container {
+  margin-top: 32px;
+  padding: 20px 16px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  .reviews-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h3 {
+        margin: 0;
+        font-weight: 800;
+        font-size: 1.25rem;
+        color: #1a1a1a;
+      }
+
+      .average-badge {
+        display: flex;
+        align-items: center;
+        background: #fff9e6;
+        padding: 6px 12px;
+        border-radius: 10px;
+        color: #e67e22;
+        font-weight: 800;
+        border: 1px solid #ffeaa7;
+
+        ion-icon {
+          margin-right: 4px;
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    ion-button {
+      --border-radius: 10px;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+}
+
+/* --- FORMULARIO DE RESEÑA --- */
+.review-form {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  border: 1px dashed #ced4da;
+
+  .star-rating-input {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    ion-icon {
+      font-size: 2.2rem;
+      color: #ffc107;
+      cursor: pointer;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+  }
+
+  ion-textarea {
+    --background: #ffffff;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    --placeholder-color: #abb2b9;
+    --color: black;
+  }
+}
+
+/* --- LISTA DE COMENTARIOS --- */
+.comments-list {
+  .comment-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f1f1f1;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .user-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #2c3e50;
+      }
+
+      .user-rating ion-icon {
+        font-size: 0.9rem;
+        color: #e0e0e0;
+        margin-left: 1px;
+
+        &.active {
+          color: #ffc107;
+        }
+      }
+    }
+
+    .comment-text {
+      font-size: 0.95rem;
+      color: #566573;
+      line-height: 1.5;
+      margin: 6px 0;
+    }
+
+    .comment-date {
+      display: block;
+      font-size: 0.8rem;
+      color: #aeb6bf;
+      margin-top: 4px;
+    }
+  }
+
+  .no-comments {
+    text-align: center;
+    color: #95a5a6;
+    padding: 30px 10px;
+    font-size: 0.95rem;
+    background: #fdfdfd;
+    border-radius: 12px;
+  }
 }
 
 //BOTON DE VOLVER ATRAS EN EL PRODUCTO
@@ -112,7 +279,7 @@ h1 {
   z-index: 999 !important; // Para que siempre esté por encima de la imagen
   width: 45px;
   height: 45px;
-  
+
   ion-button {
     --border-radius: 50% !important;
     --padding-start: 8px;
@@ -123,7 +290,7 @@ h1 {
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     --color: #000 !important;// Icono negro para contraste
     margin-top: 50px !important;
-    
+
     ion-icon {
       font-size: 24px;
     }
@@ -138,7 +305,7 @@ h1 {
   z-index: 999 !important;
   width: 45px;
   height: 45px;
-  
+
   // Estilo idéntico al círculo blanco del back-button
   display: flex;
   align-items: center;
@@ -152,7 +319,7 @@ h1 {
 
   ion-icon {
     font-size: 24px;
-    color: #000; 
+    color: #000;
   }
 
   // Clase que se activa desde el TS
@@ -170,4 +337,63 @@ h1 {
 // Ajuste para que el icono de volver sea igual de grueso
 .back-button-float ion-button {
   margin-top: 50px !important; // Aseguramos que coincidan
+}
+
+/* Añadir al final del archivo */
+
+.btn-action {
+  --border-radius: 12px;
+  height: 55px;
+  font-weight: 700;
+  margin: 20px 0;
+  --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+}
+
+.reviews-section {
+  margin-top: 35px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 20px;
+
+  .reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h3 {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #222;
+    }
+  }
+
+  .no-comments {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+    font-style: italic;
+  }
+
+  .review-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #f5f5f5;
+
+    .review-top {
+      display: flex;
+      justify-content: space-between;
+      .user-name { font-weight: 700; color: #444; }
+      ion-icon { font-size: 0.8rem; margin-left: 2px; }
+    }
+
+    .review-text {
+      margin: 8px 0;
+      font-size: 0.95rem;
+      color: #666;
+    }
+
+    .review-date {
+      font-size: 0.8rem;
+      color: #bbb;
+    }
+  }
 }

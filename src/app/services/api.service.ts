@@ -336,4 +336,13 @@ export class ApiService {
     await this.updateProfile({ avatar_url: avatarUrl });
     return avatarUrl;
   }
+
+  async getComentariosByProducto(productoId: string) {
+    try {
+      return await this.request(`comentarios.php?chollo_id=${productoId}`);
+    } catch (err) {
+      console.error('Error al obtener comentarios:', err);
+      return [];
+    }
+  }
 }
