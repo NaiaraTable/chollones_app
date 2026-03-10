@@ -254,4 +254,17 @@ export class SupabaseService {
       return [];
     }
   }
+
+  // --- REVIEW FUNNEL ---
+  async enviarFeedbackNegativo(cholloId: string, estrellas: number, comentario: string) {
+    try {
+      await this.apiService.request('feedback.php', {
+        method: 'POST',
+        body: JSON.stringify({ chollo_id: cholloId, estrellas, comentario }),
+      });
+    } catch (e) {
+      console.error("Error al enviar feedback negativo:", e);
+      throw e;
+    }
+  }
 }
