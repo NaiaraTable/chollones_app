@@ -6,9 +6,10 @@ ion-content {
 // Estilo de la lista más apretado
 ion-list {
   background: transparent;
-  padding: 4px;
+  padding: 4px; // Reducido de 8px
 }
 
+// Tarjeta de cada chollo más compacta
 /* Contenedor principal de filtros */
 .filters-container {
   background: white;
@@ -45,7 +46,7 @@ ion-list {
   }
 }
 
-/* Scroll lateral Filtros Rápidos */
+/* Scroll lateral Filtros Rápidos (cuadraditos) */
 .quick-filters-scroll {
   display: flex;
   overflow-x: auto;
@@ -76,19 +77,19 @@ ion-list {
   }
 }
 
-/* Tarjeta chollo */
 .chollo-item {
   --padding-start: 0;
   --inner-padding-end: 0;
   --background: #ffffff;
-  --min-height: 90px;
-  margin-bottom: 8px;
+  --min-height: 90px; // Altura mínima controlada
+  margin-bottom: 8px; // Reducido de 16px
   border-bottom: 1px solid #f2f2f2;
 
   ion-thumbnail {
+
     border-radius: 6px;
-    overflow: hidden;
-    position: relative;
+    overflow: visible;
+    position: hidden;
 
     width: 33.3% !important;
     height: auto !important;
@@ -105,18 +106,20 @@ ion-list {
     }
   }
 
+
   ion-label {
-    margin: 8px 10px 8px 0;
+    margin: 8px 10px 8px 0; // Márgenes más pequeños
 
     h2 {
       font-weight: 700;
       color: #1a1a1b;
-      font-size: 0.95rem;
+      font-size: 0.95rem; // Reducido de 1.1rem
       white-space: normal;
       margin-bottom: 4px;
       line-height: 1.2;
     }
 
+    // Información del proveedor más pequeña
     .info-row {
       display: flex;
       align-items: center;
@@ -124,17 +127,18 @@ ion-list {
       margin-bottom: 2px;
 
       ion-icon {
-        font-size: 13px;
+        font-size: 13px; // Más pequeño
         color: var(--ion-color-primary);
       }
 
       .vendor-text {
         font-weight: 600;
-        font-size: 0.75rem;
+        font-size: 0.75rem; // Reducido de 0.9rem
         color: var(--ion-color-primary);
       }
     }
 
+    // Descripción más discreta
     .description-text {
       font-size: 0.75rem;
       color: #5f6368;
@@ -142,15 +146,16 @@ ion-list {
       line-height: 1.2;
       display: block;
 
-      margin-left: 0 !important;
-      margin-right: 0 !important;
+      margin-left: 0px !important;
+      margin-right: 0px !important;
     }
 
+    //Contenerdor de la descripcion
     .card-content-ios {
-      --padding-start: 0 !important;
-      --padding-end: 0 !important;
-      padding-inline-start: 0 !important;
-      padding-inline-end: 0 !important;
+      --padding-start: 0px !important;
+      --padding-end: 0px !important;
+      padding-inline-start: 0px !important;
+      padding-inline-end: 0px !important;
 
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
@@ -158,13 +163,14 @@ ion-list {
       line-height: 1.4;
     }
 
+    // Fila de precios compacta
     .price-row {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 0px;
 
       .current-price {
-        font-size: 1.25rem;
+        font-size: 1.25rem; // Reducido de 1.6rem
         font-weight: 800;
         color: #1a1a1b;
       }
@@ -175,39 +181,40 @@ ion-list {
         gap: 8px;
 
         .old-price {
-          font-size: 0.85rem;
+          font-size: 0.85rem; // Reducido de 1rem
           text-decoration: line-through;
           color: #70757a;
           font-weight: 400;
         }
 
         .savings-amount {
-          font-size: 0.85rem;
-          color: #d93025;
+          font-size: 0.85rem; // Reducido de 1rem
+          color: #d93025; // Rojo ahorro
           font-weight: 600;
         }
       }
     }
   }
 
+  // Badge de descuento porcentual más pequeño
   ion-badge {
     position: absolute;
     top: 8px;
     right: 8px;
     --background: #d93025;
     font-weight: 700;
-    font-size: 0.65rem;
+    font-size: 0.65rem; // Más pequeño
     padding: 3px 6px;
     border-radius: 4px;
   }
 }
 
-/* Buscador superior */
+// Buscador superior más bajo
 ion-searchbar {
   --border-radius: 8px;
   --box-shadow: none;
   --background: #f1f3f4;
-  --height: 36px;
+  --height: 36px; // Altura del buscador reducida
   padding: 4px 12px;
 }
 
@@ -228,11 +235,11 @@ ion-searchbar {
   }
 }
 
-/* Contenedor de botones */
+/* Contenedor de botones de acción */
 .action-buttons-container {
   margin-top: 10px;
   display: flex;
-  align-items: center;
+  align-items: center; // Alinea el círculo del corazón con los botones
   gap: 8px;
 
   ion-button {
@@ -243,9 +250,9 @@ ion-searchbar {
     text-transform: none;
   }
 
-  /* Corazón favorito */
-  .fav-icon {
-    width: 30px;
+  /* ESTILO PARA EL CORAZÓN EN LA LISTA  */
+.fav-icon {
+    width: 30px;   // Misma altura que los botones de Ionic
     height: 30px;
     min-width: 30px;
     background: var(--ion-color-primary) !important;
@@ -260,22 +267,17 @@ ion-searchbar {
 
     ion-icon {
       font-size: 18px;
-      color: white !important;
+      color:white !important;
     }
 
     &.active {
       ion-icon {
-        color: black !important;
+        color: black !important;;
       }
     }
 
     &:active {
-      transform: scale(0.9);
+      transform: scale(0.9); // Efecto de pulsación
     }
   }
-}
-
-/* Ver todos */
-.ver-todos-container {
-  padding: 16px;
 }
