@@ -1,4 +1,8 @@
 <ion-content *ngIf="producto" [fullscreen]="true">
+  <div>
+    <ion-img [src]="producto.imagen_url"></ion-img>
+  </div>
+
   <div class="ion-padding content-container">
     <h1 class="product-title">{{ producto.titulo }}</h1>
 
