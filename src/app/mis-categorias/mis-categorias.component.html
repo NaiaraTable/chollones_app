@@ -11,15 +11,15 @@
 
   <div class="top-info">
     <h2>Elige tus favoritas</h2>
-    <p>Puedes seleccionar hasta <b>3 categorías</b> para recibir mejores chollos.</p>
+    <p>Puedes seleccionar hasta <b>5 categorías</b> para recibir mejores chollos.</p>
   </div>
 
-  <!-- contador -->
+
   <div class="counter">
-    {{ favoritasSeleccionadas.length }}/3 seleccionadas
+    {{ favoritasSeleccionadas.length }}/5seleccionadas
   </div>
 
-  <!-- grid de categorias -->
+
   <div class="categorias-grid">
 
     <ion-card
@@ -31,7 +31,7 @@
       <div class="card-content">
 
         <div class="icon-wrapper">
-          <ion-icon [name]="categoria.icono"></ion-icon>
+          <img [src]="categoria.img" [alt]="categoria.nombre" style="width: 40px; height: 40px; object-fit: contain;">
         </div>
 
         <div class="info">
@@ -47,12 +47,10 @@
     </ion-card>
 
   </div>
-
-  <!-- botón guardar -->
   <div class="save-area">
     <ion-button
       expand="block"
-      [disabled]="favoritasSeleccionadas.length !== 3"
+      [disabled]="favoritasSeleccionadas.length !== 5"
       (click)="guardarCategorias()">
       Guardar Preferencias
     </ion-button>

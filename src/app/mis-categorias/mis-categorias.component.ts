@@ -1,12 +1,13 @@
+
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Importante para *ngFor y *ngIf
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 
 
-// Iconos
 import { addIcons } from 'ionicons';
 import { checkmarkCircle } from 'ionicons/icons';
+
 
 import {
   IonBackButton,
@@ -20,16 +21,17 @@ import {
   IonToolbar
 } from "@ionic/angular/standalone";
 
-// Tu servicio (Asegúrate de que la ruta sea la correcta según tus carpetas)
+
 import { ApiService } from '../services/api.service';
+
 
 @Component({
   selector: 'app-mis-categorias',
   templateUrl: './mis-categorias.component.html',
   styleUrls: ['./mis-categorias.component.scss'],
-  standalone: true, // Aseguramos que sea standalone
+  standalone: true,
   imports: [
-    CommonModule, // ¡Añadido!
+    CommonModule,
     IonButton,
     IonContent,
     IonTitle,
@@ -43,28 +45,30 @@ import { ApiService } from '../services/api.service';
 })
 export class MisCategoriasComponent implements OnInit {
 
-  categorias: any[] = [];
-  favoritasSeleccionadas: any[] = []; // Array que guarda las categorías marcadas
-  loading = true;
+  categorias: any[] = []; // todas las categorias
+  favoritasSeleccionadas: any[] = []; // guardara las categorías que el usuario marque
+  loading = true; // para saber si estamos cargando datos
 
+  // el constructor que es lo primero que se ejecuta
   constructor(
-    private apiService: ApiService,
-    private router: Router,
-    private toastCtrl: ToastController
+    private apiService: ApiService,     //  para tratar con la base de datos
+    private router: Router,             // para cambiar de página
+    private toastCtrl: ToastController  //  para mostrar mensajes
   ) {
-    // Registramos el icono del check para que funcione en este componente Standalone
     addIcons({ checkmarkCircle });
   }
 
+  // se ejecuta justo cuando la pantalla está a punto de mostrarse
   async ngOnInit() {
     await this.cargarCategorias();
   }
 
+  // cargamos los datos
   async cargarCategorias() {
     this.loading = true;
 
     try {
-      const hidden = ['', '', '']; // slug de categorías a ocultar
+      const hidden = ['', '', ''];
 
       const iconosPorNombre: { [key: string]: string } = {
         'Ahorro e Inversión': 'assets/img-categorias/ahorro-inversion.png',
@@ -109,44 +113,43 @@ export class MisCategoriasComponent implements OnInit {
         'Juguetes': 'assets/img-categorias/juguetes.png'
       };
 
-      // 1. Obtenemos chollos y extraemos categorías únicas
       const chollos = await this.apiService.getChollos();
+
+      // usamos map para guardar las categorías sin que se repitan
       const catsMap = new Map<string, any>();
 
+      // recorremos todos los chollos uno por uno
       chollos.forEach((c: any) => {
         const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
+
         cats.forEach((cat: any) => {
+
           if (cat && cat.slug && !catsMap.has(cat.slug) && !hidden.includes(cat.slug)) {
+
             catsMap.set(cat.slug, {
               id: cat.id,
               nombre: cat.nombre,
               slug: cat.slug,
-              seleccionada: false, // Inicializamos en falso
-              // Usa icono del backend, o el de nuestro mapa, o genera uno
+
               img: cat.icono || iconosPorNombre[cat.nombre] || `https://ui-avatars.com/api/?name=${encodeURIComponent(cat.nombre)}&background=random&color=fff&size=128`
             });
           }
         });
       });
 
-      // Convertimos map a array y ordenamos por nombre
       this.categorias = Array.from(catsMap.values()).sort((a, b) =>
         a.nombre.localeCompare(b.nombre)
       );
 
-      // 2. Traer las preferencias del usuario actual de la BD
       const misFavoritosIds = await this.apiService.getCategoriasFavoritasIds();
 
-      // 3. Vincular las preferencias recuperadas con la lista visual
       this.favoritasSeleccionadas = [];
       this.categorias.forEach(cat => {
-        // Comprobamos si el ID de la categoría está entre las que trajo la BD
         if (misFavoritosIds.includes(cat.id.toString())) {
           cat.seleccionada = true;
           this.favoritasSeleccionadas.push(cat);
         }
       });
-
     } catch (e) {
       console.error('Error cargando datos', e);
     } finally {
@@ -154,49 +157,54 @@ export class MisCategoriasComponent implements OnInit {
     }
   }
 
-  // Se activa al hacer click en el .html
+  // funcion para marcar o desmarcar una categoria al hacer click
   toggleCategoria(categoria: any) {
     if (categoria.seleccionada) {
-      // Si ya estaba seleccionada, la quitamos
-      categoria.seleccionada = false;
+      categoria.seleccionada = false; // Le quitamos la marca
+
       this.favoritasSeleccionadas = this.favoritasSeleccionadas.filter(c => c.id !== categoria.id);
     } else {
-      // Si no estaba seleccionada, verificamos límite
-      if (this.favoritasSeleccionadas.length < 3) {
-        categoria.seleccionada = true;
+      // comprobamos que se hayan elegido maximo 5 categorias
+      if (this.favoritasSeleccionadas.length < 5) {
+        categoria.seleccionada = true; // La marcamos
         this.favoritasSeleccionadas.push(categoria);
       } else {
-        this.mostrarToast('Solo puedes elegir hasta 3 categorías', 'warning');
+        this.mostrarToast('Solo puedes elegir hasta 5 categorías', 'warning');
       }
     }
   }
 
-  // Al pulsar el botón del .html
+  // guardamos en base de datos
   async guardarCategorias() {
-    // Extraemos solo los IDs de las seleccionadas
+    // sacamos los ids de las categorias
     const ids = this.favoritasSeleccionadas.map(c => c.id);
 
     try {
       this.loading = true;
+      //mandamos el id al servidor
       await this.apiService.guardarCategoriasFavoritas(ids);
+
       this.mostrarToast('Tus categorías se han guardado con éxito', 'success');
+
       this.router.navigate(['/tabs/perfil']);
 
     } catch (error) {
+      //capturamos el erroor y mostramos mensaje de error
       this.mostrarToast('Hubo un error al guardar. Inténtalo de nuevo.', 'danger');
     } finally {
       this.loading = false;
     }
   }
 
+  // muestra los toast
   async mostrarToast(mensaje: string, color: string) {
     const toast = await this.toastCtrl.create({
-      message: mensaje,
-      duration: 2500,
-      color: color,
-      position: 'bottom'
+      message: mensaje, // El texto que se va a leer
+      duration: 2500, // Cuánto tiempo dura en pantalla (2.5 segundos)
+      color: color, // El color (success = verde, warning = amarillo, danger = rojo)
+      position: 'bottom' // Sale por la parte de abajo de la pantalla
     });
-    await toast.present();
+    await toast.present(); // Ordena que se muestre en pantalla
   }
 
 }
