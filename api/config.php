@@ -19,7 +19,7 @@ define('JWT_SECRET', 'chollones_app_secret_key_2026');
 // -- CORS: permitir llamadas desde Ionic --
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin');
 header('Content-Type: application/json; charset=utf-8');
 
 // Responder inmediatamente a las peticiones OPTIONS (preflight)
@@ -95,15 +95,19 @@ function verifyJWT(string $token): ?array
 
 function getAuthenticatedUser(): ?array
 {
-    // Intenta obtener el token de varias fuentes
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    $authHeader = '';
 
-    // Si no está en el header, intenta desde query param (bypass de Apache)
-    if (empty($authHeader) && !empty($_GET['token'])) {
-        $authHeader = 'Bearer ' . $_GET['token'];
+    // 1. Prioridad Absoluta: Si Angular nos envía el token por la URL (?token=...), lo usamos.
+    if (!empty($_GET['token'])) {
+        $authHeader = 'Bearer ' . trim($_GET['token']);
     }
 
-    // Si sigue vacío, intenta otras variantes de header
+    // 2. Si NO viene en la URL, entonces sí buscamos en la cabecera estándar
+    if (empty($authHeader)) {
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    }
+
+    // 3. Si sigue vacío, intentamos los fallbacks para Apache
     if (empty($authHeader) && function_exists('apache_request_headers')) {
         $headers = apache_request_headers();
         $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
@@ -117,11 +121,13 @@ function getAuthenticatedUser(): ?array
         $authHeader = $_SERVER['HTTP_X_AUTHORIZATION'] ?? '';
     }
 
-    if (!preg_match('/Bearer\s+(.+)/i', $authHeader, $matches))
+    // Verificamos el formato final
+    if (!preg_match('/Bearer\s+(.+)/i', $authHeader, $matches)) {
         return null;
+    }
+
     return verifyJWT($matches[1]);
 }
-
 function requireAuth(): array
 {
     $user = getAuthenticatedUser();

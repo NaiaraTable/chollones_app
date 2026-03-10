@@ -1,0 +1,108 @@
+.header-red ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: white;
+}
+
+/* Texto superior */
+
+.top-info {
+  margin-bottom: 10px;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #666;
+  }
+}
+
+/* contador */
+
+.counter {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+/* GRID CATEGORIAS */
+
+.categorias-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* CARD */
+
+.categoria-card {
+  border-radius: 12px;
+  margin: 0;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: 0.2s ease;
+
+  .card-content {
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .icon-wrapper {
+    background: #f1f2f6;
+    border-radius: 10px;
+    padding: 10px;
+
+    ion-icon {
+      font-size: 22px;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .info {
+    flex: 1;
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+      color: #333;
+    }
+  }
+
+  .check ion-icon {
+    font-size: 22px;
+    color: var(--ion-color-primary);
+  }
+}
+
+/* CARD SELECCIONADA */
+
+.categoria-card.selected {
+  border: 2px solid var(--ion-color-primary);
+  background: #fff7f7;
+}
+
+/* GUARDAR */
+
+.save-area {
+  margin-top: 20px;
+
+  ion-button {
+    --border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .hint {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+    color: #888;
+  }
+}

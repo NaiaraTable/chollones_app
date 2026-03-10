@@ -1,0 +1,63 @@
+<ion-header class="header-red">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab5" text="" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Categorías Favoritas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="--background: #f4f5f8;">
+
+  <div class="top-info">
+    <h2>Elige tus favoritas</h2>
+    <p>Puedes seleccionar hasta <b>3 categorías</b> para recibir mejores chollos.</p>
+  </div>
+
+  <!-- contador -->
+  <div class="counter">
+    {{ favoritasSeleccionadas.length }}/3 seleccionadas
+  </div>
+
+  <!-- grid de categorias -->
+  <div class="categorias-grid">
+
+    <ion-card
+      *ngFor="let categoria of categorias"
+      class="categoria-card"
+      [class.selected]="categoria.seleccionada"
+      (click)="toggleCategoria(categoria)">
+
+      <div class="card-content">
+
+        <div class="icon-wrapper">
+          <ion-icon [name]="categoria.icono"></ion-icon>
+        </div>
+
+        <div class="info">
+          <h3>{{ categoria.nombre }}</h3>
+        </div>
+
+        <div class="check" *ngIf="categoria.seleccionada">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+
+      </div>
+
+    </ion-card>
+
+  </div>
+
+  <!-- botón guardar -->
+  <div class="save-area">
+    <ion-button
+      expand="block"
+      [disabled]="favoritasSeleccionadas.length !== 3"
+      (click)="guardarCategorias()">
+      Guardar Preferencias
+    </ion-button>
+
+    <p class="hint">Podrás cambiar estas categorías cuando quieras.</p>
+  </div>
+
+</ion-content>
