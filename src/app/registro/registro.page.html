@@ -1,28 +1,33 @@
-<ion-content class="ion-padding">
-  <div class="back-nav" style="margin-bottom: 10px;">
-    <ion-buttons>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/login" text="Volver"></ion-back-button>
     </ion-buttons>
+    <ion-title>Crear Cuenta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="registro-container">
+    <p>Únete a la comunidad de Chollones.</p>
+
+    <ion-item lines="none" class="custom-input">
+      <ion-label position="stacked">Nombre Completo</ion-label>
+      <ion-input [(ngModel)]="nombre" type="text" placeholder="Tu nombre"></ion-input>
+    </ion-item>
+
+    <ion-item lines="none" class="custom-input">
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input [(ngModel)]="email" type="email" placeholder="email@ejemplo.com"></ion-input>
+    </ion-item>
+
+    <ion-item lines="none" class="custom-input">
+      <ion-label position="stacked">Contraseña</ion-label>
+      <ion-input [(ngModel)]="password" type="password" placeholder="Mínimo 6 caracteres"></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" (click)="registrarse()" class="ion-margin-top btn-verde">
+      REGISTRARSE
+    </ion-button>
   </div>
-  <h2>Crear Cuenta</h2>
-  <p>Crea una cuenta para guardar tus chollos favoritos.</p>
-
-  <ion-item lines="full">
-    <ion-label position="floating">Nombre Completo</ion-label>
-    <ion-input [(ngModel)]="nombre" type="text"></ion-input>
-  </ion-item>
-
-  <ion-item lines="full">
-    <ion-label position="floating">Email</ion-label>
-    <ion-input [(ngModel)]="email" type="email"></ion-input>
-  </ion-item>
-
-  <ion-item lines="full">
-    <ion-label position="floating">Contraseña</ion-label>
-    <ion-input [(ngModel)]="password" type="password"></ion-input>
-  </ion-item>
-
-  <ion-button expand="block" (click)="registrarse()" class="ion-margin-top">
-    REGISTRARSE
-  </ion-button>
 </ion-content>

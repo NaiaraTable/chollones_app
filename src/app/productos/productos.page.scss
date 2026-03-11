@@ -1,3 +1,7 @@
+ion-content {
+  --background: var(--ion-background-color);
+}
+
 .header-image {
   width: 100%;
   height: 100%;
@@ -16,13 +20,13 @@
     position: absolute;
     bottom: 20px;
     right: 20px;
-    background: var(--ion-color-danger);
+    background: var(--ion-color-primary);
     color: white;
     padding: 8px 15px;
     border-radius: 20px;
     font-weight: bold;
     font-size: 1.2rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -30,19 +34,21 @@ h1 {
   font-weight: 800;
   font-size: 1.6rem;
   margin-top: 15px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .price-section {
   margin: 15px 0;
+
   .current-price {
     font-size: 2rem;
     font-weight: 800;
     color: var(--ion-color-primary);
   }
+
   .old-price {
     text-decoration: line-through;
-    color: #999;
+    color: var(--text-muted);
     margin-left: 10px;
     font-size: 1.2rem;
   }
@@ -50,30 +56,32 @@ h1 {
 
 .description {
   line-height: 1.6;
-  color: #555;
+  color: var(--text-secondary);
   font-size: 1.05rem;
 }
 
 .vendor-info {
   --padding-start: 0;
   margin: 10px 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  --background: var(--card-background);
+  --color: var(--text-primary);
 }
 
 .details-card {
-  background-color: #f8f9fa; /* Fondo gris muy suave para diferenciarlo */
+  background-color: var(--card-background-alt);
   border-radius: 12px;
   padding: 20px;
   margin-top: 25px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--card-border);
 }
 
 .details-header {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--card-border);
   padding-bottom: 10px;
 
   ion-icon {
@@ -86,7 +94,7 @@ h1 {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 700;
-    color: #333;
+    color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -94,17 +102,12 @@ h1 {
 
 .description-long {
   font-size: 0.95rem;
-  line-height: 1.8; /* Importante: da aire entre líneas para leer mejor */
-  color: #444;
-
-  /* LA MAGIA: Respeta los saltos de línea y espacios de Supabase */
+  line-height: 1.8;
+  color: var(--text-secondary);
   white-space: pre-wrap;
-
-  /* Opcional: Justifica el texto para que se vea cuadrado */
   text-align: justify;
 }
 
-/* --- SECCIÓN DE DESCRIPCIÓN --- */
 .product-description {
   margin: 24px 0;
   padding: 0 4px;
@@ -112,7 +115,7 @@ h1 {
   h3 {
     font-size: 1.15rem;
     font-weight: 800;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -120,20 +123,19 @@ h1 {
 
   p {
     line-height: 1.7;
-    color: #4a4a4a;
+    color: var(--text-secondary);
     font-size: 1rem;
     text-align: justify;
   }
 }
 
-/* --- SECCIÓN DE REVIEWS --- */
 .reviews-container {
   margin-top: 32px;
   padding: 20px 16px;
-  background-color: #ffffff;
+  background-color: var(--card-background);
   border-radius: 20px;
-  border: 1px solid #f0f0f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 12px var(--card-shadow);
 
   .reviews-header {
     display: flex;
@@ -150,18 +152,18 @@ h1 {
         margin: 0;
         font-weight: 800;
         font-size: 1.25rem;
-        color: #1a1a1a;
+        color: var(--text-primary);
       }
 
       .average-badge {
         display: flex;
         align-items: center;
-        background: #fff9e6;
+        background: rgba(230, 126, 34, 0.1);
         padding: 6px 12px;
         border-radius: 10px;
         color: #e67e22;
         font-weight: 800;
-        border: 1px solid #ffeaa7;
+        border: 1px solid rgba(230, 126, 34, 0.3);
 
         ion-icon {
           margin-right: 4px;
@@ -178,13 +180,12 @@ h1 {
   }
 }
 
-/* --- FORMULARIO DE RESEÑA --- */
 .review-form {
-  background: #f8f9fa;
+  background: var(--card-background-alt);
   padding: 20px;
   border-radius: 16px;
   margin-bottom: 24px;
-  border: 1px dashed #ced4da;
+  border: 1px dashed var(--card-border);
 
   .star-rating-input {
     display: flex;
@@ -196,28 +197,26 @@ h1 {
       font-size: 2.2rem;
       color: #ffc107;
       cursor: pointer;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
   }
 
   ion-textarea {
-    --background: #ffffff;
+    --background: var(--input-background);
     --padding-start: 12px;
     --padding-end: 12px;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--input-border);
     border-radius: 12px;
     margin-bottom: 16px;
     font-size: 0.95rem;
-    --placeholder-color: #abb2b9;
-    --color: black;
+    --placeholder-color: var(--text-muted);
+    --color: var(--text-primary);
   }
 }
 
-/* --- LISTA DE COMENTARIOS --- */
 .comments-list {
   .comment-item {
     padding: 16px 0;
-    border-bottom: 1px solid #f1f1f1;
+    border-bottom: 1px solid var(--card-border);
 
     &:last-child {
       border-bottom: none;
@@ -232,12 +231,12 @@ h1 {
       .user-name {
         font-weight: 700;
         font-size: 1rem;
-        color: #2c3e50;
+        color: var(--text-primary);
       }
 
       .user-rating ion-icon {
         font-size: 0.9rem;
-        color: #e0e0e0;
+        color: var(--text-muted);
         margin-left: 1px;
 
         &.active {
@@ -248,7 +247,7 @@ h1 {
 
     .comment-text {
       font-size: 0.95rem;
-      color: #566573;
+      color: var(--text-secondary);
       line-height: 1.5;
       margin: 6px 0;
     }
@@ -256,90 +255,85 @@ h1 {
     .comment-date {
       display: block;
       font-size: 0.8rem;
-      color: #aeb6bf;
+      color: var(--text-muted);
       margin-top: 4px;
     }
   }
 
   .no-comments {
     text-align: center;
-    color: #95a5a6;
+    color: var(--text-muted);
     padding: 30px 10px;
     font-size: 0.95rem;
-    background: #fdfdfd;
+    background: var(--card-background-alt);
     border-radius: 12px;
   }
 }
 
-//BOTON DE VOLVER ATRAS EN EL PRODUCTO
+/* Botón flotante de volver */
 .back-button-float {
   position: absolute !important;
   top: calc(10px + var(--ion-safe-area-top, 0px)) !important;
   left: 15px !important;
-  z-index: 999 !important; // Para que siempre esté por encima de la imagen
-  width: 45px;
-  height: 45px;
-
-  ion-button {
-    --border-radius: 50% !important;
-    --padding-start: 8px;
-    --padding-end: 8px;
-    height: 40px !important;
-    width: 40px !important;
-    --background: rgba(255, 255, 255, 0.9) !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    --color: #000 !important;// Icono negro para contraste
-    margin-top: 50px !important;
-
-    ion-icon {
-      font-size: 24px;
-    }
-  }
-}
-
-// BOTÓN DE FAVORITOS (Gemelo del de volver)
-.fav-button-float {
-  position: absolute !important;
-  top: calc(10px + var(--ion-safe-area-top, 0px)) !important;
-  right: 15px !important; // A la derecha
   z-index: 999 !important;
   width: 45px;
   height: 45px;
-
-  // Estilo idéntico al círculo blanco del back-button
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  margin-top: 50px !important; // Mismo margen que el botón de volver
+  background: rgba(0, 0, 0, 0.45) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  margin-top: 50px !important;
   cursor: pointer;
   transition: transform 0.1s ease;
 
   ion-icon {
     font-size: 24px;
-    color: #000;
+    color: #ffffff;
   }
 
-  // Clase que se activa desde el TS
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.fav-button-float {
+  position: absolute !important;
+  top: calc(10px + var(--ion-safe-area-top, 0px)) !important;
+  right: 15px !important;
+  z-index: 999 !important;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  margin-top: 50px !important;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+
+  ion-icon {
+    font-size: 24px;
+    color: #ffffff;
+  }
+
   &.active {
     ion-icon {
-      color: var(--ion-color-primary) !important; // Rojo cuando es favorito
+      color: var(--ion-color-primary) !important;
     }
   }
 
   &:active {
-    transform: scale(0.9); // Efecto de pulsación
+    transform: scale(0.9);
   }
 }
 
-// Ajuste para que el icono de volver sea igual de grueso
 .back-button-float ion-button {
-  margin-top: 50px !important; // Aseguramos que coincidan
+  margin-top: 50px !important;
 }
-
-/* Añadir al final del archivo */
 
 .btn-action {
   --border-radius: 12px;
@@ -351,7 +345,7 @@ h1 {
 
 .reviews-section {
   margin-top: 35px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--card-border);
   padding-top: 20px;
 
   .reviews-header {
@@ -363,37 +357,45 @@ h1 {
     h3 {
       font-weight: 800;
       font-size: 1.2rem;
-      color: #222;
+      color: var(--text-primary);
     }
   }
 
   .no-comments {
     text-align: center;
-    color: #999;
+    color: var(--text-muted);
     padding: 20px;
     font-style: italic;
   }
 
   .review-item {
     padding: 15px 0;
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--card-border);
 
     .review-top {
       display: flex;
       justify-content: space-between;
-      .user-name { font-weight: 700; color: #444; }
-      ion-icon { font-size: 0.8rem; margin-left: 2px; }
+
+      .user-name {
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      ion-icon {
+        font-size: 0.8rem;
+        margin-left: 2px;
+      }
     }
 
     .review-text {
       margin: 8px 0;
       font-size: 0.95rem;
-      color: #666;
+      color: var(--text-secondary);
     }
 
     .review-date {
       font-size: 0.8rem;
-      color: #bbb;
+      color: var(--text-muted);
     }
   }
 }

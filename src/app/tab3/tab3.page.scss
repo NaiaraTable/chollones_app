@@ -5,7 +5,7 @@
 }
 
 ion-content {
-    --background: #f4f5f8;
+    --background: var(--ion-background-color);
 }
 
 .guardados-container {
@@ -16,7 +16,7 @@ ion-content {
 .loading {
     text-align: center;
     padding: 40px 20px;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 /* Estado vacío */
@@ -26,7 +26,7 @@ ion-content {
 
     .empty-icon {
         font-size: 80px;
-        color: #ccc;
+        color: var(--text-muted);
         margin-bottom: 20px;
     }
 
@@ -34,11 +34,11 @@ ion-content {
         font-size: 20px;
         font-weight: 900;
         margin-bottom: 10px;
-        color: #333;
+        color: var(--text-primary);
     }
 
     p {
-        color: #666;
+        color: var(--text-secondary);
         font-size: 14px;
     }
 }
@@ -51,9 +51,9 @@ ion-content {
 }
 
 .chollo-card {
-    background: #fff;
+    background: var(--card-background);
     border-radius: 18px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 12px 30px var(--card-shadow);
     overflow: hidden;
     position: relative;
 }
@@ -75,7 +75,7 @@ ion-content {
     width: 100%;
     height: 170px;
     object-fit: cover;
-    background: #f2f2f2;
+    background: var(--card-background-alt);
 }
 
 .meta {
@@ -112,7 +112,7 @@ ion-content {
     }
 
     .old {
-        color: #999;
+        color: var(--text-muted);
         text-decoration: line-through;
         font-size: 13px;
     }
@@ -129,7 +129,7 @@ ion-button {
     right: 10px;
     z-index: 3;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-background);
     border-radius: 50%;
     width: 36px;
     height: 36px;
@@ -137,6 +137,7 @@ ion-button {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 8px var(--card-shadow);
 
     ion-icon {
         font-size: 20px;
@@ -145,7 +146,6 @@ ion-button {
 
     &:hover {
         transform: scale(1.1);
-        background: rgba(255, 255, 255, 1);
     }
 
     &:active {
@@ -159,8 +159,7 @@ ion-button {
     margin-top: 5px;
     padding: 12px 12px;
     border-radius: 14px;
-    background: #4A90E2;
-    /* Tono azul solicitado */
+    background: var(--ion-color-secondary);
     color: #fff;
     font-weight: 900;
     font-size: 14px;
