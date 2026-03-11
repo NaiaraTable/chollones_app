@@ -155,7 +155,7 @@ export class ProductosPage implements OnInit {
     } else {
       // Positive feedback -> Google Maps Review
       await Browser.open({
-        url: 'https://search.google.com/local/writereview?placeid=TU_PLACE_ID',
+        url: 'https://search.google.com/local/writereview?placeid=ChIJQch3bfv9cg0RqzsciQc4i4M',
         presentationStyle: 'popover'
       });
     }
