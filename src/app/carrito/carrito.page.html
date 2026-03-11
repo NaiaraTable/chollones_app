@@ -53,9 +53,16 @@
       <span>Total a pagar</span>
       <span class="total-price">{{ total | number:'1.2-2' }}€</span>
     </div>
-    <ion-button expand="block" shape="round" class="pay-btn" (click)="pagarAhora()">
-      <ion-icon slot="start" name="bag-check-outline"></ion-icon>
-      Pagar ahora
+    <ion-button 
+      expand="block" 
+      shape="round" 
+      class="pay-btn" 
+      (click)="pagarAhora()"
+      [disabled]="procesandoPago"
+    >
+      <ion-spinner *ngIf="procesandoPago" name="crescent"></ion-spinner>
+      <ion-icon *ngIf="!procesandoPago" slot="start" name="bag-check-outline"></ion-icon>
+      {{ procesandoPago ? 'Procesando pago...' : 'Pagar ahora' }}
     </ion-button>
   </div>
 </ion-footer>

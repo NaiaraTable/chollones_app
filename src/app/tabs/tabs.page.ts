@@ -23,7 +23,8 @@ import {
   flameOutline,
   gridOutline,
   notificationsOutline,
-  locationOutline
+  locationOutline,
+  clipboardOutline
 } from 'ionicons/icons';
 
 import { Router } from '@angular/router';
@@ -57,7 +58,8 @@ export class TabsPage {
       flameOutline,
       gridOutline,
       notificationsOutline,
-      locationOutline
+      locationOutline,
+      clipboardOutline
     });
   }
 

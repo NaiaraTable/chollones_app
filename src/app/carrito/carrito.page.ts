@@ -23,6 +23,7 @@ export class CarritoPage implements OnInit {
   articulos: any[] = [];
   cargando = true;
   total = 0;
+  procesandoPago = false;
 
   constructor(
     private supabaseService: ApiService,
@@ -92,8 +93,59 @@ export class CarritoPage implements OnInit {
   }
 
   pagarAhora() {
-    // Aquí iría la integración con pasarela de pagos
-    alert(`Redirigiendo a la pasarela de pago... Total: ${this.total.toFixed(2)}€`);
+    if (this.articulos.length === 0) {
+      alert('El carrito está vacío');
+      return;
+    }
+
+    if (this.procesandoPago) {
+      return; // Evitar clicks múltiples
+    }
+
+    this.procesandoPago = true;
+
+    // Preparar datos de la compra
+    const articulosParaGuardar = this.articulos.map(item => ({
+      chollo_id: item.chollos?.id,
+      titulo: item.chollos?.titulo,
+      precio: item.chollos?.precio_actual,
+      cantidad: item.cantidad,
+      imagen_url: item.chollos?.imagen_url
+    }));
+
+    // Guardar la compra en el historial
+    this.supabaseService.guardarCompra(articulosParaGuardar, this.total)
+      .then((compraCreada) => {
+        // Mostrar confirmación
+        alert(`✓ Compra realizada exitosamente!\n\nNúmero de pedido: ${compraCreada.numero_pedido}\nTotal: ${this.total.toFixed(2)}€`);
+        
+        // Limpiar el carrito
+        this.limpiarCarrito();
+        
+        // Redirigir al historial de compras
+        this.router.navigate(['/tabs/historial']);
+      })
+      .catch((error) => {
+        console.error('Error al procesar compra:', error);
+        const mensajeError = error?.message || 'Error desconocido al procesar la compra';
+        alert(`❌ Error al procesar la compra:\n${mensajeError}`);
+      })
+      .finally(() => {
+        this.procesandoPago = false;
+      });
+  }
+
+  async limpiarCarrito() {
+    try {
+      // Eliminar todos los artículos del carrito
+      for (const item of this.articulos) {
+        await this.supabaseService.eliminarDelCarrito(item.id);
+      }
+      this.articulos = [];
+      this.calcularTotal();
+    } catch (e) {
+      console.error('Error al limpiar el carrito:', e);
+    }
   }
 
   irAInicio() {

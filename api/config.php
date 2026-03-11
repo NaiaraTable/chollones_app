@@ -3,6 +3,19 @@
 // CONFIGURACIÓN DE LA API - CHOLLONES
 // ======================================================
 
+// --- CORS PRIMERO (antes de cualquier otra cosa) ---
+header('Access-Control-Allow-Origin: *', true);
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS', true);
+header('Access-Control-Allow-Headers: Content-Type, Authorization', true);
+header('Access-Control-Max-Age: 3600', true);
+header('Content-Type: application/json; charset=utf-8', true);
+
+// Responder inmediatamente a las peticiones OPTIONS (preflight)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 // -- Conexión a MySQL --
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
@@ -15,18 +28,6 @@ define('SITE_URL', 'https://chollones.com');
 
 // -- Clave secreta para JWT --
 define('JWT_SECRET', 'chollones_app_secret_key_2026');
-
-// -- CORS: permitir llamadas desde Ionic --
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Content-Type: application/json; charset=utf-8');
-
-// Responder inmediatamente a las peticiones OPTIONS (preflight)
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
 
 // -- Conexión PDO --
 function getDB(): PDO {
