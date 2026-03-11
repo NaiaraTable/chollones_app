@@ -15,7 +15,6 @@ import {
   IonSearchbar,
   IonButton,
   IonModal,
-  IonTitle,
   IonContent,
   IonFab,
   IonFabButton
@@ -55,7 +54,6 @@ import { Router } from '@angular/router';
     IonLabel,
     IonButton,
     IonModal,
-    IonTitle,
     IonContent,
     IonFab,
     IonFabButton,
