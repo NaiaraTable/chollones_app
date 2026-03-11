@@ -1,78 +1,88 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="header-toolbar">
-    <ion-title class="ion-text-center">Mi Perfil</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Mi Perfil</ion-title>
     <ion-buttons slot="end" *ngIf="usuario">
-      <ion-button class="btn-settings">
+      <ion-button>
         <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="bg-blanco" fullscreen>
-  <div *ngIf="usuario" class="fade-in">
-
-    <div class="profile-header ion-text-center ion-padding-top ion-padding-bottom">
-      <div class="avatar-wrapper">
-        <ion-avatar>
-          <img [src]="usuario.user_metadata?.avatar_url || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
-        </ion-avatar>
-      </div>
-      <h2 class="user-name">{{ usuario.user_metadata?.full_name || 'Usuario Chollones' }}</h2>
-      <p class="user-email">{{ usuario.email }}</p>
+<ion-content fullscreen>
+  <div *ngIf="usuario">
+    <div class="profile-header">
+      <ion-avatar>
+        <img [src]="usuario.user_metadata?.avatar_url || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+      </ion-avatar>
+      <h2>{{ usuario.user_metadata?.full_name || 'Usuario Chollones' }}</h2>
+      <p>{{ usuario.email }}</p>
     </div>
 
-    <ion-list inset="true" class="custom-list">
-      <ion-item button routerLink="/tabs/editar-perfil" detail="false">
-        <ion-icon slot="start" name="person-circle-outline" class="icon-red"></ion-icon>
+    <ion-list lines="full">
+      <ion-item button routerLink="/tabs/editar-perfil">
+        <ion-icon slot="start" name="person-circle-outline" color="primary"></ion-icon>
         <ion-label>Editar Perfil</ion-label>
-        <ion-icon slot="end" name="chevron-forward-outline" class="icon-arrow"></ion-icon>
+        <ion-icon slot="end" name="chevron-forward-outline" size="small"></ion-icon>
       </ion-item>
 
-      <ion-item button routerLink="/tabs/mis-alertas" detail="false">
-        <ion-icon slot="start" name="notifications-outline" class="icon-red"></ion-icon>
+      <ion-item button routerLink="/tabs/mis-alertas">
+        <ion-icon slot="start" name="notifications-outline" color="primary"></ion-icon>
         <ion-label>Mis Alertas</ion-label>
-        <ion-icon slot="end" name="chevron-forward-outline" class="icon-arrow"></ion-icon>
+        <ion-icon slot="end" name="chevron-forward-outline" size="small"></ion-icon>
       </ion-item>
 
-      <ion-item button detail="false">
-        <ion-icon slot="start" name="shield-checkmark-outline" class="icon-red"></ion-icon>
+      <ion-item button>
+        <ion-icon slot="start" name="shield-checkmark-outline" color="primary"></ion-icon>
         <ion-label>Seguridad</ion-label>
-        <ion-icon slot="end" name="chevron-forward-outline" class="icon-arrow"></ion-icon>
+        <ion-icon slot="end" name="chevron-forward-outline" size="small"></ion-icon>
       </ion-item>
 
-      <ion-item button routerLink="/tabs/mis-categorias" detail="false" lines="none">
-        <ion-icon slot="start" name="grid-outline" class="icon-red"></ion-icon>
+      <ion-item button routerLink="/tabs/mis-categorias">
+        <ion-icon slot="start" name="grid-outline" color="primary"></ion-icon>
         <ion-label>Mis Categorías</ion-label>
-        <ion-icon slot="end" name="chevron-forward-outline" class="icon-arrow"></ion-icon>
+        <ion-icon slot="end" name="chevron-forward-outline" size="small"></ion-icon>
+      </ion-item>
+
+      <ion-list lines="full" class="quest-settings-list">
+        <ion-item>
+          <ion-icon slot="start" [name]="isDarkMode ? 'moon' : 'sunny-outline'" color="primary"></ion-icon>
+          <ion-label>Modo Oscuro</ion-label>
+          <ion-toggle slot="end" [checked]="isDarkMode" (ionChange)="toggleDarkMode($event)" color="primary"></ion-toggle>
+        </ion-item>
+      </ion-list>
+
+      <ion-item button class="logout-item" (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
+        <ion-label color="danger">Cerrar Sesión</ion-label>
       </ion-item>
     </ion-list>
-
-    <div class="logout-btn-wrapper ion-padding-horizontal">
-      <ion-button expand="block" fill="outline" color="danger" (click)="logout()" class="btn-logout-profesional">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon>
-        Cerrar Sesión
-      </ion-button>
-    </div>
   </div>
 
-  <div *ngIf="!usuario" class="guest-container ion-text-center fade-in">
+  <div *ngIf="!usuario" class="guest-container ion-text-center ion-padding">
     <div class="guest-icon-wrapper">
-      <ion-icon name="person-circle-outline"></ion-icon>
+      <ion-icon name="person-circle-outline" color="medium"></ion-icon>
     </div>
 
-    <h2 class="guest-title">¡Bienvenido a Chollones!</h2>
-    <p class="guest-text">
-      Inicia sesión para poder guardar tus ofertas favoritas, configurar alertas personalizadas y gestionar tus compras.
-    </p>
+    <h2>¡Bienvenido a Chollones!</h2>
+    <p>Inicia sesión para poder guardar tus ofertas favoritas, configurar alertas personalizadas y gestionar tus
+      compras.</p>
 
     <div class="ion-padding-top">
-      <ion-button expand="block" routerLink="/tabs/login" class="btn-red" shape="round">
+      <ion-button expand="block" routerLink="/tabs/login" class="btn-verde">
         Iniciar Sesión / Registrarse
       </ion-button>
     </div>
 
-    <ion-note class="guest-note">
+    <ion-list lines="full" class="quest-settings-list">
+      <ion-item>
+        <ion-icon slot="start" [name]="isDarkMode ? 'moon' : 'sunny-outline'" color="primary"></ion-icon>
+        <ion-label>Modo Oscuro</ion-label>
+        <ion-toggle slot="end" [checked]="isDarkMode" (ionChange)="toggleDarkMode($event)" color="primary"></ion-toggle>
+      </ion-item>
+    </ion-list>
+
+    <ion-note class="ion-margin-top ion-block">
       Navega gratis y encuentra los mejores precios.
     </ion-note>
   </div>
