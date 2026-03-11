@@ -1,61 +1,34 @@
-<ion-content *ngIf="producto" [fullscreen]="true">
+<ion-content *ngIf="producto">
 
   <div class="header-image">
-    <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'"
-      (error)="$any($event.target).src='assets/placeholder.png'" />
-
-    <div class="back-button-float" (click)="volverAtras()">
-      <ion-icon name="arrow-back"></ion-icon>
-    </div>
-
-    <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()">
-      <ion-icon [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon>
-    </div>
-
-    <div class="discount-badge" *ngIf="producto.precio_original">
-      -{{ (((producto.precio_original - producto.precio_actual) / producto.precio_original) * 100).toFixed(0) }}% DTO
-    </div>
+    <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'" (error)="$any($event.target).src='assets/placeholder.png'" />
+    <div class="back-button-float" (click)="volverAtras()"><ion-icon name="arrow-back"></ion-icon></div>
+    <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()"><ion-icon [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon></div>
+    <div class="discount-badge" *ngIf="producto.precio_original">-{{ (((producto.precio_original - producto.precio_actual) / producto.precio_original) * 100).toFixed(0) }}% DTO</div>
   </div>
 
-  <div class="ion-padding content-container">
+  <div class="ion-padding">
     <h1 class="product-title">{{ producto.titulo }}</h1>
 
-    <ion-item lines="none" class="vendor-info">
-      <ion-avatar slot="start">
-        <img [src]="producto.proveedores?.logo || 'assets/placeholder.png'" />
-      </ion-avatar>
-      <ion-label>
-        <p>Vendido por</p>
-        <h3>{{ producto.proveedores?.nombre }}</h3>
-      </ion-label>
-    </ion-item>
+    <div class="short-description" *ngIf="producto.extracto_limpio" style="margin-bottom: 10px; font-weight: 600;">
+      <p>{{ producto.extracto_limpio }}</p>
+    </div>
 
     <div class="price-section">
       <span class="current-price">{{ producto.precio_actual }}€</span>
       <span class="old-price" *ngIf="producto.precio_original">{{ producto.precio_original }}€</span>
     </div>
 
-    <div class="details-card" *ngIf="producto?.descripcion_larga">
-      <div class="details-header">
-        <ion-icon name="information-circle-outline"></ion-icon>
-        <h3>Detalles de la oferta</h3>
-      </div>
-      <p class="description-long">{{ producto.descripcion_larga }}</p>
-    </div>
-    <div class="rating-section ion-text-center ion-margin-top">
-      <h3>¿Qué te parece esta oferta?</h3>
-      <div class="faces-container">
-        <span class="face-icon" (click)="rateProduct(1)">😠</span>
-        <span class="face-icon" (click)="rateProduct(2)">😕</span>
-        <span class="face-icon" (click)="rateProduct(3)">😐</span>
-        <span class="face-icon" (click)="rateProduct(4)">🙂</span>
-        <span class="face-icon" (click)="rateProduct(5)">😍</span>
-      </div>
-    </div>
+    <ion-item lines="none" class="vendor-info">
+      <ion-avatar slot="start"><img [src]="producto.proveedores?.logo || 'assets/placeholder.png'" /></ion-avatar>
+      <ion-label>
+        <p>Vendido por</p>
+        <h3>{{ producto.proveedores?.nombre }}</h3>
+      </ion-label>
+    </ion-item>
 
-    <ion-button expand="block" color="primary" class="ion-margin-top btn-action" (click)="anadirAlCarrito()">
+    <ion-button expand="block" color="primary" class="ion-margin-top" (click)="anadirAlCarrito()">
       AÑADIR AL CARRITO
     </ion-button>
   </div>
-
 </ion-content>
