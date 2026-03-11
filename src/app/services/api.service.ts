@@ -283,6 +283,43 @@ export class ApiService {
     });
   }
 
+  // --- HISTORIAL DE COMPRAS ---
+
+  async getHistorialCompras() {
+    try {
+      return await this.request('historial.php?action=list');
+    } catch (error) {
+      console.error('Error al cargar historial:', error);
+      return [];
+    }
+  }
+
+  async guardarCompra(articulos: any[], total: number) {
+    if (!this.token) throw new Error('Debes estar logueado para realizar una compra');
+
+    try {
+      console.log('Enviando compra:', { articulos, total });
+      const resultado = await this.request('historial.php?action=create', {
+        method: 'POST',
+        body: JSON.stringify({ articulos, total }),
+      });
+      console.log('Compra guardada exitosamente:', resultado);
+      return resultado;
+    } catch (error: any) {
+      console.error('Error al guardar compra:', error.message, error);
+      throw error;
+    }
+  }
+
+  async obtenerDetallesCompra(compraId: number) {
+    try {
+      return await this.request(`historial.php?action=details&id=${compraId}`);
+    } catch (error) {
+      console.error('Error al obtener detalles de compra:', error);
+      return null;
+    }
+  }
+
   // --- PERFIL Y AVATAR ---
 
   async updateProfile(data: any) {

@@ -31,7 +31,12 @@ export const routes: Routes = [
       // CARRITO
       { path: 'carrito', loadComponent: () => import('./carrito/carrito.page').then(m => m.CarritoPage) },
 
+      // HISTORIAL DE COMPRAS
+      { path: 'historial', loadComponent: () => import('./historial/historial.page').then(m => m.HistorialPage) },
+
+      // MIS CATEGORÍAS
       { path: 'mis-categorias', loadComponent: () => import('./mis-categorias/mis-categorias.component').then(m => m.MisCategoriasComponent) },
+
       // default
       { path: '', redirectTo: 'tab1', pathMatch: 'full' },
     ],

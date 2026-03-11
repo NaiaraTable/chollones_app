@@ -15,7 +15,6 @@ import {
   IonSearchbar,
   IonButton,
   IonModal,
-  IonTitle,
   IonContent,
   IonFab,
   IonFabButton
@@ -30,6 +29,7 @@ import {
   gridOutline,
   notificationsOutline,
   locationOutline,
+  clipboardOutline,
   close
 } from 'ionicons/icons';
 
@@ -54,7 +54,6 @@ import { Router } from '@angular/router';
     IonLabel,
     IonButton,
     IonModal,
-    IonTitle,
     IonContent,
     IonFab,
     IonFabButton,
@@ -74,6 +73,7 @@ export class TabsPage {
       gridOutline,
       notificationsOutline,
       locationOutline,
+      clipboardOutline,
       close
     });
   }
