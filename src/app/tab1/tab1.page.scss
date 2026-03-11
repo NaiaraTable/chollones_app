@@ -2,6 +2,26 @@
    TAB1 — ESTILOS CON SOPORTE COMPLETO DE DARK MODE
    Todos los colores usan variables CSS dinámicas.
    =================================================== */
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 10px;
+  gap: 15px;
+  -webkit-overflow-scrolling: touch; /* Suavidad en iOS */
+
+  /* Opcional: ocultar barra de scroll en navegadores WebKit */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Las tarjetas deben tener un ancho definido para deslizarse */
+.scroll-item {
+  flex: 0 0 250px; /* Ajusta este ancho según lo que necesites */
+  scroll-snap-align: start;
+}
+
 
 ion-content {
   --background: var(--ion-background-color);
@@ -170,7 +190,12 @@ ion-content {
   overflow-y: visible;
   padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+  touch-action: pan-x;
+  scroll-snap-type: x mandatory;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .cat-item {
@@ -213,8 +238,13 @@ ion-content {
   overflow-y: visible;
   padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-  overscroll-behavior: contain;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* --- PRODUCT CARD --- */
@@ -222,6 +252,7 @@ ion-content {
   min-width: 250px;
   max-width: 250px;
   min-height: 300px;
+  scroll-snap-align: start;
   background: var(--card-background);
   /* dinámico */
   border-radius: 18px;
