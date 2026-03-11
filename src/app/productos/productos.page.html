@@ -1,5 +1,4 @@
 <ion-content *ngIf="producto">
-
   <div class="header-image">
     <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'" (error)="$any($event.target).src='assets/placeholder.png'" />
     <div class="back-button-float" (click)="volverAtras()"><ion-icon name="arrow-back"></ion-icon></div>
@@ -19,6 +18,10 @@
       <span class="old-price" *ngIf="producto.precio_original">{{ producto.precio_original }}€</span>
     </div>
 
+    <div class="product-description" *ngIf="producto.descripcion_limpia" style="margin: 20px 0;">
+      <p style="white-space: pre-wrap; color: #555; line-height: 1.6;">{{ producto.descripcion_limpia }}</p>
+    </div>
+
     <ion-item lines="none" class="vendor-info">
       <ion-avatar slot="start"><img [src]="producto.proveedores?.logo || 'assets/placeholder.png'" /></ion-avatar>
       <ion-label>
@@ -27,7 +30,18 @@
       </ion-label>
     </ion-item>
 
-    <ion-button expand="block" color="primary" class="ion-margin-top" (click)="anadirAlCarrito()">
+    <div class="rating-section ion-text-center ion-margin-top">
+      <h3>¿Qué te parece esta oferta?</h3>
+      <div class="faces-container">
+        <span class="face-icon" (click)="rateProduct(1)">😠</span>
+        <span class="face-icon" (click)="rateProduct(2)">😕</span>
+        <span class="face-icon" (click)="rateProduct(3)">😐</span>
+        <span class="face-icon" (click)="rateProduct(4)">🙂</span>
+        <span class="face-icon" (click)="rateProduct(5)">🤩</span>
+      </div>
+    </div>
+
+    <ion-button expand="block" color="primary" class="ion-margin-top btn-action" (click)="anadirAlCarrito()">
       AÑADIR AL CARRITO
     </ion-button>
   </div>
