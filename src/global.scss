@@ -20,7 +20,7 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 /* Dark mode */
-@import "@ionic/angular/css/palettes/dark.system.css";
+@import "@ionic/angular/css/palettes/dark.class.css";
 
 /* =========================
    CHOLLONES - Tema Global
@@ -28,7 +28,7 @@
 
 /* Fondo general + scroll estable */
 ion-content {
-  --background: #f4f5f8;
+  --background: var(--ion-background-color, #f4f5f8);
   --overflow: auto;
   --padding-bottom: calc(72px + env(safe-area-inset-bottom));
   /* Esta es la clave. Forzamos a Ionic a recibir eventos en el centro de la pantalla */
@@ -263,4 +263,276 @@ ion-tab-bar {
   color: var(--primary);
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+}
+
+/* ─── MODO OSCURO ───────────────────────────────────────────────
+   Añade este bloque al final de tu global.scss o variables.scss
+   ────────────────────────────────────────────────────────────── */
+
+body.dark {
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
+  --ion-color-step-50: #1e1e1e;
+  --ion-color-step-100: #2a2a2a;
+  --ion-color-step-150: #363636;
+  --ion-color-step-200: #414141;
+  --ion-color-step-250: #4d4d4d;
+  --ion-color-step-300: #595959;
+  --ion-color-step-350: #656565;
+  --ion-color-step-400: #717171;
+  --ion-color-step-450: #7d7d7d;
+  --ion-color-step-500: #898989;
+  --ion-color-step-550: #949494;
+  --ion-color-step-600: #a0a0a0;
+  --ion-color-step-650: #acacac;
+  --ion-color-step-700: #b8b8b8;
+  --ion-color-step-750: #c4c4c4;
+  --ion-color-step-800: #d0d0d0;
+  --ion-color-step-850: #dbdbdb;
+  --ion-color-step-900: #e7e7e7;
+  --ion-color-step-950: #f3f3f3;
+
+  --ion-item-background: #1e1e1e;
+  --ion-toolbar-background: var(--ion-color-primary);
+  --ion-tab-bar-background: #1e1e1e;
+  --ion-card-background: #1e1e1e;
+}
+
+/* ─── OVERRIDES MODO OSCURO ─── */
+body.dark ion-content {
+  --background: #121212;
+}
+
+body.dark .profile-header {
+  background: #1e1e1e !important;
+}
+
+body.dark ion-list {
+  background: #1e1e1e !important;
+}
+body.dark ion-page {
+  background: #121212;
+  color: #ffffff;
+}
+
+body.dark ion-header ion-toolbar {
+  --background: var(--ion-color-primary);
+}
+
+body.dark ion-item {
+  --background: #1e1e1e;
+  --color: #ffffff;
+  --border-color: #2a2a2a;
+}
+
+body.dark ion-label {
+  color: #ffffff !important;
+}
+
+body.dark ion-note {
+  color: #aaaaaa !important;
+}
+
+body.dark ion-card {
+  --background: #1e1e1e;
+  color: #ffffff;
+}
+
+body.dark ion-card-title,
+body.dark ion-card-subtitle {
+  color: #ffffff !important;
+}
+
+body.dark ion-searchbar {
+  --background: #2a2a2a !important;
+  --color: #ffffff !important;
+  --placeholder-color: #aaaaaa !important;
+  --icon-color: #aaaaaa !important;
+}
+
+body.dark ion-tab-bar {
+  --background: #1e1e1e;
+  --color: #aaaaaa;
+  --color-selected: var(--ion-color-primary);
+  border-top: 1px solid #2a2a2a;
+}
+
+body.dark ion-segment {
+  --background: #2a2a2a;
+}
+
+body.dark ion-segment-button {
+  --color: #aaaaaa;
+  --color-checked: #ffffff;
+}
+
+body.dark ion-chip {
+  --background: #2a2a2a;
+  --color: #ffffff;
+}
+
+body.dark ion-badge {
+  --background: var(--ion-color-primary);
+  --color: #ffffff;
+}
+
+body.dark ion-input {
+  --background: #2a2a2a;
+  --color: #ffffff;
+  --placeholder-color: #aaaaaa;
+}
+
+body.dark ion-textarea {
+  --background: #2a2a2a;
+  --color: #ffffff;
+  --placeholder-color: #aaaaaa;
+}
+
+body.dark ion-select {
+  --background: #2a2a2a;
+  color: #ffffff;
+}
+
+body.dark ion-refresher {
+  --background: #121212;
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6,
+body.dark p,
+body.dark span {
+  color: inherit;
+}
+
+body.dark .card {
+  background: #1e1e1e !important;
+  color: #ffffff;
+}
+
+/* ─── OVERRIDES MODO OSCURO - TAB1 ─── */
+body.dark .section-title h3 {
+  color: #ffffff !important;
+}
+
+body.dark .link {
+  color: #cccccc !important;
+}
+
+body.dark .quick-text {
+  color: #ffffff !important;
+}
+
+body.dark .quick-cta {
+  color: #aaaaaa !important;
+}
+
+body.dark .product-card {
+  background: #1e1e1e !important;
+  border-color: #2a2a2a !important;
+}
+
+body.dark .product-title {
+  color: #ffffff !important;
+}
+
+body.dark .product-cat {
+  color: #aaaaaa !important;
+}
+
+body.dark .product-prov {
+  color: #aaaaaa !important;
+}
+
+body.dark .p-old {
+  color: #aaaaaa !important;
+}
+
+body.dark .product-img {
+  background: #2a2a2a !important;
+}
+
+body.dark .cat-item {
+  background: #1e1e1e !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark .cat-item div {
+  color: #ffffff !important;
+}
+
+/* ─── OVERRIDES MODO OSCURO - TAB4 ─── */
+body.dark .filters-container {
+  background: #1e1e1e !important;
+  border-bottom-color: #2a2a2a !important;
+}
+
+body.dark .category-pill {
+  background: #2a2a2a !important;
+  color: #aaaaaa !important;
+}
+
+body.dark .category-pill.active {
+  background: var(--ion-color-primary) !important;
+  color: #ffffff !important;
+}
+
+body.dark .quick-filter-chip {
+  background: #1e1e1e !important;
+  border-color: #3a3a3a !important;
+  color: #cccccc !important;
+}
+
+body.dark .quick-filter-chip.active {
+  background: #1a3a2e !important;
+  border-color: var(--ion-color-secondary) !important;
+  color: var(--ion-color-secondary) !important;
+}
+
+body.dark .chollo-item {
+  --background: #1e1e1e !important;
+  border-bottom-color: #2a2a2a !important;
+}
+
+body.dark .chollo-item h2 {
+  color: #ffffff !important;
+}
+
+body.dark .description-text {
+  color: #aaaaaa !important;
+}
+
+body.dark .current-price {
+  color: #ffffff !important;
+}
+
+body.dark .old-price {
+  color: #888888 !important;
+}
+
+body.dark ion-searchbar {
+  --background: #2a2a2a !important;
+  --color: #ffffff !important;
+  --placeholder-color: #aaaaaa !important;
+  --icon-color: #aaaaaa !important;
+}
+
+body.dark .ver-todos-container {
+  background: #121212;
+}
+
+/* ─── OVERRIDES MODO OSCURO - TAB5 PERFIL ─── */
+body.dark .profile-header h2 {
+  color: #ffffff !important;
+}
+
+body.dark .profile-header p {
+  color: #aaaaaa !important;
 }
