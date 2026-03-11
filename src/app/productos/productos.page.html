@@ -4,10 +4,8 @@
     <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'"
       (error)="$any($event.target).src='assets/placeholder.png'" />
 
-    <div class="back-button-float">
-      <ion-button (click)="volverAtras()" fill="clear">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
+    <div class="back-button-float" (click)="volverAtras()">
+      <ion-icon name="arrow-back"></ion-icon>
     </div>
 
     <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()">

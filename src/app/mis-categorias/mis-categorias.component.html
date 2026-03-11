@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" style="--background: #f4f5f8;">
+<ion-content class="ion-padding">
 
   <div class="top-info">
     <h2>Elige tus favoritas</h2>
@@ -22,10 +22,7 @@
 
   <div class="categorias-grid">
 
-    <ion-card
-      *ngFor="let categoria of categorias"
-      class="categoria-card"
-      [class.selected]="categoria.seleccionada"
+    <ion-card *ngFor="let categoria of categorias" class="categoria-card" [class.selected]="categoria.seleccionada"
       (click)="toggleCategoria(categoria)">
 
       <div class="card-content">
@@ -48,10 +45,7 @@
 
   </div>
   <div class="save-area">
-    <ion-button
-      expand="block"
-      [disabled]="favoritasSeleccionadas.length !== 5"
-      (click)="guardarCategorias()">
+    <ion-button expand="block" [disabled]="favoritasSeleccionadas.length !== 5" (click)="guardarCategorias()">
       Guardar Preferencias
     </ion-button>
 

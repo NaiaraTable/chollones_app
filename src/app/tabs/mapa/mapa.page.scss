@@ -1,7 +1,8 @@
 #map {
   height: 100%;
   width: 100%;
-  min-height: 300px; /* Asegura que tenga espacio */
+  min-height: 300px;
+  /* Asegura que tenga espacio */
 }
 
 /* 🔥 CLAVE: cuando el tab no está activo, que no capture eventos */
@@ -45,7 +46,7 @@
       font-weight: bold;
       width: 100%;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
   }
 }

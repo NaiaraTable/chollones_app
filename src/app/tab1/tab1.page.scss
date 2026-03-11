@@ -1,166 +1,14 @@
+/* ===================================================
+   TAB1 — ESTILOS CON SOPORTE COMPLETO DE DARK MODE
+   Todos los colores usan variables CSS dinámicas.
+   =================================================== */
+
 ion-content {
-  --background: #f4f5f8;
+  --background: var(--ion-background-color);
   --overflow: auto;
 }
 
-/* Header */
-.header-red {
-  --background: var(--ion-color-primary);
-  color: #fff;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 10px;
-}
-
-.brand {
-  font-weight: 900;
-  letter-spacing: 1px;
-  white-space: nowrap;
-  color: #fff;
-}
-
-.brand-logo {
-  height: 35px;
-  object-fit: contain;
-  margin-right: 4px;
-}
-
-/* Search */
-.search-wrap {
-  flex: 1;
-}
-
-.searchbar {
-  --border-radius: 999px;
-  --background: rgba(255, 255, 255, 0.95);
-  --color: #111;
-  --placeholder-color: #666;
-  --icon-color: #666;
-}
-
-/* Iconos */
-ion-button {
-  --color: #fff;
-}
-
-/* Carrito badge */
-.cart-btn {
-  position: relative;
-}
-
-.cart-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  background: #fff;
-  color: var(--ion-color-primary);
-  font-weight: 900;
-  font-size: 10px;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Secciones */
-.section {
-  padding: 14px;
-}
-
-.section-title h3 {
-  color: #111; // negro principal
-}
-
-.section-title h3::after {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 3px;
-  background: var(--ion-color-primary);
-  margin-top: 6px;
-  border-radius: 10px;
-}
-
-.link {
-  font-size: 13px;
-  text-decoration: underline;
-  font-weight: 700;
-  color: #111;
-}
-
-
-.link {
-  font-size: 13px;
-  text-decoration: underline;
-  font-weight: 700;
-  color: #111;
-}
-
-/* Quick Links (Circulares) */
-.quick-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  padding: 4px 16px 20px;
-}
-
-.quick-circle-item {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-
-  .circle-bg {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scale(1.1);
-      /* Hacer zoom en las fotos para que no queden bordes blancos  */
-    }
-  }
-
-  .quick-text {
-    font-weight: 800;
-    font-size: 14px;
-    line-height: 1.3;
-    color: #111;
-    margin-bottom: 6px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .quick-cta {
-    font-size: 13px;
-    font-weight: 800;
-    color: #333;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-    opacity: 0.9;
-  }
-}
-
-/* Banner */
+/* --- BANNER --- */
 .banner {
   margin: 14px;
   height: 180px;
@@ -168,13 +16,13 @@ ion-button {
   background: center/cover no-repeat;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
 }
 
 .banner-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.05));
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.05));
   padding: 18px;
   color: #fff;
   display: flex;
@@ -187,6 +35,7 @@ ion-button {
   letter-spacing: 1px;
   opacity: 0.9;
   font-size: 12px;
+  color: #fff;
 }
 
 .banner-title {
@@ -194,6 +43,7 @@ ion-button {
   font-weight: 900;
   margin-top: 6px;
   line-height: 1.1;
+  color: #fff;
 }
 
 .banner-sub {
@@ -201,6 +51,7 @@ ion-button {
   opacity: 0.9;
   margin-top: 6px;
   max-width: 240px;
+  color: #fff;
 }
 
 .banner-btn {
@@ -214,9 +65,104 @@ ion-button {
   border-radius: 12px;
 }
 
-/* Scroll horizontal seguro */
-.popular-row,
-.cards-row,
+/* --- SECCIONES --- */
+.section {
+  padding: 14px;
+}
+
+.section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  h3 {
+    color: var(--text-primary);
+    /* dinámico */
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 3px;
+      background: var(--ion-color-primary);
+      margin-top: 6px;
+      border-radius: 10px;
+    }
+  }
+}
+
+.link {
+  font-size: 13px;
+  text-decoration: underline;
+  font-weight: 700;
+  color: var(--text-primary);
+  /* dinámico */
+}
+
+/* --- QUICK LINKS CIRCULARES --- */
+.quick-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 4px 16px 20px;
+}
+
+.quick-circle-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+
+  .circle-bg {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 2px solid var(--card-border);
+    /* dinámico */
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.1);
+    }
+  }
+
+  .quick-text {
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1.3;
+    color: var(--text-primary);
+    /* dinámico */
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .quick-cta {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* --- CATEGORÍAS STRIP --- */
 .cat-strip {
   display: flex;
   gap: 14px;
@@ -224,58 +170,106 @@ ion-button {
   overflow-y: visible;
   padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
-/* Product cards */
+.cat-item {
+  min-width: 130px;
+  background: var(--card-background);
+  /* dinámico */
+  border-radius: 18px;
+  padding: 14px;
+  text-align: center;
+  box-shadow: 0 6px 16px var(--card-shadow);
+  /* dinámico */
+  border: 1px solid var(--card-border);
+  /* dinámico */
+  cursor: pointer;
+
+  img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin: 0 auto 8px;
+    display: block;
+  }
+
+  div {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    /* dinámico */
+    letter-spacing: 0.3px;
+    margin-top: 6px;
+  }
+}
+
+/* --- SCROLL FILAS HORIZONTALES --- */
+.popular-row,
+.cards-row {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+/* --- PRODUCT CARD --- */
 .product-card {
   min-width: 250px;
   max-width: 250px;
   min-height: 300px;
-  background: #fff;
+  background: var(--card-background);
+  /* dinámico */
   border-radius: 18px;
-  border: 1px solid #efefef;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--card-border);
+  /* dinámico */
+  box-shadow: 0 4px 15px var(--card-shadow);
+  /* dinámico */
   overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
-}
 
-.product-card .disc {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: var(--ion-color-primary);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-weight: 800;
-  font-size: 13px;
-  z-index: 2;
-}
-
-.product-card .fav-icon {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  background: var(--ion-color-primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-
-  ion-icon {
-    color: white;
-    font-size: 18px;
+  .disc {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--ion-color-primary);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 13px;
+    z-index: 2;
   }
 
-  &.active ion-icon {
-    color: black;
+  .fav-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: var(--ion-color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+    ion-icon {
+      color: #fff;
+      font-size: 18px;
+    }
+
+    &.active ion-icon {
+      color: #ffeb3b;
+    }
   }
 }
 
@@ -283,20 +277,24 @@ ion-button {
   width: 100%;
   height: 180px;
   object-fit: cover;
-  background: #f2f2f2;
+  background: var(--card-background-alt);
+  /* dinámico */
 }
 
 .product-body {
-  padding: 16px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   flex: 1;
   justify-content: space-between;
+  background: var(--card-background);
+  /* dinámico */
 }
 
 .product-cat {
   font-size: 12px;
-  color: #888;
+  color: var(--text-muted);
+  /* dinámico */
   margin-bottom: 4px;
   font-weight: 600;
 }
@@ -306,7 +304,8 @@ ion-button {
   font-weight: 800;
   line-height: 1.3;
   margin-bottom: 8px;
-  color: #111;
+  color: var(--text-primary);
+  /* dinámico */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -317,7 +316,8 @@ ion-button {
 
 .product-prov {
   font-size: 13px;
-  color: #555;
+  color: var(--text-secondary);
+  /* dinámico */
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -340,11 +340,11 @@ ion-button {
 
 .p-old {
   font-size: 14px;
-  color: #888;
+  color: var(--text-muted);
+  /* dinámico */
   text-decoration: line-through;
   font-weight: 600;
 }
-
 
 .btn-cart {
   width: 100%;
@@ -355,74 +355,5 @@ ion-button {
   padding: 12px;
   border-radius: 12px;
   border: none;
-}
-
-
-/* Categorías */
-.cat-item {
-  min-width: 140px;
-  background: #fff;
-  border-radius: 18px;
-  padding: 14px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-
-  img {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-    margin: 0 auto 10px;
-    display: block;
-  }
-
-  div {
-    font-size: 15px;
-    font-weight: 600;
-    color: #2c3e50;
-    letter-spacing: 0.3px;
-    margin-top: 8px;
-  }
-
-  /* Permite scroll vertical aunque estés encima de un carrusel horizontal */
-  .popular-row,
-  .cards-row,
-  .cat-strip {
-    touch-action: pan-y;
-    overscroll-behavior: contain;
-  }
-
-  /* En escritorio con rueda, evita que el contenedor horizontal “se coma” el scroll */
-  .popular-row,
-  .cards-row,
-  .cat-strip {
-    scroll-snap-type: none;
-  }
-
-  /* Si estás encima de un carrusel horizontal, permite igualmente el scroll vertical */
-  .popular-row,
-  .cards-row,
-  .cat-strip {
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-
-    /* CLAVE: no bloquear el pan vertical */
-    touch-action: pan-y;
-    overscroll-behavior: contain;
-  }
-
-  /* PERMITIR SCROLL VERTICAL SIEMPRE */
-  .popular-row,
-  .cards-row,
-  .cat-strip {
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-
-    /* CLAVE */
-    touch-action: pan-y;
-    overscroll-behavior: contain;
-  }
-
-
+  cursor: pointer;
 }
