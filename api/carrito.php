@@ -122,7 +122,8 @@ function addToCarrito(PDO $db, string $prefix): void
         $nuevaCantidad = intval($existente['cantidad']) + $cantidad;
         $stmt = $db->prepare("UPDATE {$prefix}app_carro SET cantidad = :cant WHERE id = :id");
         $stmt->execute(['cant' => $nuevaCantidad, 'id' => $existente['id']]);
-    } else {
+    }
+    else {
         $stmt = $db->prepare("
             INSERT INTO {$prefix}app_carro (usuario_id, chollo_id, cantidad, creado_en)
             VALUES (:uid, :cid, :cant, NOW())
@@ -154,7 +155,8 @@ function updateCarrito(PDO $db, string $prefix): void
     if ($cantidad <= 0) {
         $stmt = $db->prepare("DELETE FROM {$prefix}app_carro WHERE id = :id AND usuario_id = :uid");
         $stmt->execute(['id' => $carroId, 'uid' => $userId]);
-    } else {
+    }
+    else {
         $stmt = $db->prepare("UPDATE {$prefix}app_carro SET cantidad = :cant WHERE id = :id AND usuario_id = :uid");
         $stmt->execute(['cant' => $cantidad, 'id' => $carroId, 'uid' => $userId]);
     }

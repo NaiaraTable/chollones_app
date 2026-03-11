@@ -18,7 +18,7 @@ import {
   openOutline
 } from 'ionicons/icons';
 
-import { SupabaseService } from '../services/supabase.service';
+import { ApiService } from '../services/api.service';
 import { FavoritosEvent } from '../services/favoritos-event';
 
 @Component({
@@ -47,22 +47,14 @@ export class Tab1Page implements OnInit {
 
   productosPopulares: any[] = [];
   chollosFiltrados: any[] = [];
-  categorias = [
-    { nombre: 'Belleza y Bienestar', slug: 'belleza-bienestar', img: 'assets/img-categorias/belleza-bienestar.png' },
-    { nombre: 'Moda', slug: 'moda', img: 'assets/img-categorias/moda.png' },
-    { nombre: 'Mascotas', slug: 'mascotas', img: 'assets/img-categorias/mascotas.png' },
-    { nombre: 'Cocina', slug: 'cocina', img: 'assets/img-categorias/cocina.png' },
-    { nombre: 'Marketing', slug: 'marketing', img: 'assets/img-categorias/marketing.png' },
-    { nombre: 'Juguetes', slug: 'juguetes', img: 'assets/img-categorias/juguetes.png' },
-    { nombre: 'Electrónica', slug: 'electronica', img: 'assets/img-categorias/electronica.png' },
-    { nombre: 'Servicios Estéticos', slug: 'servicios-esteticos', img: 'assets/img-categorias/servicios-esteticos.png' },
-  ];
+  topVentas: any[] = [];
+  categorias: any[] = [];
 
   // Set para trackear IDs de favoritos
   favoritosIds: Set<string> = new Set();
 
   constructor(
-    private supabaseService: SupabaseService,
+    private supabaseService: ApiService,
     private favoritosEvent: FavoritosEvent,
     public router: Router
   ) {
@@ -84,36 +76,121 @@ export class Tab1Page implements OnInit {
 
   async cargarDatos() {
     try {
-      const res = await this.supabaseService.getChollos();
+      const [res, resTopVentas] = await Promise.all([
+        this.supabaseService.getChollos(),
+        this.supabaseService.getTopVentas()
+      ]);
+
+      const mapProduct = (c: any) => ({
+        ...c,
+        titulo: c.titulo,
+        precioActual: c.precio_actual,
+        precioOriginal: c.precio_original,
+        imagen: c.imagen_url,
+        proveedor: c.proveedores?.nombre,
+        nuevo: this.esReciente(c.created_at)
+      });
 
       // Validamos que res no sea nulo y que sea un array (o contenga data como array)
       const dataRaw = Array.isArray(res) ? res : (res as any)?.data;
 
       if (dataRaw && Array.isArray(dataRaw)) {
-        const dataMapeada = dataRaw.map((c: any) => ({
-          ...c,
-          titulo: c.titulo,
-          precioActual: c.precio_actual,
-          precioOriginal: c.precio_original,
-          imagen: c.imagen_url,
-          proveedor: c.proveedores?.nombre,
-          nuevo: this.esReciente(c.created_at)
-        }));
+        const dataMapeada = dataRaw.map(mapProduct);
 
         this.productosPopulares = dataMapeada;
         this.chollosFiltrados = [...dataMapeada];
+
+        // --- Extraer y calcular categorías más populares ---
+        const iconosPorNombre: { [key: string]: string } = {
+          'Ahorro e Inversión': 'assets/img-categorias/ahorro-inversion.png',
+          'Belleza y bienestar': 'assets/img-categorias/belleza-bienestar.png',
+          'Bikinis y Bañadores': 'assets/img-categorias/bikini-bañadores.png',
+          'Branding': 'assets/img-categorias/branding.png',
+          'Complementos': 'assets/img-categorias/complementos.png',
+          'Consultoría Online': 'assets/img-categorias/consultoria-online.png',
+          'Cosmética Facial y Corporal': 'assets/img-categorias/cosmetica-facial-corporal.png',
+          'Corporal': 'assets/img-categorias/corporal.png',
+          'Cosmética Natural': 'assets/img-categorias/cosmetica-natural.png',
+          'Depilación Láser Médica': 'assets/img-categorias/depilacion-laser-medica.png',
+          'Diagnóstico Estético': 'assets/img-categorias/diagnostico-estetico.png',
+          'Digitalización': 'assets/img-categorias/digitalizacion.png',
+          'Electrónica': 'assets/img-categorias/electronica.png',
+          'Experiencia de Compra': 'assets/img-categorias/experiencia-compra.png',
+          'General': 'assets/img-categorias/general.png',
+          'Hipotecas y Seguros': 'assets/img-categorias/hipotecas-seguros.png',
+          'Kimonos': 'assets/img-categorias/kimono.png',
+          'Manu Hipotecas': 'assets/img-categorias/manu-hipotecas.png',
+          'Medicina Estética': 'assets/img-categorias/medicina-estetica.png',
+          'Micropigmentación Estética': 'assets/img-categorias/micropigmentacion-estetica.png',
+          'Moda Baño': 'assets/img-categorias/moda-baño.png',
+          'Moda Deportiva': 'assets/img-categorias/moda-deportiva.png',
+          'Nutrición y Bienestar': 'assets/img-categorias/nutricion-bienestar.png',
+          'Nutricosmética': 'assets/img-categorias/nutricosmetica.png',
+          'Páginas web': 'assets/img-categorias/paginas-web.png',
+          'Redes sociales': 'assets/img-categorias/redes-sociales.png',
+          'Revisión y Mejora de Hipotecas': 'assets/img-categorias/revision-mejoras-hipoteca.png',
+          'Ropa': 'assets/img-categorias/ropa.png',
+          'Ropa Deportiva Mujer': 'assets/img-categorias/ropa-deportiva-mujer.png',
+          'SEO': 'assets/img-categorias/seo.png',
+          'Servicios': 'assets/img-categorias/servicio.png',
+          'Servicios Estéticos': 'assets/img-categorias/servicios-esteticos.png',
+          'Servicios Financieros': 'assets/img-categorias/servicios-financieros.png',
+          'Tatuajes': 'assets/img-categorias/tatuajes.png',
+          'Training': 'assets/img-categorias/training.png',
+          'Moda': 'assets/img-categorias/moda.png',
+          'Mascotas': 'assets/img-categorias/mascotas.png',
+          'Cocina': 'assets/img-categorias/cocina.png',
+          'Marketing': 'assets/img-categorias/marketing.png',
+          'Juguetes': 'assets/img-categorias/juguetes.png'
+        };
+
+        const catsMap = new Map<string, any>();
+        dataRaw.forEach((c: any) => {
+          const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
+          cats.forEach((cat: any) => {
+            if (cat && cat.slug) {
+              if (catsMap.has(cat.slug)) {
+                catsMap.get(cat.slug)!.count++;
+              } else {
+                catsMap.set(cat.slug, {
+                  id: cat.id,
+                  nombre: cat.nombre,
+                  slug: cat.slug,
+                  img: cat.icono || iconosPorNombre[cat.nombre] || `https://ui-avatars.com/api/?name=${encodeURIComponent(cat.nombre)}&background=random&color=fff&size=128`,
+                  count: 1
+                });
+              }
+            }
+          });
+        });
+
+        // Ordenamos por popularidad (mayor count primero) y cogemos las 8 primeras
+        this.categorias = Array.from(catsMap.values())
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 8);
+
       } else {
-        console.warn('No se pudieron cargar los datos o el formato es incorrecto');
       }
+
+      // Procesar Top Ventas
+      const topRaw = Array.isArray(resTopVentas) ? resTopVentas : (resTopVentas as any)?.data;
+      if (topRaw && Array.isArray(topRaw)) {
+        this.topVentas = topRaw.map(mapProduct);
+      } else {
+        console.warn('No se pudo cargar el Top Ventas');
+      }
+
     } catch (error) {
       console.error('Error al cargar datos:', error);
     }
   }
 
+
   async cargarFavoritos() {
     try {
       const ids = await this.supabaseService.getFavoritosIds();
-      this.favoritosIds = new Set(ids);
+      const idsSeguros = Array.isArray(ids) ? ids : [];
+      this.favoritosIds = new Set(idsSeguros);
     } catch (error) {
       console.error('Error al cargar favoritos:', error);
     }
@@ -245,6 +322,5 @@ export class Tab1Page implements OnInit {
     if (!actual || !original || original <= actual) return 0;
     return Math.round(((original - actual) / original) * 100);
   }
-
 
 }

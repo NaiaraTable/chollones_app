@@ -217,12 +217,12 @@ export class SupabaseService {
     try {
       const formData = new FormData();
       formData.append('avatar', file);
-      
+
       const response = await this.apiService.request('perfil.php?action=avatar', {
         method: 'POST',
         body: formData,
       });
-      
+
       return response.avatar_url || '';
     } catch (err) {
       console.error('Error al subir avatar:', err);
@@ -252,6 +252,19 @@ export class SupabaseService {
     } catch (err) {
       console.error('Error al obtener chollos similares:', err);
       return [];
+    }
+  }
+
+  // --- REVIEW FUNNEL ---
+  async enviarFeedbackNegativo(cholloId: string, estrellas: number, comentario: string) {
+    try {
+      await this.apiService.request('feedback.php', {
+        method: 'POST',
+        body: JSON.stringify({ chollo_id: cholloId, estrellas, comentario }),
+      });
+    } catch (e) {
+      console.error("Error al enviar feedback negativo:", e);
+      throw e;
     }
   }
 }

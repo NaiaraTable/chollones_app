@@ -24,11 +24,14 @@ $prefix = TABLE_PREFIX;
 // Determinar acción
 $id = $_GET['id'] ?? null;
 $similares = isset($_GET['similares']);
+$topVentas = isset($_GET['top_ventas']);
 
 if ($id) {
     getCholloById($db, $prefix, $id);
 } elseif ($similares) {
     getChollosSimilares($db, $prefix);
+} elseif ($topVentas) {
+    getTopVentas($db, $prefix);
 } else {
     getChollos($db, $prefix);
 }
@@ -48,7 +51,8 @@ function getChollos(PDO $db, string $prefix): void
             MAX(CASE WHEN pm.meta_key = '_price' THEN pm.meta_value END) as precio_actual,
             MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) as precio_original,
             MAX(CASE WHEN pm.meta_key = '_sale_price' THEN pm.meta_value END) as precio_oferta,
-            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id
+            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id,
+            CAST(MAX(CASE WHEN pm.meta_key = 'total_sales' THEN pm.meta_value END) AS UNSIGNED) as ventas
         FROM {$prefix}posts p
         LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
         WHERE p.post_type = 'product'
@@ -66,9 +70,56 @@ function getChollos(PDO $db, string $prefix): void
         $product['proveedores'] = getVendor($db, $prefix, $product['autor_id']);
 
         // Limpiar campos auxiliares
+        $product['ventas'] = intval($product['ventas'] ?? 0);
         unset($product['thumbnail_id'], $product['autor_id']);
 
         // Asegurar tipos numéricos
+        $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
+        $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
+
+        if ($product['precio_original'] === $product['precio_actual']) {
+            $product['precio_original'] = null;
+        }
+    }
+
+    jsonResponse($products);
+}
+
+// -------------------------------------------------------
+// GET /chollos.php?top_ventas=1 → Top 5 más vendidos
+// -------------------------------------------------------
+function getTopVentas(PDO $db, string $prefix): void
+{
+    $sql = "
+        SELECT
+            p.ID as id,
+            p.post_title as titulo,
+            p.post_content as descripcion,
+            p.post_date as created_at,
+            p.post_author as autor_id,
+            MAX(CASE WHEN pm.meta_key = '_price' THEN pm.meta_value END) as precio_actual,
+            MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) as precio_original,
+            MAX(CASE WHEN pm.meta_key = '_sale_price' THEN pm.meta_value END) as precio_oferta,
+            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id,
+            CAST(MAX(CASE WHEN pm.meta_key = 'total_sales' THEN pm.meta_value END) AS UNSIGNED) as ventas
+        FROM {$prefix}posts p
+        LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
+        WHERE p.post_type = 'product'
+          AND p.post_status = 'publish'
+        GROUP BY p.ID
+        ORDER BY ventas DESC
+        LIMIT 10
+    ";
+
+    $products = $db->query($sql)->fetchAll();
+
+    foreach ($products as &$product) {
+        $product['imagen_url'] = getImageUrl($db, $prefix, $product['thumbnail_id']);
+        $product['categorias'] = getProductCategories($db, $prefix, $product['id']);
+        $product['proveedores'] = getVendor($db, $prefix, $product['autor_id']);
+
+        unset($product['thumbnail_id'], $product['autor_id'], $product['ventas']);
+
         $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
         $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
 

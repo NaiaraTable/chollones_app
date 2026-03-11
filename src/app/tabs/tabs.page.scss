@@ -11,13 +11,24 @@
   margin-left: 10px;
   object-fit: contain;
 }
+ion-tab-bar {
+  --background: #ffffff !important;
+  background: #ffffff !important;
+  --color: #666666 !important;
+  --color-selected: #e53935 !important;
+  border-top: 1px solid #eeeeee !important;
+}
 
+ion-tab-button {
+  --background: #ffffff !important;
+  background: #ffffff !important;
+}
 .top-search {
   flex: 1;
   /* ocupa el espacio restante */
   max-width: 520px;
   width: 100%;
-   margin: 10px 1px 0 1px;
+  margin: 10px 1px 0 1px;
   --background: #ffffff;
   --color: #797979;
   --placeholder-color: #797979;
@@ -55,4 +66,14 @@
   width: 100%;
   padding-right: 8px;
   /* space for buttons */
+}
+
+ion-modal#modal-juegos {
+  --width: 92%;
+  --height: 85%;
+  --max-width: 500px;
+  --max-height: 800px;
+  --border-radius: 20px;
+  --box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --backdrop-opacity: 0.7;
 }
