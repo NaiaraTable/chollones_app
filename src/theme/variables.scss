@@ -2,20 +2,83 @@
 // https://ionicframework.com/docs/theming/
 
 :root {
-  /* El Rojo Coral de la cabecera */
+  /* --- COLORES DE MARCA --- */
   --ion-color-primary: #f05a5e;
   --ion-color-primary-rgb: 240, 90, 94;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-shade: #d34f53;
   --ion-color-primary-tint: #f26b6e;
 
-  /* El Verde Menta de los botones de puntos */
   --ion-color-secondary: #40c9a2;
   --ion-color-secondary-rgb: 64, 201, 162;
   --ion-color-secondary-contrast: #ffffff;
   --ion-color-secondary-shade: #38b18e;
   --ion-color-secondary-tint: #53ceab;
 
-  /* Fondo gris muy neutro */
-  --ion-background-color: #fcfcfc;
+  /* --- MODO CLARO (valores por defecto) --- */
+  --ion-background-color: #f8f9fa;
+  --ion-background-color-rgb: 248, 249, 250;
+  --ion-text-color: #1a1a1b;
+  --ion-text-color-rgb: 26, 26, 27;
+
+  --card-background: #ffffff;
+  --card-background-alt: #f1f3f6;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-shadow: rgba(0, 0, 0, 0.06);
+
+  --text-primary: #1a1a1b;
+  --text-secondary: #5f6368;
+  --text-muted: #80868b;
+
+  --input-background: #ffffff;
+  --input-border: #e0e0e0;
+
+  /* Buscador sobre la barra roja */
+  --searchbar-bg: rgba(255, 255, 255, 0.88);
+  --searchbar-color: #333333;
+
+  /* Variables Ionic que afectan al tab bar y más */
+  --ion-item-background: #ffffff;
+  --ion-tab-bar-background: #ffffff;
+  --ion-tab-bar-border-color: rgba(0, 0, 0, 0.08);
+  --ion-toolbar-background: #ffffff;
+  --ion-card-background: #ffffff;
+}
+
+/* -------------------------------------------
+   MODO OSCURO  —  activado SOLO por body.dark
+   (sin @media para no interferir con el toggle)
+   ------------------------------------------- */
+body.dark {
+  /* Fondos */
+  --ion-background-color: #111111;
+  --ion-background-color-rgb: 17, 17, 17;
+  --ion-text-color: #f0f0f0;
+  --ion-text-color-rgb: 240, 240, 240;
+
+  /* Tarjetas */
+  --card-background: #1e1e1e;
+  --card-background-alt: #282828;
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: rgba(0, 0, 0, 0.5);
+
+  /* Textos */
+  --text-primary: #f0f0f0;
+  --text-secondary: #aaaaaa;
+  --text-muted: #777777;
+
+  /* Inputs */
+  --input-background: #252525;
+  --input-border: #3a3a3a;
+
+  /* Buscador sobre la barra roja en dark */
+  --searchbar-bg: rgba(0, 0, 0, 0.30);
+  --searchbar-color: #ffffff;
+
+  /* Variables Ionic — tab bar y demás */
+  --ion-item-background: #1e1e1e;
+  --ion-tab-bar-background: #1a1a1a;
+  --ion-tab-bar-border-color: rgba(255, 255, 255, 0.08);
+  --ion-toolbar-background: #111111;
+  --ion-card-background: #1e1e1e;
 }

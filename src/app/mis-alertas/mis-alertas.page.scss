@@ -1,27 +1,27 @@
 ion-content {
-  --background: #ffffff;
+  --background: var(--ion-background-color);
 }
 
 ion-header ion-toolbar {
-  --background: #ffffff !important;
-  --color: #000000 !important;
+  --background: var(--ion-background-color);
+  --color: var(--text-primary);
 }
 
 ion-title {
   font-weight: 800;
-  color: #000000 !important;
+  color: var(--text-primary);
 }
 
 .custom-segment {
   margin-top: 10px;
-  background: #ffffff;
+  background: var(--card-background-alt);
   border-radius: 8px;
   padding: 4px;
 
   ion-segment-button {
-    --color: #666666;
-    --color-checked: #e53935;
-    --indicator-color: #ffebee;
+    --color: var(--text-muted);
+    --color-checked: var(--ion-color-primary);
+    --indicator-color: rgba(var(--ion-color-primary-rgb), 0.12);
     font-weight: 700;
   }
 }
@@ -33,24 +33,24 @@ ion-title {
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #000000;
+  color: var(--text-primary);
 
   .empty-icon {
     font-size: 64px;
-    color: #eeeeee;
+    color: var(--text-muted);
     margin-bottom: 16px;
   }
 
   h2 {
     font-size: 18px;
     font-weight: 800;
-    color: #000000;
+    color: var(--text-primary);
     margin-bottom: 8px;
   }
 
   p {
     font-size: 14px;
-    color: #666666;
+    color: var(--text-secondary);
     margin-bottom: 20px;
     font-weight: 500;
   }
@@ -59,10 +59,10 @@ ion-title {
 .alert-card {
   margin-bottom: 12px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  background: #ffffff;
+  box-shadow: 0 4px 12px var(--card-shadow);
+  background: var(--card-background);
   padding: 0;
-  border: 1px solid #eeeeee;
+  border: 1px solid var(--card-border);
 
   .card-row {
     display: flex;
@@ -76,6 +76,7 @@ ion-title {
     height: 70px;
     border-radius: 8px;
     object-fit: cover;
+    background: var(--card-background-alt);
   }
 
   .info {
@@ -88,7 +89,7 @@ ion-title {
       font-size: 14px;
       font-weight: 800;
       margin: 0;
-      color: #000000;
+      color: var(--text-primary);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       line-clamp: 2;
@@ -104,12 +105,12 @@ ion-title {
       .new-price {
         font-weight: 800;
         font-size: 16px;
-        color: #e53935;
+        color: var(--ion-color-primary);
       }
 
       .old-price {
         text-decoration: line-through;
-        color: #666666;
+        color: var(--text-muted);
         font-size: 12px;
       }
     }
@@ -119,7 +120,7 @@ ion-title {
     align-self: flex-start;
     font-size: 10px;
     padding: 4px 8px;
-    --background: #e53935;
+    --background: var(--ion-color-primary);
     font-weight: 700;
   }
 
@@ -133,7 +134,7 @@ ion-title {
 .section-hint {
   padding: 0 8px;
   font-size: 13px;
-  color: #000000;
+  color: var(--text-primary);
   font-weight: 800;
   margin-top: 0;
   margin-bottom: 12px;
@@ -142,9 +143,9 @@ ion-title {
 .coupon-card {
   margin-bottom: 12px;
   border-radius: 12px;
-  border: 2px dashed #e53935;
+  border: 2px dashed var(--ion-color-primary);
   box-shadow: none;
-  background: #ffffff;
+  background: var(--card-background);
 
   .coupon-content {
     display: flex;
@@ -155,7 +156,7 @@ ion-title {
 
   .left-side ion-icon {
     font-size: 32px;
-    color: #e53935;
+    color: var(--ion-color-primary);
   }
 
   .center-side {
@@ -165,19 +166,19 @@ ion-title {
       margin: 0;
       font-weight: 800;
       font-size: 18px;
-      color: #000000;
+      color: var(--text-primary);
       letter-spacing: 1px;
     }
 
     p {
       margin: 4px 0;
       font-size: 13px;
-      color: #000000;
+      color: var(--text-primary);
       font-weight: 600;
     }
 
     small {
-      color: #666666;
+      color: var(--text-muted);
       font-size: 11px;
       font-weight: 700;
     }

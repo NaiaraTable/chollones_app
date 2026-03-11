@@ -1,51 +1,53 @@
+ion-content {
+  --background: var(--ion-background-color);
+}
+
 .header-red ion-toolbar {
   --background: var(--ion-color-primary);
   --color: white;
 }
 
 /* Texto superior */
-
 .top-info {
   margin-bottom: 10px;
 
   h2 {
     font-size: 18px;
     font-weight: 700;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 4px;
   }
 
   p {
     font-size: 14px;
-    color: #666;
+    color: var(--text-secondary);
   }
 }
 
-/* contador */
-
+/* Contador de selección */
 .counter {
   font-size: 13px;
-  color: #777;
+  color: var(--text-muted);
   margin-bottom: 12px;
   padding-left: 4px;
 }
 
-/* GRID CATEGORIAS */
-
+/* Grid de categorías */
 .categorias-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
-/* CARD */
-
+/* Tarjeta de categoría */
 .categoria-card {
   border-radius: 12px;
   margin: 0;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: var(--card-background);
+  box-shadow: 0 4px 12px var(--card-shadow);
+  border: 1px solid var(--card-border);
   transition: 0.2s ease;
+  --background: var(--card-background);
 
   .card-content {
     display: flex;
@@ -55,7 +57,7 @@
   }
 
   .icon-wrapper {
-    background: #f1f2f6;
+    background: var(--card-background-alt);
     border-radius: 10px;
     padding: 10px;
 
@@ -72,7 +74,7 @@
       font-size: 14px;
       font-weight: 600;
       margin: 0;
-      color: #333;
+      color: var(--text-primary);
     }
   }
 
@@ -82,15 +84,14 @@
   }
 }
 
-/* CARD SELECCIONADA */
-
+/* Tarjeta seleccionada */
 .categoria-card.selected {
   border: 2px solid var(--ion-color-primary);
-  background: #fff7f7;
+  background: rgba(var(--ion-color-primary-rgb), 0.07);
+  --background: rgba(var(--ion-color-primary-rgb), 0.07);
 }
 
-/* GUARDAR */
-
+/* Área de guardado */
 .save-area {
   margin-top: 20px;
 
@@ -103,6 +104,6 @@
     font-size: 12px;
     text-align: center;
     margin-top: 8px;
-    color: #888;
+    color: var(--text-muted);
   }
 }

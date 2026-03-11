@@ -1,538 +1,125 @@
 /*
- * App Global CSS
- * ----------------------------------------------------------------------------
+ * App Global CSS - Chollones
+ * -------------------------------------------------------
+ * IMPORTANTE: El modo oscuro se controla EXCLUSIVAMENTE
+ * mediante la clase body.dark (gestionada por app.component.ts).
+ * NO usar @media(prefers-color-scheme:dark) aquí para evitar
+ * conflictos con el botón de toggle.
+ * -------------------------------------------------------
  */
 
-/* Core CSS required for Ionic components to work properly */
+/* Core Ionic */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/* Dark mode */
+/* Paleta dark de Ionic (necesaria para que Ionic ajuste sus propios tonos) */
 @import "@ionic/angular/css/palettes/dark.class.css";
 
-/* =========================
-   CHOLLONES - Tema Global
-   ========================= */
+/* ==============================================
+   ESTILOS GLOBALES DE LA APP
+   ============================================== */
 
-/* Fondo general + scroll estable */
 ion-content {
-  --background: var(--ion-background-color, #f4f5f8);
-  --overflow: auto;
+  --background: var(--ion-background-color);
   --padding-bottom: calc(72px + env(safe-area-inset-bottom));
-  /* Esta es la clave. Forzamos a Ionic a recibir eventos en el centro de la pantalla */
-  pointer-events: auto !important;
-  touch-action: auto !important;
 }
 
-ion-router-outlet {
-  pointer-events: auto !important;
-}
-
-/* Header rojo en toda la app */
-.header-red ion-toolbar {
-  --background: var(--ion-color-primary);
-  --color: #fff;
-}
-
-.header-red ion-icon {
-  color: #fff;
-}
-
-
-/* Iconos en header blancos */
-ion-header ion-icon,
-ion-toolbar ion-icon {
-  color: #fff;
-}
-
-/* Searchbar estilo web */
-ion-searchbar {
-  --border-radius: 999px;
-  --background: rgba(255, 255, 255, 0.92);
-  --color: #111;
-  --placeholder-color: #666;
-  --icon-color: #666;
-}
-
-/* Botones verde menta */
-ion-button.btn-verde {
-  --background: var(--ion-color-secondary);
-  --color: #fff;
-  font-weight: 800;
-  --border-radius: 12px;
-}
-
-/* Links tipo web */
-a.link {
-  color: #111;
-  text-decoration: underline;
-  font-weight: 600;
-}
-
-/* Tab bar siempre clicable */
+/* El tab bar hereda la variable --ion-tab-bar-background que definimos en :root y body.dark */
 ion-tab-bar {
-  z-index: 9999 !important;
-  pointer-events: auto !important;
+  background: var(--ion-tab-bar-background) !important;
+  --background: var(--ion-tab-bar-background) !important;
+  border-top: 1px solid var(--ion-tab-bar-border-color) !important;
 }
 
-/* Scrollbars (web) */
-::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+ion-tab-button {
+  --background: var(--ion-tab-bar-background) !important;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+/* Buscador global en la cabecera roja */
+ion-searchbar.top-search {
+  --background: var(--searchbar-bg) !important;
+  --color: var(--searchbar-color) !important;
+  --placeholder-color: var(--searchbar-color) !important;
+  --icon-color: var(--searchbar-color) !important;
+  --box-shadow: none;
 }
 
-@import "leaflet/dist/leaflet.css";
-
-//Un pequeño fix para que el contenedor del mapa ocupe toda la pantalla
-#map {
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-  /* Bajo, para que no tape menús */
+/* Textos heredan color del body */
+body {
+  color: var(--text-primary);
+  background-color: var(--ion-background-color);
 }
 
-
-//ANIMACION CHOLOLO
-.contenedor-mascota {
-  position: fixed;
-  bottom: 85px;
-  right: -80px; // Empezamos con el mono escondido a la derecha
-  z-index: 9999;
-  width: 100px !important;
-  pointer-events: none !important;
-  /* Esto obliga a que el contenedor del mono no bloquee los clics al mapa */
-  display: flex;
-  justify-content: flex-end;
-
-  .monito-animado {
-    width: 70%;
-    // Animación de 20 segundos para que no sea repetitiva
-    animation: cicloMascota 20s ease-in-out infinite;
-    transform-origin: bottom right;
-  }
-}
-
+/* ==============================================
+   ANIMACIÓN MASCOTA
+   ============================================== */
 @keyframes cicloMascota {
 
-  // 0% a 70%: El mono está totalmente escondido
   0%,
   70% {
     transform: translateX(0) rotate(0);
   }
 
-  // 72%: Se asoma un poquito (curiosidad)
-  72% {
-    transform: translateX(-40px) rotate(-10deg);
-  }
-
-  // 77%: Se vuelve a esconder un poco
-  77% {
-    transform: translateX(-40px) rotate(-10deg);
-  }
-
-  // 80%: Sale del todo para saludar
   80% {
     transform: translateX(-90px) rotate(-5deg);
   }
 
-  // 82%, 86%: Movimiento de saludo (arriba y abajo)
-  82%,
-  86% {
-    transform: translateX(-90px) rotate(10deg);
-  }
-
-  84%,
-  88% {
-    transform: translateX(-90px) rotate(-10deg);
-  }
-
-  // 92%: Se queda mirando un momento
   92% {
     transform: translateX(-90px) rotate(0) scale(1.1);
   }
 
-  // 100%: Se retira rápidamente
   100% {
     transform: translateX(0) rotate(0);
   }
 }
 
+.contenedor-mascota {
+  position: fixed;
+  bottom: 85px;
+  right: -80px;
+  z-index: 999999;
+  width: 100px !important;
+  pointer-events: none !important;
+  display: flex;
+  justify-content: flex-end;
 
-/* Toast del carrito: Burbuja pequeña y elegante */
-.toast-carrito {
-  // 1. Elevamos el aviso para que no lo tape nada
-  --z-index: 99999 !important;
-
-  // 2. Posicionamiento: lo bajamos para no tapar los iconos superiores
-  // Ajustamos el '90px' si necesitamos que baje más o menos
-  margin-top: calc(var(--ion-safe-area-top, 0px) + 90px) !important;
+  .monito-animado {
+    width: 70%;
+    animation: cicloMascota 20s ease-in-out infinite;
+    transform-origin: bottom right;
+  }
 }
 
-/* 1. Hacemos que el fondo negro sea totalmente transparente */
-.toast-carrito {
-  --background: transparent !important;
-  --box-shadow: none !important;
-
-  /* Bajamos el aviso para que no tape los iconos rojos */
-  margin-top: calc(var(--ion-safe-area-top, 0px) + 90px) !important;
-}
-
-/* 2. Estilizamos solo la cápsula blanca central */
+/* ==============================================
+   TOAST DEL CARRITO
+   ============================================== */
 .toast-carrito::part(container) {
-  background: #ffffff !important;
-  border: 1.5px solid #40c9a2 !important;
+  background: var(--card-background) !important;
+  border: 1.5px solid var(--ion-color-secondary) !important;
   border-radius: 30px !important;
-
-  /* Forzamos que la cápsula sea pequeña y centrada */
-  width: fit-content !important;
-  min-width: 150px !important;
-  max-width: 80% !important;
-  margin: 0 auto !important;
-
-  /* Sombra para que flote sobre el contenido */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
-  padding: 8px 16px !important;
+  box-shadow: 0 4px 15px var(--card-shadow) !important;
 }
 
-/* 3. El texto */
 .toast-carrito::part(message) {
-  color: #40c9a2 !important;
-  text-align: center !important;
-  font-weight: 600 !important;
-  opacity: 1 !important;
-}
-
-/* =========================================
-   ESTILOS ORIGINALES DE BOTONES DE JUEGOS
-   ========================================= */
-
-.btn-pill {
-  background-color: #ff6b6b;
-  /* Rojo Pastel */
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 15px 40px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-  transition: transform 0.1s, box-shadow 0.2s, background 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.btn-pill:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
-}
-
-.btn-pill:active {
-  transform: scale(0.95);
-}
-
-/* Tarjetas */
-.card {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-/* Glassmorphism Title */
-.glass-title {
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--primary);
-  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-/* ─── MODO OSCURO ───────────────────────────────────────────────
-   Añade este bloque al final de tu global.scss o variables.scss
-   ────────────────────────────────────────────────────────────── */
-
-body.dark {
-  --ion-background-color: #121212;
-  --ion-background-color-rgb: 18, 18, 18;
-
-  --ion-text-color: #ffffff;
-  --ion-text-color-rgb: 255, 255, 255;
-
-  --ion-color-step-50: #1e1e1e;
-  --ion-color-step-100: #2a2a2a;
-  --ion-color-step-150: #363636;
-  --ion-color-step-200: #414141;
-  --ion-color-step-250: #4d4d4d;
-  --ion-color-step-300: #595959;
-  --ion-color-step-350: #656565;
-  --ion-color-step-400: #717171;
-  --ion-color-step-450: #7d7d7d;
-  --ion-color-step-500: #898989;
-  --ion-color-step-550: #949494;
-  --ion-color-step-600: #a0a0a0;
-  --ion-color-step-650: #acacac;
-  --ion-color-step-700: #b8b8b8;
-  --ion-color-step-750: #c4c4c4;
-  --ion-color-step-800: #d0d0d0;
-  --ion-color-step-850: #dbdbdb;
-  --ion-color-step-900: #e7e7e7;
-  --ion-color-step-950: #f3f3f3;
-
-  --ion-item-background: #1e1e1e;
-  --ion-toolbar-background: var(--ion-color-primary);
-  --ion-tab-bar-background: #1e1e1e;
-  --ion-card-background: #1e1e1e;
-}
-
-/* ─── OVERRIDES MODO OSCURO ─── */
-body.dark ion-content {
-  --background: #121212;
-}
-
-body.dark .profile-header {
-  background: #1e1e1e !important;
-}
-
-body.dark ion-list {
-  background: #1e1e1e !important;
-}
-body.dark ion-page {
-  background: #121212;
-  color: #ffffff;
-}
-
-body.dark ion-header ion-toolbar {
-  --background: var(--ion-color-primary);
-}
-
-body.dark ion-item {
-  --background: #1e1e1e;
-  --color: #ffffff;
-  --border-color: #2a2a2a;
-}
-
-body.dark ion-label {
-  color: #ffffff !important;
-}
-
-body.dark ion-note {
-  color: #aaaaaa !important;
-}
-
-body.dark ion-card {
-  --background: #1e1e1e;
-  color: #ffffff;
-}
-
-body.dark ion-card-title,
-body.dark ion-card-subtitle {
-  color: #ffffff !important;
-}
-
-body.dark ion-searchbar {
-  --background: #2a2a2a !important;
-  --color: #ffffff !important;
-  --placeholder-color: #aaaaaa !important;
-  --icon-color: #aaaaaa !important;
-}
-
-body.dark ion-tab-bar {
-  --background: #1e1e1e;
-  --color: #aaaaaa;
-  --color-selected: var(--ion-color-primary);
-  border-top: 1px solid #2a2a2a;
-}
-
-body.dark ion-segment {
-  --background: #2a2a2a;
-}
-
-body.dark ion-segment-button {
-  --color: #aaaaaa;
-  --color-checked: #ffffff;
-}
-
-body.dark ion-chip {
-  --background: #2a2a2a;
-  --color: #ffffff;
-}
-
-body.dark ion-badge {
-  --background: var(--ion-color-primary);
-  --color: #ffffff;
-}
-
-body.dark ion-input {
-  --background: #2a2a2a;
-  --color: #ffffff;
-  --placeholder-color: #aaaaaa;
-}
-
-body.dark ion-textarea {
-  --background: #2a2a2a;
-  --color: #ffffff;
-  --placeholder-color: #aaaaaa;
-}
-
-body.dark ion-select {
-  --background: #2a2a2a;
-  color: #ffffff;
-}
-
-body.dark ion-refresher {
-  --background: #121212;
-}
-
-body.dark h1,
-body.dark h2,
-body.dark h3,
-body.dark h4,
-body.dark h5,
-body.dark h6,
-body.dark p,
-body.dark span {
-  color: inherit;
-}
-
-body.dark .card {
-  background: #1e1e1e !important;
-  color: #ffffff;
-}
-
-/* ─── OVERRIDES MODO OSCURO - TAB1 ─── */
-body.dark .section-title h3 {
-  color: #ffffff !important;
-}
-
-body.dark .link {
-  color: #cccccc !important;
-}
-
-body.dark .quick-text {
-  color: #ffffff !important;
-}
-
-body.dark .quick-cta {
-  color: #aaaaaa !important;
-}
-
-body.dark .product-card {
-  background: #1e1e1e !important;
-  border-color: #2a2a2a !important;
-}
-
-body.dark .product-title {
-  color: #ffffff !important;
-}
-
-body.dark .product-cat {
-  color: #aaaaaa !important;
-}
-
-body.dark .product-prov {
-  color: #aaaaaa !important;
-}
-
-body.dark .p-old {
-  color: #aaaaaa !important;
-}
-
-body.dark .product-img {
-  background: #2a2a2a !important;
-}
-
-body.dark .cat-item {
-  background: #1e1e1e !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
-}
-
-body.dark .cat-item div {
-  color: #ffffff !important;
-}
-
-/* ─── OVERRIDES MODO OSCURO - TAB4 ─── */
-body.dark .filters-container {
-  background: #1e1e1e !important;
-  border-bottom-color: #2a2a2a !important;
-}
-
-body.dark .category-pill {
-  background: #2a2a2a !important;
-  color: #aaaaaa !important;
-}
-
-body.dark .category-pill.active {
-  background: var(--ion-color-primary) !important;
-  color: #ffffff !important;
-}
-
-body.dark .quick-filter-chip {
-  background: #1e1e1e !important;
-  border-color: #3a3a3a !important;
-  color: #cccccc !important;
-}
-
-body.dark .quick-filter-chip.active {
-  background: #1a3a2e !important;
-  border-color: var(--ion-color-secondary) !important;
   color: var(--ion-color-secondary) !important;
+  font-weight: 600 !important;
 }
 
-body.dark .chollo-item {
-  --background: #1e1e1e !important;
-  border-bottom-color: #2a2a2a !important;
-}
+/* ==============================================
+   LEAFLET (MAPA)
+   ============================================== */
+@import "leaflet/dist/leaflet.css";
 
-body.dark .chollo-item h2 {
-  color: #ffffff !important;
-}
-
-body.dark .description-text {
-  color: #aaaaaa !important;
-}
-
-body.dark .current-price {
-  color: #ffffff !important;
-}
-
-body.dark .old-price {
-  color: #888888 !important;
-}
-
-body.dark ion-searchbar {
-  --background: #2a2a2a !important;
-  --color: #ffffff !important;
-  --placeholder-color: #aaaaaa !important;
-  --icon-color: #aaaaaa !important;
-}
-
-body.dark .ver-todos-container {
-  background: #121212;
-}
-
-/* ─── OVERRIDES MODO OSCURO - TAB5 PERFIL ─── */
-body.dark .profile-header h2 {
-  color: #ffffff !important;
-}
-
-body.dark .profile-header p {
-  color: #aaaaaa !important;
+#map {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
 }

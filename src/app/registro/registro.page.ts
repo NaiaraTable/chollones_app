@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent, IonItem, IonLabel, IonInput, IonButton,
-  IonButtons, IonBackButton
+  IonButtons, IonBackButton, IonHeader, IonToolbar, IonTitle
 } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
@@ -17,7 +17,7 @@ import { ApiService } from '../services/api.service';
   imports: [
     CommonModule, FormsModule, IonContent,
     IonItem, IonLabel, IonInput, IonButton,
-    IonButtons, IonBackButton
+    IonButtons, IonBackButton, IonHeader, IonToolbar, IonTitle
   ]
 })
 export class RegistroPage {

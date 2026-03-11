@@ -1,7 +1,7 @@
 .profile-header {
   text-align: center;
   padding: 30px 20px;
-  background: white;
+  background: var(--card-background);
   margin-bottom: 10px;
 
   ion-avatar {
@@ -14,18 +14,18 @@
   h2 {
     font-weight: 800;
     margin-bottom: 4px;
-    color: #1a1a1b;
+    color: var(--text-primary);
   }
 
   p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
     margin: 0;
   }
 }
 
 ion-list {
-  background: white;
+  background: var(--card-background);
   padding: 0;
 }
 
@@ -60,18 +60,18 @@ ion-item {
   h2 {
     font-weight: 900;
     margin-bottom: 10px;
-    color: #1a1a1b;
+    color: var(--text-primary);
   }
 
   p {
-    color: #666;
+    color: var(--text-secondary);
     max-width: 280px;
     line-height: 1.4;
     margin: 10px auto;
   }
 
   .btn-verde {
-    --background: #40c9a2;
+    --background: var(--ion-color-secondary);
     --color: white;
     font-weight: 800;
     margin-top: 20px;

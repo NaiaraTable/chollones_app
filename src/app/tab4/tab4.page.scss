@@ -1,6 +1,6 @@
 // Contenedor principal
 ion-content {
-  --background: #ffffff;
+  --background: var(--ion-background-color);
 }
 
 // Estilo de la lista más apretado
@@ -12,9 +12,9 @@ ion-list {
 // Tarjeta de cada chollo más compacta
 /* Contenedor principal de filtros */
 .filters-container {
-  background: white;
+  background: var(--card-background);
   padding: 10px 0 14px;
-  border-bottom: 1px solid #efefef;
+  border-bottom: 1px solid var(--card-border);
 }
 
 /* Scroll lateral Categorías */
@@ -34,8 +34,8 @@ ion-list {
   white-space: nowrap;
   padding: 8px 18px;
   border-radius: 20px;
-  background: #f4f5f8;
-  color: #666;
+  background: var(--card-background-alt);
+  color: var(--text-secondary);
   font-weight: 700;
   font-size: 14px;
   transition: all 0.2s ease;
@@ -63,16 +63,16 @@ ion-list {
   white-space: nowrap;
   padding: 10px 14px;
   border-radius: 12px;
-  border: 1.5px solid #e0e0e0;
-  background: white;
-  color: #444;
+  border: 1.5px solid var(--card-border);
+  background: var(--card-background);
+  color: var(--text-secondary);
   font-weight: 700;
   font-size: 13px;
   transition: all 0.2s ease;
 
   &.active {
     border-color: var(--ion-color-secondary);
-    background: #eafff8;
+    background: rgba(64, 201, 162, 0.12);
     color: var(--ion-color-secondary);
   }
 }
@@ -80,10 +80,10 @@ ion-list {
 .chollo-item {
   --padding-start: 0;
   --inner-padding-end: 0;
-  --background: #ffffff;
+  --background: var(--card-background);
   --min-height: 90px; // Altura mínima controlada
   margin-bottom: 8px; // Reducido de 16px
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid var(--card-border);
 
   ion-thumbnail {
 
@@ -112,7 +112,7 @@ ion-list {
 
     h2 {
       font-weight: 700;
-      color: #1a1a1b;
+      color: var(--text-primary);
       font-size: 0.95rem; // Reducido de 1.1rem
       white-space: normal;
       margin-bottom: 4px;
@@ -141,7 +141,7 @@ ion-list {
     // Descripción más discreta
     .description-text {
       font-size: 0.75rem;
-      color: #5f6368;
+      color: var(--text-secondary);
       margin: 0;
       line-height: 1.2;
       display: block;
@@ -172,7 +172,7 @@ ion-list {
       .current-price {
         font-size: 1.25rem; // Reducido de 1.6rem
         font-weight: 800;
-        color: #1a1a1b;
+        color: var(--text-primary);
       }
 
       .savings-container {
@@ -183,13 +183,13 @@ ion-list {
         .old-price {
           font-size: 0.85rem; // Reducido de 1rem
           text-decoration: line-through;
-          color: #70757a;
+          color: var(--text-muted);
           font-weight: 400;
         }
 
         .savings-amount {
-          font-size: 0.85rem; // Reducido de 1rem
-          color: #d93025; // Rojo ahorro
+          font-size: 0.85rem;
+          color: var(--ion-color-primary);
           font-weight: 600;
         }
       }
@@ -201,9 +201,9 @@ ion-list {
     position: absolute;
     top: 8px;
     right: 8px;
-    --background: #d93025;
+    --background: var(--ion-color-primary);
     font-weight: 700;
-    font-size: 0.65rem; // Más pequeño
+    font-size: 0.65rem;
     padding: 3px 6px;
     border-radius: 4px;
   }
@@ -213,7 +213,7 @@ ion-list {
 ion-searchbar {
   --border-radius: 8px;
   --box-shadow: none;
-  --background: #f1f3f4;
+  --background: var(--input-background);
   --height: 36px; // Altura del buscador reducida
   padding: 4px 12px;
 }
@@ -251,8 +251,8 @@ ion-searchbar {
   }
 
   /* ESTILO PARA EL CORAZÓN EN LA LISTA  */
-.fav-icon {
-    width: 30px;   // Misma altura que los botones de Ionic
+  .fav-icon {
+    width: 30px; // Misma altura que los botones de Ionic
     height: 30px;
     min-width: 30px;
     background: var(--ion-color-primary) !important;
@@ -261,18 +261,18 @@ ion-searchbar {
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #eee;
+    border: 1px solid var(--card-border);
     cursor: pointer;
     transition: transform 0.1s ease;
 
     ion-icon {
       font-size: 18px;
-      color:white !important;
+      color: white !important;
     }
 
     &.active {
       ion-icon {
-        color: black !important;;
+        color: #ffeb3b !important;
       }
     }
 

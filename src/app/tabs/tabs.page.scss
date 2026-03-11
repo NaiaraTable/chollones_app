@@ -1,8 +1,9 @@
+/* Cabecera principal — fondo siempre rojo de marca */
 .main-header ion-toolbar {
-  --background: #ff4d4f;
-  /* rojo */
+  --background: var(--ion-color-primary);
   --color: #ffffff;
-  /* texto blanco */
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
 .header-logo {
@@ -11,53 +12,42 @@
   margin-left: 10px;
   object-fit: contain;
 }
+
+/* Tab bar — usa variables definidas en :root y body.dark */
 ion-tab-bar {
-  --background: #ffffff !important;
-  background: #ffffff !important;
-  --color: #666666 !important;
-  --color-selected: #e53935 !important;
-  border-top: 1px solid #eeeeee !important;
+  --background: var(--ion-tab-bar-background) !important;
+  background: var(--ion-tab-bar-background) !important;
+  --color: var(--text-muted) !important;
+  --color-selected: var(--ion-color-primary) !important;
+  border-top: 1px solid var(--ion-tab-bar-border-color) !important;
 }
 
 ion-tab-button {
-  --background: #ffffff !important;
-  background: #ffffff !important;
+  --background: var(--ion-tab-bar-background) !important;
+  background: var(--ion-tab-bar-background) !important;
 }
+
+/* Buscador dentro de la barra roja */
 .top-search {
   flex: 1;
-  /* ocupa el espacio restante */
   max-width: 520px;
   width: 100%;
   margin: 10px 1px 0 1px;
-  --background: #ffffff;
-  --color: #797979;
-  --placeholder-color: #797979;
-  --icon-color: #797979;
-  --clear-button-color: #797979;
+  --background: var(--searchbar-bg);
+  --color: var(--searchbar-color);
+  --placeholder-color: var(--searchbar-color);
+  --icon-color: var(--searchbar-color);
+  --clear-button-color: var(--searchbar-color);
   border-radius: 12px;
 }
 
+/* Iconos de acciones (siempre blancos sobre fondo rojo) */
 .top-actions ion-button {
   --color: #ffffff;
-  /* iconos blancos */
 }
 
 .top-actions ion-icon {
   font-size: 30px;
-}
-
-.tabs-root ion-router-outlet {
-  position: relative;
-  z-index: 1;
-}
-
-.tabs-root ion-tab-bar {
-  z-index: 10;
-}
-
-.main-header ion-toolbar {
-  --padding-start: 0;
-  --padding-end: 0;
 }
 
 .toolbar-content {
@@ -65,7 +55,6 @@ ion-tab-button {
   align-items: center;
   width: 100%;
   padding-right: 8px;
-  /* space for buttons */
 }
 
 ion-modal#modal-juegos {
@@ -74,6 +63,6 @@ ion-modal#modal-juegos {
   --max-width: 500px;
   --max-height: 800px;
   --border-radius: 20px;
-  --box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --box-shadow: 0 10px 40px var(--card-shadow);
   --backdrop-opacity: 0.7;
 }
