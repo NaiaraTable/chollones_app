@@ -16,6 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+// Capturar errores y warnings
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Error en el servidor: ' . $errstr]);
+    exit();
+});
+
 require_once __DIR__ . '/config.php';
 
 $db = getDB();
