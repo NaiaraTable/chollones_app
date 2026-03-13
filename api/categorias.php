@@ -3,18 +3,6 @@
 // API DE CATEGORÍAS (Taxonomía product_cat de WooCommerce)
 // ======================================================
 
-// --- CORS HEADERS (PRIMERO - antes de cualquier otra cosa) ---
-header('Access-Control-Allow-Origin: *', true);
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS', true);
-header('Access-Control-Allow-Headers: Content-Type, Authorization', true);
-header('Access-Control-Max-Age: 3600', true);
-header('Content-Type: application/json; charset=utf-8', true);
-
-// Responder inmediatamente a las peticiones OPTIONS (preflight)
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
 
 // Capturar errores
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
