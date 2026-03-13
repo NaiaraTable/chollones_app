@@ -26,6 +26,11 @@
 ion-content {
   --background: var(--ion-background-color);
   --overflow: auto;
+
+  // Permite que los gestos horizontales en filas no interfieran con el scroll vertical del ion-content
+  &::part(scroll) {
+    touch-action: pan-y;
+  }
 }
 
 /* --- BANNER --- */
@@ -190,7 +195,7 @@ ion-content {
   overflow-y: visible;
   padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
+  touch-action: pan-x pan-y;
   scroll-snap-type: x mandatory;
 
   &::-webkit-scrollbar {
@@ -238,7 +243,7 @@ ion-content {
   overflow-y: visible;
   padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
+  touch-action: pan-x pan-y;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
 
