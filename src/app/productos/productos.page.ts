@@ -59,6 +59,31 @@ export class ProductosPage implements OnInit {
   }
 
   async toggleFavorito() {
+    // CORREGIDO: Usamos la clave correcta 'chollones_token'
+    const token = localStorage.getItem('chollones_token');
+
+    if (!token) {
+      const alert = await this.alertController.create({
+        header: '¡Atención!',
+        message: 'Debes iniciar sesión para poder guardar chollos en tus favoritos.',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel'
+          },
+          {
+            text: 'Iniciar Sesión',
+            handler: () => {
+              // Asegúrate de usar navCtrl si es lo que tienes inyectado en este archivo
+              this.navCtrl.navigateForward('/tabs/tab5');
+            }
+          }
+        ]
+      });
+      await alert.present();
+      return;
+    }
+
     try {
       if (this.esFavorito) {
         await this.supabase.eliminarCholloFavorito(this.producto.id);
@@ -67,7 +92,9 @@ export class ProductosPage implements OnInit {
         await this.supabase.guardarCholloFavorito(this.producto.id);
         this.esFavorito = true;
       }
-    } catch (error) { console.error('Error:', error); }
+    } catch (error) {
+      console.error('Error al guardar favorito:', error);
+    }
   }
 
   volverAtras() { this.navCtrl.back(); }

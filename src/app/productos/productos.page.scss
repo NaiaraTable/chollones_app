@@ -4,14 +4,31 @@ ion-content {
 
 .header-image {
   width: 100%;
-  height: 100%;
+  /* Le damos un alto proporcional (35% del alto de la pantalla) o un mínimo fijo */
+  height: 35vh;
+  min-height: 280px;
   position: relative;
   overflow: hidden;
+  /* Fondo suave por si el producto es un PNG transparente */
+  background-color: #f4f5f8;
+
+  /* (OPCIONAL) Añade una sombra/degradado sutil arriba y abajo para resaltar los botones y la etiqueta de descuento */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none; /* Evita que este fondo bloquee los clics en los botones */
+    z-index: 1; /* Por encima de la imagen, por debajo de los botones */
+  }
 
   .header-img-bg {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Garantiza que la imagen llene el espacio sin achatarse ni estirarse */
     object-position: center;
     display: block;
   }
@@ -27,6 +44,7 @@ ion-content {
     font-weight: bold;
     font-size: 1.2rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 2; /* Aseguramos que la etiqueta quede por encima del degradado */
   }
 }
 
