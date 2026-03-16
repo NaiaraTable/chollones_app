@@ -19,6 +19,7 @@ import {
 } from 'ionicons/icons';
 
 import { ApiService } from '../services/api.service';
+import { SupabaseService } from '../services/supabase.service';
 import { FavoritosEvent } from '../services/favoritos-event';
 
 @Component({
@@ -54,7 +55,8 @@ export class Tab1Page implements OnInit {
   favoritosIds: Set<string> = new Set();
 
   constructor(
-    private supabaseService: ApiService,
+    private apiService: ApiService,
+    private supabaseService: SupabaseService,
     private favoritosEvent: FavoritosEvent,
     public router: Router
   ) {
@@ -77,8 +79,8 @@ export class Tab1Page implements OnInit {
   async cargarDatos() {
     try {
       const [res, resTopVentas] = await Promise.all([
-        this.supabaseService.getChollos(),
-        this.supabaseService.getTopVentas()
+        this.apiService.getChollos(),
+        this.apiService.getTopVentas()
       ]);
 
       const mapProduct = (c: any) => ({
@@ -230,30 +232,19 @@ export class Tab1Page implements OnInit {
     const id = chollo.id;
     const isFav = this.isFavorito(id);
 
-    // Optimistic UI update
-    if (isFav) {
-      this.favoritosIds.delete(id);
-    } else {
-      this.favoritosIds.add(id);
-    }
-
     try {
       if (isFav) {
         await this.supabaseService.eliminarCholloFavorito(id);
+        this.favoritosIds.delete(id);
       } else {
         await this.supabaseService.guardarCholloFavorito(id);
+        this.favoritosIds.add(id);
       }
 
       // Notificar a otros componentes
       this.favoritosEvent.notificarCambio();
     } catch (error) {
-      console.error('Error al gestionar favorito (revertiendo):', error);
-      // Revertir cambio si falla
-      if (isFav) {
-        this.favoritosIds.add(id);
-      } else {
-        this.favoritosIds.delete(id);
-      }
+      console.error('Error al gestionar favorito:', error);
     }
   }
 

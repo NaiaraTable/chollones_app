@@ -115,6 +115,11 @@ export class Tab4Page implements OnInit {
     });
   }
 
+  // Recargar favoritos cuando vuelves a este tab
+  async ionViewWillEnter() {
+    await this.cargarFavoritos();
+  }
+
   async cargarChollos() {
     try {
       const chollos = await this.supabaseService.getChollos();

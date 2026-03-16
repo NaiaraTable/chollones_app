@@ -16,6 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+// Capturar errores para asegurar que CORS always se envía
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    error_log("Error: $errstr en $errfile:$errline");
+    http_response_code(500);
+    echo json_encode(['error' => 'Error en el servidor']);
+    exit();
+});
+
 require_once __DIR__ . '/config.php';
 
 $db = getDB();
