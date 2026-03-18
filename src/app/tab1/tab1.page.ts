@@ -34,11 +34,9 @@ import { FavoritosEvent } from '../services/favoritos-event';
   ],
 })
 export class Tab1Page implements OnInit {
-  // Propiedades básicas para la interfaz
   cartCount = 0;
   bannerUrl = 'https://images.unsplash.com/photo-1607083206968-13611e3d76db?q=80&w=1400&auto=format&fit=crop';
 
-  // Listados de datos requeridos por el HTML (Corrige errores Imágenes 5 y 7)
   quickLinks = [
     { id: 'recientes', title: 'Recientes', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600&auto=format&fit=crop', bgColor: 'rgba(255, 244, 204, 0.4)' },
     { id: 'destacados', title: 'Destacados', img: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=600&auto=format&fit=crop', bgColor: 'rgba(226, 226, 226, 0.4)' },
@@ -51,7 +49,6 @@ export class Tab1Page implements OnInit {
   topVentas: any[] = [];
   categorias: any[] = [];
 
-  // Set para trackear IDs de favoritos
   favoritosIds: Set<string> = new Set();
 
   constructor(
@@ -71,7 +68,6 @@ export class Tab1Page implements OnInit {
     await this.cargarFavoritos();
   }
 
-  // Recargar favoritos cuando vuelves a este tab
   async ionViewWillEnter() {
     await this.cargarFavoritos();
   }
@@ -93,7 +89,6 @@ export class Tab1Page implements OnInit {
         nuevo: this.esReciente(c.created_at)
       });
 
-      // Validamos que res no sea nulo y que sea un array (o contenga data como array)
       const dataRaw = Array.isArray(res) ? res : (res as any)?.data;
 
       if (dataRaw && Array.isArray(dataRaw)) {
@@ -102,7 +97,6 @@ export class Tab1Page implements OnInit {
         this.productosPopulares = dataMapeada;
         this.chollosFiltrados = [...dataMapeada];
 
-        // --- Extraer y calcular categorías más populares ---
         const iconosPorNombre: { [key: string]: string } = {
           'Ahorro e Inversión': 'assets/img-categorias/ahorro-inversion.png',
           'Belleza y bienestar': 'assets/img-categorias/belleza-bienestar.png',
@@ -166,15 +160,11 @@ export class Tab1Page implements OnInit {
           });
         });
 
-        // Ordenamos por popularidad (mayor count primero) y cogemos las 8 primeras
         this.categorias = Array.from(catsMap.values())
           .sort((a, b) => b.count - a.count)
           .slice(0, 8);
-
-      } else {
       }
 
-      // Procesar Top Ventas
       const topRaw = Array.isArray(resTopVentas) ? resTopVentas : (resTopVentas as any)?.data;
       if (topRaw && Array.isArray(topRaw)) {
         this.topVentas = topRaw.map(mapProduct);
@@ -187,7 +177,6 @@ export class Tab1Page implements OnInit {
     }
   }
 
-
   async cargarFavoritos() {
     try {
       const ids = await this.supabaseService.getFavoritosIds();
@@ -198,7 +187,6 @@ export class Tab1Page implements OnInit {
     }
   }
 
-  // Función de búsqueda (Corrige error Imagen 6)
   onSearch(ev: any) {
     const q = (ev?.target?.value || '').toLowerCase().trim();
 
@@ -213,20 +201,44 @@ export class Tab1Page implements OnInit {
     });
   }
 
-  // Navegar a la pestaña de guardados
   irAGuardados() {
     this.router.navigate(['/tabs/tab3']);
   }
 
-  // Navegar a una categoría
   irACategoria(slug: string) {
     this.router.navigate(['/tabs', 'categoria', slug]);
   }
 
-  // Métodos para gestión de favoritos
   async toggleFavorito(chollo: any, event?: Event) {
     if (event) {
       event.stopPropagation();
+    }
+
+    // ¡AQUÍ ESTÁ LA MAGIA CORREGIDA!
+    const token = localStorage.getItem('chollones_token');
+
+    if (!token) {
+      import('@ionic/angular/standalone').then(async ({ AlertController }) => {
+        const alertCtrl = new AlertController();
+        const alert = await alertCtrl.create({
+          header: '¡Atención!',
+          message: 'Debes iniciar sesión para poder guardar chollos en tus favoritos.',
+          buttons: [
+            {
+              text: 'Cancelar',
+              role: 'cancel'
+            },
+            {
+              text: 'Iniciar Sesión',
+              handler: () => {
+                this.router.navigate(['/tabs/tab5']);
+              }
+            }
+          ]
+        });
+        await alert.present();
+      });
+      return;
     }
 
     const id = chollo.id;
@@ -241,7 +253,6 @@ export class Tab1Page implements OnInit {
         this.favoritosIds.add(id);
       }
 
-      // Notificar a otros componentes
       this.favoritosEvent.notificarCambio();
     } catch (error) {
       console.error('Error al gestionar favorito:', error);
@@ -252,21 +263,19 @@ export class Tab1Page implements OnInit {
     return this.favoritosIds.has(cholloId);
   }
 
-  // Utilidades requeridas por el HTML
   esReciente(fecha: string): boolean {
     if (!fecha) return false;
     const horas = (new Date().getTime() - new Date(fecha).getTime()) / (1000 * 60 * 60);
     return horas < 24;
   }
 
-  // Ajustado para recibir el objeto chollo completo (Corrige error Imagen 7)
   calcDescuento(c: any): number {
     const actual = Number(c?.precio_actual || 0);
     const original = Number(c?.precio_original || 0);
     if (!actual || !original || original <= actual) return 0;
     return Math.round(((original - actual) / original) * 100);
   }
-  // ✅ Abrir página de producto (detalle)
+
   irAProducto(chollo: any) {
     const id = chollo?.id;
     if (!id) return;
@@ -274,12 +283,10 @@ export class Tab1Page implements OnInit {
     this.router.navigate(['/tabs', 'producto', id]);
   }
 
-  // ✅ Lógica real del carrito
   async anadirAlCarrito(item: any) {
     try {
       await this.supabaseService.anadirAlCarrito(item.id, 1);
 
-      // Mostrar feedback visual
       import('@ionic/angular/standalone').then(async ({ ToastController }) => {
         const toastCtrl = new ToastController();
         const toast = await toastCtrl.create({
@@ -306,12 +313,10 @@ export class Tab1Page implements OnInit {
     }
   }
 
-  // ✅ Si quieres descuento también en "productosPopulares"
   calcDescuentoPopular(p: any): number {
     const actual = Number(p?.precioActual || 0);
     const original = Number(p?.precioOriginal || 0);
     if (!actual || !original || original <= actual) return 0;
     return Math.round(((original - actual) / original) * 100);
   }
-
 }
