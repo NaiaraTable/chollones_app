@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent, IonItem, IonLabel, IonInput, IonButton,
-  IonButtons, IonBackButton, IonHeader, IonToolbar, IonTitle
+  IonButtons, IonBackButton, IonHeader, IonToolbar, IonTitle,
+  IonText, IonIcon
 } from '@ionic/angular/standalone';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
+import { addIcons } from 'ionicons';
+import { checkmarkCircle, closeCircle } from 'ionicons/icons';
 
 @Component({
   selector: 'app-registro',
@@ -17,24 +20,75 @@ import { ApiService } from '../services/api.service';
   imports: [
     CommonModule, FormsModule, IonContent,
     IonItem, IonLabel, IonInput, IonButton,
-    IonButtons, IonBackButton, IonHeader, IonToolbar, IonTitle
+    IonButtons, IonBackButton, IonHeader, IonToolbar, IonTitle,
+    IonText, IonIcon
   ]
 })
 export class RegistroPage {
-  email = '';
+  email    = '';
   password = '';
-  nombre = '';
+  nombre   = '';
 
   constructor(
     private supabase: ApiService,
     private router: Router,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController
-  ) { }
+  ) {
+    addIcons({ checkmarkCircle, closeCircle });
+  }
+
+  // --- Getters de validación en tiempo real ---
+
+  get tieneArroba(): boolean {
+    return this.email.includes('@') && this.email.includes('.');
+  }
+
+  get tieneMinCaracteres(): boolean {
+    return this.password.length >= 8;
+  }
+
+  get tieneMayuscula(): boolean {
+    return /[A-Z]/.test(this.password);
+  }
+
+  get tieneNumero(): boolean {
+    return /[0-9]/.test(this.password);
+  }
+
+  get passwordValida(): boolean {
+    return this.tieneMinCaracteres && this.tieneMayuscula && this.tieneNumero;
+  }
+
+  get formularioValido(): boolean {
+    return !!this.nombre.trim() && this.tieneArroba && this.passwordValida;
+  }
+
+  // --- Registro ---
 
   async registrarse() {
-    if (!this.email || !this.password || !this.nombre) {
-      this.mostrarAlerta('Campos vacíos', 'Por favor, rellena todos los datos.');
+    if (!this.nombre.trim()) {
+      this.mostrarAlerta('Nombre requerido', 'Por favor, introduce tu nombre completo.');
+      return;
+    }
+
+    if (!this.tieneArroba) {
+      this.mostrarAlerta('Email inválido', 'El email debe contener @ y un dominio válido (ej: correo@gmail.com).');
+      return;
+    }
+
+    if (!this.tieneMinCaracteres) {
+      this.mostrarAlerta('Contraseña corta', 'La contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+
+    if (!this.tieneMayuscula) {
+      this.mostrarAlerta('Contraseña débil', 'La contraseña debe contener al menos una letra mayúscula.');
+      return;
+    }
+
+    if (!this.tieneNumero) {
+      this.mostrarAlerta('Contraseña débil', 'La contraseña debe contener al menos un número.');
       return;
     }
 
@@ -48,7 +102,7 @@ export class RegistroPage {
       if (res && res.error) {
         this.mostrarAlerta('Error', res.error.message);
       } else {
-        this.mostrarAlerta('¡Éxito!', 'Cuenta creada. Ahora puedes loguearte.');
+        this.mostrarAlerta('¡Éxito!', 'Cuenta creada. Ahora puedes iniciar sesión.');
         this.router.navigateByUrl('/tabs/login');
       }
     } catch (err) {

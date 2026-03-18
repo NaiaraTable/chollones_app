@@ -11,23 +11,55 @@
   <div class="registro-container">
     <p>Únete a la comunidad de Chollones.</p>
 
+    <!-- Nombre -->
     <ion-item lines="none" class="custom-input">
       <ion-label position="stacked">Nombre Completo</ion-label>
       <ion-input [(ngModel)]="nombre" type="text" placeholder="Tu nombre"></ion-input>
     </ion-item>
 
+    <!-- Email -->
     <ion-item lines="none" class="custom-input">
       <ion-label position="stacked">Email</ion-label>
       <ion-input [(ngModel)]="email" type="email" placeholder="email@ejemplo.com"></ion-input>
     </ion-item>
 
+    <!-- Requisito email -->
+    <div class="requisitos-box" *ngIf="email.length > 0">
+      <div class="requisito" [class.ok]="tieneArroba" [class.fail]="!tieneArroba">
+        <ion-icon [name]="tieneArroba ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+        <span>Email válido con @ y dominio</span>
+      </div>
+    </div>
+
+    <!-- Contraseña -->
     <ion-item lines="none" class="custom-input">
       <ion-label position="stacked">Contraseña</ion-label>
-      <ion-input [(ngModel)]="password" type="password" placeholder="Mínimo 6 caracteres"></ion-input>
+      <ion-input [(ngModel)]="password" type="password" placeholder="Mínimo 8 caracteres"></ion-input>
     </ion-item>
 
-    <ion-button expand="block" (click)="registrarse()" class="ion-margin-top btn-verde">
+    <!-- Requisitos contraseña -->
+    <div class="requisitos-box" *ngIf="password.length > 0">
+      <div class="requisito" [class.ok]="tieneMinCaracteres" [class.fail]="!tieneMinCaracteres">
+        <ion-icon [name]="tieneMinCaracteres ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+        <span>Mínimo 8 caracteres</span>
+      </div>
+      <div class="requisito" [class.ok]="tieneMayuscula" [class.fail]="!tieneMayuscula">
+        <ion-icon [name]="tieneMayuscula ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+        <span>Al menos una mayúscula</span>
+      </div>
+      <div class="requisito" [class.ok]="tieneNumero" [class.fail]="!tieneNumero">
+        <ion-icon [name]="tieneNumero ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+        <span>Al menos un número</span>
+      </div>
+    </div>
+
+    <ion-button
+      expand="block"
+      (click)="registrarse()"
+      class="ion-margin-top btn-verde"
+      [disabled]="!formularioValido">
       REGISTRARSE
     </ion-button>
+
   </div>
 </ion-content>
