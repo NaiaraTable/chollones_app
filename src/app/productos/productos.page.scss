@@ -54,19 +54,85 @@ h1 {
   }
 }
 
-.description {
-  line-height: 1.6;
-  color: var(--text-secondary);
-  font-size: 1.05rem;
+/* --- Nuevas clases añadidas para la descripción --- */
+.short-description p {
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
+.product-description {
+  margin: 24px 0;
+  padding: 0 4px;
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  p {
+    line-height: 1.7;
+    color: var(--text-secondary);
+    /* Variable automática para oscurecer/aclarar */
+    font-size: 1rem;
+    text-align: justify;
+    white-space: pre-wrap;
+    /* Mantiene los saltos de línea del HTML */
+  }
+}
+
+/* --- Arreglo del bloque del vendedor --- */
 .vendor-info {
   --padding-start: 0;
   margin: 10px 0;
   border-top: 1px solid var(--card-border);
   border-bottom: 1px solid var(--card-border);
-  --background: var(--card-background);
+  --background: transparent;
+  /* Evita el bloque blanco en modo oscuro */
   --color: var(--text-primary);
+
+  .vendor-subtitle {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .vendor-name {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin: 4px 0 0 0;
+    font-size: 1.1rem;
+  }
+}
+
+/* --- Arreglo de la sección de puntuación --- */
+.rating-section {
+  h3 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  .faces-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 2.2rem;
+
+    .face-icon {
+      cursor: pointer;
+      transition: transform 0.2s;
+
+      &:active {
+        transform: scale(0.8);
+      }
+    }
+  }
 }
 
 .details-card {
@@ -106,27 +172,6 @@ h1 {
   color: var(--text-secondary);
   white-space: pre-wrap;
   text-align: justify;
-}
-
-.product-description {
-  margin: 24px 0;
-  padding: 0 4px;
-
-  h3 {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  p {
-    line-height: 1.7;
-    color: var(--text-secondary);
-    font-size: 1rem;
-    text-align: justify;
-  }
 }
 
 .reviews-container {
