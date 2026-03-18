@@ -5,7 +5,7 @@
 
 
 // Capturar errores
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     error_log("Error: $errstr en $errfile:$errline");
     http_response_code(500);
     echo json_encode(['error' => 'Error en el servidor']);
@@ -24,11 +24,14 @@ $topVentas = isset($_GET['top_ventas']);
 
 if ($id) {
     getCholloById($db, $prefix, $id);
-} elseif ($similares) {
+}
+elseif ($similares) {
     getChollosSimilares($db, $prefix);
-} elseif ($topVentas) {
+}
+elseif ($topVentas) {
     getTopVentas($db, $prefix);
-} else {
+}
+else {
     getChollos($db, $prefix);
 }
 
@@ -201,7 +204,8 @@ function getChollosSimilares(PDO $db, string $prefix): void
             WHERE tt.term_id = :filter_id AND tt.taxonomy = 'product_cat'
         )";
         $params['filter_id'] = $categoriaId;
-    } elseif ($proveedorId) {
+    }
+    elseif ($proveedorId) {
         $extraWhere = "AND p.post_author = :filter_id";
         $params['filter_id'] = $proveedorId;
     }

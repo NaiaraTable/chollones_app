@@ -39,7 +39,7 @@ p {
   --padding-top: 10px;
   --padding-bottom: 10px;
   --inner-padding-end: 16px;
-  margin-bottom: 14px;
+  margin-bottom: 6px;
   border: 1px solid var(--input-border);
   border-radius: 12px;
   box-shadow: 0 2px 8px var(--card-shadow);
@@ -61,6 +61,41 @@ p {
   }
 }
 
+/* Caja de requisitos */
+.requisitos-box {
+  padding: 8px 4px 12px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.requisito {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+
+  ion-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+  }
+
+  // Requisito cumplido — verde
+  &.ok {
+    color: var(--ion-color-success, #2dd36f);
+    ion-icon { color: var(--ion-color-success, #2dd36f); }
+  }
+
+  // Requisito no cumplido — rojo apagado
+  &.fail {
+    color: var(--ion-color-danger, #eb445a);
+    ion-icon { color: var(--ion-color-danger, #eb445a); }
+  }
+}
+
 .btn-verde {
   --background: var(--ion-color-secondary);
   --color: #ffffff;
@@ -69,4 +104,9 @@ p {
   font-weight: 800;
   margin-top: 20px;
   box-shadow: 0 6px 15px var(--card-shadow);
+
+  // Botón deshabilitado mientras no se cumplan los requisitos
+  &[disabled] {
+    opacity: 0.45;
+  }
 }

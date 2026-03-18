@@ -83,7 +83,6 @@ ion-title {
     font-weight: 600;
 
     ion-input,
-    ion-datetime-button,
     ion-label {
       --color: var(--text-primary);
       color: var(--text-primary);
@@ -97,6 +96,114 @@ ion-title {
   }
 }
 
+// ---- Fecha de nacimiento ----
+.fecha-label {
+  font-size: 12px;
+  color: var(--ion-color-primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 2px 0;
+}
+
+.fecha-valor {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+// ---- Input nativo de fecha ----
+.fecha-item {
+  --padding-start: 14px;
+  --background: var(--card-background);
+}
+
+.fecha-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  width: 100%;
+}
+
+.fecha-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  font-family: inherit;
+  width: 100%;
+  padding: 4px 0;
+  cursor: pointer;
+
+  // Estilo del icono del calendario nativo
+  color-scheme: light;
+}
+
+// Modo oscuro — el input nativo cambia color-scheme
+body.dark .fecha-input {
+  color-scheme: dark;
+  color: #f0f0f0;
+}
+
+
+// ---- Requisitos contraseña ----
+.requisitos-box {
+  padding: 8px 20px 12px 52px;
+  background: var(--card-background);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.requisito {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+
+  ion-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+  }
+
+  &.ok {
+    color: var(--ion-color-success, #2dd36f);
+    ion-icon { color: var(--ion-color-success, #2dd36f); }
+  }
+
+  &.fail {
+    color: var(--ion-color-danger, #eb445a);
+    ion-icon { color: var(--ion-color-danger, #eb445a); }
+  }
+}
+
+// ---- Botones ----
 .btn-section {
   padding: 16px 20px 0;
+}
+
+.btn-save {
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 800;
+}
+
+.btn-password {
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 700;
+
+  &[disabled] {
+    opacity: 0.45;
+  }
+}
+
+.spacer {
+  height: 40px;
 }

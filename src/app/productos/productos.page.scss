@@ -4,15 +4,12 @@ ion-content {
 
 .header-image {
   width: 100%;
-  /* Le damos un alto proporcional (35% del alto de la pantalla) o un mínimo fijo */
   height: 35vh;
   min-height: 280px;
   position: relative;
   overflow: hidden;
-  /* Fondo suave por si el producto es un PNG transparente */
   background-color: #f4f5f8;
 
-  /* (OPCIONAL) Añade una sombra/degradado sutil arriba y abajo para resaltar los botones y la etiqueta de descuento */
   &::after {
     content: '';
     position: absolute;
@@ -20,15 +17,15 @@ ion-content {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.4) 100%);
-    pointer-events: none; /* Evita que este fondo bloquee los clics en los botones */
-    z-index: 1; /* Por encima de la imagen, por debajo de los botones */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0.4) 100%);
+    pointer-events: none;
+    z-index: 1;
   }
 
   .header-img-bg {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Garantiza que la imagen llene el espacio sin achatarse ni estirarse */
+    object-fit: cover;
     object-position: center;
     display: block;
   }
@@ -44,7 +41,7 @@ ion-content {
     font-weight: bold;
     font-size: 1.2rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    z-index: 2; /* Aseguramos que la etiqueta quede por encima del degradado */
+    z-index: 2;
   }
 }
 
@@ -72,219 +69,64 @@ h1 {
   }
 }
 
-.description {
-  line-height: 1.6;
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-}
-
 .vendor-info {
   --padding-start: 0;
   margin: 10px 0;
   border-top: 1px solid var(--card-border);
   border-bottom: 1px solid var(--card-border);
-  --background: var(--card-background);
+  --background: transparent;
+  /* Evita el bloque blanco en modo oscuro */
   --color: var(--text-primary);
-}
 
-.details-card {
-  background-color: var(--card-background-alt);
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 25px;
-  border: 1px solid var(--card-border);
-}
-
-.details-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  border-bottom: 1px solid var(--card-border);
-  padding-bottom: 10px;
-
-  ion-icon {
-    font-size: 1.4rem;
-    color: var(--ion-color-primary);
-    margin-right: 8px;
+  .vendor-subtitle {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
   }
 
+  .vendor-name {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin: 4px 0 0 0;
+    font-size: 1.1rem;
+  }
+}
+
+/* --- Arreglo de la sección de puntuación --- */
+.rating-section {
   h3 {
-    margin: 0;
+    color: var(--text-primary);
     font-size: 1.1rem;
     font-weight: 700;
-    color: var(--text-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-bottom: 15px;
   }
-}
 
-.description-long {
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: var(--text-secondary);
-  white-space: pre-wrap;
-  text-align: justify;
+  .faces-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 2.2rem;
+
+    .face-icon {
+      cursor: pointer;
+      transition: transform 0.2s;
+
+      &:active {
+        transform: scale(0.8);
+      }
+    }
+  }
 }
 
 .product-description {
   margin: 24px 0;
   padding: 0 4px;
 
-  h3 {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
   p {
     line-height: 1.7;
     color: var(--text-secondary);
     font-size: 1rem;
     text-align: justify;
-  }
-}
-
-.reviews-container {
-  margin-top: 32px;
-  padding: 20px 16px;
-  background-color: var(--card-background);
-  border-radius: 20px;
-  border: 1px solid var(--card-border);
-  box-shadow: 0 4px 12px var(--card-shadow);
-
-  .reviews-header {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 24px;
-
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      h3 {
-        margin: 0;
-        font-weight: 800;
-        font-size: 1.25rem;
-        color: var(--text-primary);
-      }
-
-      .average-badge {
-        display: flex;
-        align-items: center;
-        background: rgba(230, 126, 34, 0.1);
-        padding: 6px 12px;
-        border-radius: 10px;
-        color: #e67e22;
-        font-weight: 800;
-        border: 1px solid rgba(230, 126, 34, 0.3);
-
-        ion-icon {
-          margin-right: 4px;
-          font-size: 1.1rem;
-        }
-      }
-    }
-
-    ion-button {
-      --border-radius: 10px;
-      font-weight: 700;
-      margin: 0;
-    }
-  }
-}
-
-.review-form {
-  background: var(--card-background-alt);
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 24px;
-  border: 1px dashed var(--card-border);
-
-  .star-rating-input {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
-
-    ion-icon {
-      font-size: 2.2rem;
-      color: #ffc107;
-      cursor: pointer;
-    }
-  }
-
-  ion-textarea {
-    --background: var(--input-background);
-    --padding-start: 12px;
-    --padding-end: 12px;
-    border: 1px solid var(--input-border);
-    border-radius: 12px;
-    margin-bottom: 16px;
-    font-size: 0.95rem;
-    --placeholder-color: var(--text-muted);
-    --color: var(--text-primary);
-  }
-}
-
-.comments-list {
-  .comment-item {
-    padding: 16px 0;
-    border-bottom: 1px solid var(--card-border);
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    .comment-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-
-      .user-name {
-        font-weight: 700;
-        font-size: 1rem;
-        color: var(--text-primary);
-      }
-
-      .user-rating ion-icon {
-        font-size: 0.9rem;
-        color: var(--text-muted);
-        margin-left: 1px;
-
-        &.active {
-          color: #ffc107;
-        }
-      }
-    }
-
-    .comment-text {
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin: 6px 0;
-    }
-
-    .comment-date {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-  }
-
-  .no-comments {
-    text-align: center;
-    color: var(--text-muted);
-    padding: 30px 10px;
-    font-size: 0.95rem;
-    background: var(--card-background-alt);
-    border-radius: 12px;
   }
 }
 
@@ -338,19 +180,13 @@ h1 {
     color: #ffffff;
   }
 
-  &.active {
-    ion-icon {
-      color: var(--ion-color-primary) !important;
-    }
+  &.active ion-icon {
+    color: var(--ion-color-primary) !important;
   }
 
   &:active {
     transform: scale(0.9);
   }
-}
-
-.back-button-float ion-button {
-  margin-top: 50px !important;
 }
 
 .btn-action {
@@ -361,59 +197,252 @@ h1 {
   --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
 }
 
-.reviews-section {
-  margin-top: 35px;
-  border-top: 1px solid var(--card-border);
-  padding-top: 20px;
+// ============================================================
+//  SECCIÓN DE RESEÑAS
+// ============================================================
+
+.reviews-container {
+  margin-top: 32px;
+  padding: 20px 16px;
+  background-color: var(--card-background);
+  border-radius: 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 12px var(--card-shadow);
+  margin-bottom: 20px;
 
   .reviews-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 12px;
     margin-bottom: 20px;
 
-    h3 {
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h3 {
+        margin: 0;
+        font-weight: 800;
+        font-size: 1.25rem;
+        color: var(--text-primary);
+      }
+
+      .average-badge {
+        display: flex;
+        align-items: center;
+        background: rgba(230, 126, 34, 0.1);
+        padding: 6px 12px;
+        border-radius: 10px;
+        color: #e67e22;
+        font-weight: 800;
+        border: 1px solid rgba(230, 126, 34, 0.3);
+        font-size: 0.95rem;
+
+        ion-icon {
+          margin-right: 4px;
+          font-size: 1rem;
+          color: #ffc107;
+        }
+      }
+    }
+
+    ion-button {
+      --border-radius: 10px;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+}
+
+// ---- Formulario de nueva reseña ----
+.review-form {
+  background: var(--card-background-alt);
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  border: 1px dashed var(--card-border);
+
+  .form-label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 8px 0;
+    text-align: center;
+  }
+
+  .star-rating-input {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+
+    ion-icon {
+      font-size: 2.4rem;
+      color: #ffc107;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+
+      &:active {
+        transform: scale(1.25);
+      }
+    }
+  }
+
+  ion-textarea {
+    --background: var(--input-background, #fff);
+    --padding-start: 12px;
+    --padding-end: 12px;
+    border: 1px solid var(--input-border, #ddd);
+    border-radius: 12px;
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+    --placeholder-color: var(--text-muted);
+    --color: var(--text-primary);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+
+// ---- Mi reseña destacada ----
+.mi-review-card {
+  background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.08), rgba(var(--ion-color-primary-rgb), 0.03));
+  border: 1.5px solid rgba(var(--ion-color-primary-rgb), 0.3);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+
+  .mi-review-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .mi-review-label {
+      font-size: 0.78rem;
       font-weight: 800;
-      font-size: 1.2rem;
-      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--ion-color-primary);
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      border-radius: 8px;
+      transition: background 0.15s;
+
+      &:active {
+        background: rgba(255, 0, 0, 0.08);
+      }
+
+      ion-icon {
+        font-size: 1.2rem;
+        color: var(--ion-color-danger, #eb445a);
+      }
+    }
+  }
+
+  .stars-row {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 8px;
+
+    ion-icon {
+      font-size: 1rem;
+      color: #ffc107;
+    }
+  }
+
+  .comment-text {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin: 0 0 6px 0;
+  }
+
+  .comment-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+}
+
+// ---- Lista de reseñas de otros ----
+.comments-list {
+  .comment-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--card-border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+
+      .user-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+      }
+
+      .user-rating ion-icon {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-left: 1px;
+
+        &.active {
+          color: #ffc107;
+        }
+      }
+    }
+
+    .comment-text {
+      font-size: 0.93rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 4px 0 6px;
+    }
+
+    .comment-date {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
     }
   }
 
   .no-comments {
     text-align: center;
     color: var(--text-muted);
-    padding: 20px;
-    font-style: italic;
-  }
+    padding: 32px 10px;
+    font-size: 0.95rem;
+    background: var(--card-background-alt);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 
-  .review-item {
-    padding: 15px 0;
-    border-bottom: 1px solid var(--card-border);
-
-    .review-top {
-      display: flex;
-      justify-content: space-between;
-
-      .user-name {
-        font-weight: 700;
-        color: var(--text-primary);
-      }
-
-      ion-icon {
-        font-size: 0.8rem;
-        margin-left: 2px;
-      }
+    ion-icon {
+      font-size: 2rem;
+      opacity: 0.5;
     }
 
-    .review-text {
-      margin: 8px 0;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-    }
-
-    .review-date {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    p {
+      margin: 0;
     }
   }
 }
