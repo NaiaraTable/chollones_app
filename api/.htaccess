@@ -1,18 +1,13 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-<<<<<<< HEAD
 
-    # Esto es lo ÚNICO que necesitas: deja pasar los tokens de Angular a PHP
-    RewriteCond %{HTTP:Authorization} ^(.*)
-    RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
-=======
-
-    # Pasar Authorization header a PHP
+    # 1. Permite que el Token (Authorization) llegue a PHP
+    # Sin esto, $_SERVER['HTTP_AUTHORIZATION'] estará vacío en PHP
     RewriteCond %{HTTP:Authorization} ^(.*)
     RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 
-    # Responder OK a peticiones OPTIONS (preflight)
-    RewriteCond %{REQUEST_METHOD} ^OPTIONS$
-    RewriteRule ^(.*)$ $1 [R=200,L]
->>>>>>> 11c06b7059e03c6e738b05e1d99e5b55a970bd2c
+    # 2. No hagas nada más si el archivo existe
+    # Esto permite que chollos.php se ejecute normalmente
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
 </IfModule>
