@@ -1,13 +1,11 @@
-<IfModule mod_headers.c>
-    # Permitir peticiones desde cualquier origen (CORS)
-    Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
-    Header set Access-Control-Max-Age "3600"
-</IfModule>
-
 <IfModule mod_rewrite.c>
     RewriteEngine On
+<<<<<<< HEAD
+    
+    # Esto es lo ÚNICO que necesitas: deja pasar los tokens de Angular a PHP
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+=======
 
     # Pasar Authorization header a PHP
     RewriteCond %{HTTP:Authorization} ^(.*)
@@ -16,5 +14,5 @@
     # Responder OK a peticiones OPTIONS (preflight)
     RewriteCond %{REQUEST_METHOD} ^OPTIONS$
     RewriteRule ^(.*)$ $1 [R=200,L]
+>>>>>>> 11c06b7059e03c6e738b05e1d99e5b55a970bd2c
 </IfModule>
-
