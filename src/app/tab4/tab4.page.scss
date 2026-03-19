@@ -287,18 +287,25 @@ ion-searchbar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px;
+  padding: 60px 20px 20px;
   color: var(--text-muted);
   text-align: center;
+  gap: 8px;
 
   ion-icon {
     font-size: 3rem;
-    margin-bottom: 12px;
     opacity: 0.4;
   }
 
   p {
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
   }
 }
