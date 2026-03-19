@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonSearchbar,
-  IonButtons, IonButton, IonIcon, IonSpinner, ToastController
+  IonButtons, IonButton, IonIcon, IonSpinner, IonBadge
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   heart, heartOutline, bagOutline, add, searchOutline,
-  locationOutline, storefrontOutline, cartOutline
+  locationOutline, storefrontOutline
 } from 'ionicons/icons';
 import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
@@ -21,7 +21,7 @@ import { Capacitor } from '@capacitor/core';
   standalone: true,
   imports: [
     CommonModule, IonContent, IonHeader, IonToolbar,
-    IonSearchbar, IonButtons, IonButton, IonIcon, IonSpinner
+    IonSearchbar, IonButtons, IonButton, IonIcon, IonSpinner, IonBadge
   ]
 })
 export class Tab4Page implements OnInit {
@@ -38,12 +38,11 @@ export class Tab4Page implements OnInit {
   constructor(
     private supabaseService: SupabaseService,
     private locationService: LocationService,
-    private router: Router,
-    private toastCtrl: ToastController
+    private router: Router
   ) {
     addIcons({
       heart, heartOutline, bagOutline, add, searchOutline,
-      locationOutline, storefrontOutline, cartOutline
+      locationOutline, storefrontOutline
     });
   }
 
@@ -54,12 +53,13 @@ export class Tab4Page implements OnInit {
   async cargarDatos() {
     this.cargando = true;
     try {
+      // Intentar obtener ubicación si no es web
       if (Capacitor.getPlatform() !== 'web') {
         try {
           const coords = await this.locationService.getPosition();
           this.miLat = coords.latitude;
           this.miLng = coords.longitude;
-        } catch (e) { console.warn('Ubicación manual'); }
+        } catch (e) { console.warn('Ubicación por defecto activada'); }
       }
 
       const data = await this.supabaseService.getChollos();
@@ -68,10 +68,12 @@ export class Tab4Page implements OnInit {
 
       if (data) {
         this.listadoChollos = data.map((c: any) => {
+          // Limpiar HTML de la descripción como tenías antes
           let textoOriginal = (c.descripcion || '').replace(/<[^>]*>/g, '');
           const palabras = textoOriginal.split(/\s+/);
           const descCorta = palabras.length > 15 ? palabras.slice(0, 15).join(' ') + '...' : textoOriginal;
 
+          // Cálculo de distancia
           let distancia = '?';
           if (c.proveedores?.lat && c.proveedores?.lng) {
             distancia = this.locationService.calcularDistancia(this.miLat, this.miLng, c.proveedores.lat, c.proveedores.lng).toFixed(1);
@@ -80,6 +82,7 @@ export class Tab4Page implements OnInit {
           return { ...c, descripcionCorta: descCorta, distanciaKM: distancia };
         });
 
+        // Categorías únicas
         const catsMap = new Map();
         data.forEach((c: any) => {
           const cats = Array.isArray(c.categorias) ? c.categorias : [c.categorias];
@@ -88,6 +91,7 @@ export class Tab4Page implements OnInit {
           });
         });
         this.categorias = [{ nombre: 'Todas', slug: 'todas' }, ...Array.from(catsMap.values())];
+
         this.aplicarFiltros();
       }
     } catch (e) { console.error(e); } finally { this.cargando = false; }
@@ -137,19 +141,8 @@ export class Tab4Page implements OnInit {
 
   irADetalle(id: string) { this.router.navigate(['/tabs/producto', id]); }
 
-  async anadirAlCarrito(chollo: any, e: Event) {
+  async anadirAlCarrito(c: any, e: Event) {
     e.stopPropagation();
-    try {
-      await this.supabaseService.anadirAlCarrito(chollo.id, 1);
-      const toast = await this.toastCtrl.create({
-        message: '¡Añadido al carrito!',
-        duration: 1500,
-        position: 'bottom',
-        color: 'dark'
-      });
-      await toast.present();
-    } catch (error) {
-      console.error(error);
-    }
+    await this.supabaseService.anadirAlCarrito(c.id, 1);
   }
 }

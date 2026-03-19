@@ -9,7 +9,7 @@
 
   <div class="filters-bar">
     <div class="scroll-container">
-      <button type="button" class="filter-chip"
+      <button class="filter-chip"
               *ngFor="let cat of categorias"
               [class.active]="categoriaSeleccionada === cat.slug"
               (click)="seleccionarCategoria(cat.slug)">
@@ -22,14 +22,13 @@
 <ion-content>
   <div *ngIf="cargando" class="ion-padding ion-text-center">
     <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p>Cargando chollos...</p>
   </div>
 
   <div class="chollos-container" *ngIf="!cargando">
     <div class="chollo-card" *ngFor="let chollo of filtrados" (click)="irADetalle(chollo.id)">
 
       <div class="image-wrapper">
-        <img [src]="chollo.imagen_url || 'assets/placeholder.png'" alt="producto" />
+        <img [src]="chollo.imagen_url || 'assets/placeholder.png'" />
         <div class="discount-tag" *ngIf="calcDescuento(chollo) > 0">-{{ calcDescuento(chollo) }}%</div>
         <button class="fav-circle" [class.is-fav]="esFavorito(chollo.id)"
                 (click)="toggleFavorito(chollo, $event); $event.stopPropagation()">
@@ -50,14 +49,12 @@
         <div class="card-footer">
           <div class="price-box">
             <span class="main-price">{{ chollo.precio_actual }}€</span>
-            <span class="old-price" *ngIf="chollo.precio_original > chollo.precio_actual">
-              {{ chollo.precio_original }}€
-            </span>
+            <span class="old-price" *ngIf="chollo.precio_original > chollo.precio_actual">{{ chollo.precio_original }}€</span>
           </div>
 
-          <button class="add-to-cart-btn" (click)="anadirAlCarrito(chollo, $event)">
-            <ion-icon name="cart-outline"></ion-icon>
-            <span>Añadir al carrito</span>
+          <button class="add-btn" (click)="anadirAlCarrito(chollo, $event); $event.stopPropagation()">
+            <ion-icon name="add"></ion-icon>
+            <span>Añadir</span>
           </button>
         </div>
       </div>
