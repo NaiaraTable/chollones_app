@@ -69,11 +69,11 @@ body {
   }
 
   80% {
-    transform: translateX(-90px) rotate(-5deg);
+    transform: translateX(-140px) rotate(-5deg);
   }
 
   92% {
-    transform: translateX(-90px) rotate(0) scale(1.1);
+    transform: translateX(-140px) rotate(0) scale(1.1);
   }
 
   100% {
@@ -84,15 +84,15 @@ body {
 .contenedor-mascota {
   position: fixed;
   bottom: 85px;
-  right: -80px;
+  right: -130px;
   z-index: 999999;
-  width: 100px !important;
+  width: 140px !important;
   pointer-events: none !important;
   display: flex;
   justify-content: flex-end;
 
   .monito-animado {
-    width: 70%;
+    width: 110px;
     animation: cicloMascota 20s ease-in-out infinite;
     transform-origin: bottom right;
   }

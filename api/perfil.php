@@ -32,10 +32,6 @@ switch ($action) {
         jsonError('Acción no válida');
 }
 
-// -------------------------------------------------------
-// POST /perfil.php?action=update
-// Body: { "full_name": "...", ... }
-// -------------------------------------------------------
 function updateProfile(PDO $db, string $prefix): void
 {
     $auth = requireAuth();
@@ -113,7 +109,6 @@ function uploadAvatar(PDO $db, string $prefix): void
     if (!isset($_FILES['avatar'])) {
         jsonError('No se recibió archivo');
     }
-
     $file = $_FILES['avatar'];
     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
     $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
@@ -121,13 +116,10 @@ function uploadAvatar(PDO $db, string $prefix): void
     if (!in_array(strtolower($ext), $allowed)) {
         jsonError('Formato de imagen no permitido');
     }
-
-    // Crear directorio de avatares
     $uploadDir = __DIR__ . '/uploads/avatars/';
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
     }
-
     $fileName = "user_{$userId}_avatar.{$ext}";
     $filePath = $uploadDir . $fileName;
 

@@ -1,10 +1,10 @@
 <ion-content *ngIf="producto">
   <div class="header-image">
     <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'"
-      (error)="$any($event.target).src='assets/placeholder.png'" />
+         (error)="$any($event.target).src='assets/placeholder.png'" />
     <div class="back-button-float" (click)="volverAtras()"><ion-icon name="arrow-back"></ion-icon></div>
     <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()"><ion-icon
-        [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon></div>
+      [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon></div>
     <div class="discount-badge" *ngIf="producto.precio_original">-{{ (((producto.precio_original -
       producto.precio_actual) / producto.precio_original) * 100).toFixed(0) }}% DTO</div>
   </div>
@@ -21,8 +21,17 @@
       <span class="old-price" *ngIf="producto.precio_original">{{ producto.precio_original }}€</span>
     </div>
 
-    <div class="product-description" *ngIf="producto.descripcion_limpia">
-      <p>{{ producto.descripcion_limpia }}</p>
+    <div class="description-container" *ngIf="producto.descripcion_limpia">
+      <div class="description-wrapper" [class.expanded]="mostrarTodo">
+        <div class="product-description">
+          <p>{{ producto.descripcion_limpia }}</p>
+        </div>
+        <div class="fade-overlay" *ngIf="!mostrarTodo" (click)="toggleDescripcion()"></div>
+      </div>
+
+      <div class="read-more-btn" (click)="toggleDescripcion()">
+        <span>{{ mostrarTodo ? 'Leer menos' : 'Descripción completa' }}</span>
+      </div>
     </div>
 
     <ion-item lines="none" class="vendor-info">
@@ -48,12 +57,7 @@
       AÑADIR AL CARRITO
     </ion-button>
 
-    <!-- ================================================ -->
-    <!--  SECCIÓN DE RESEÑAS                              -->
-    <!-- ================================================ -->
     <div class="reviews-container">
-
-      <!-- Cabecera con media de puntuación -->
       <div class="reviews-header">
         <div class="header-top">
           <h3>Reseñas</h3>
@@ -63,7 +67,6 @@
           </div>
         </div>
 
-        <!-- Botón "Escribir reseña" — solo si no tiene la suya -->
         <ion-button
           *ngIf="!miReview && !mostrarFormulario"
           expand="block"
@@ -75,7 +78,6 @@
         </ion-button>
       </div>
 
-      <!-- ---- FORMULARIO DE NUEVA RESEÑA ---- -->
       <div class="review-form" *ngIf="mostrarFormulario && !miReview">
         <p class="form-label">Tu puntuación</p>
         <div class="star-rating-input">
@@ -102,7 +104,6 @@
         </div>
       </div>
 
-      <!-- ---- MI RESEÑA (destacada) ---- -->
       <div class="mi-review-card" *ngIf="miReview">
         <div class="mi-review-top">
           <span class="mi-review-label">Tu reseña</span>
@@ -121,7 +122,6 @@
         <span class="comment-date">{{ miReview.fecha | date:'d MMM y' }}</span>
       </div>
 
-      <!-- ---- LISTA DE RESEÑAS DE OTROS ---- -->
       <div class="comments-list">
         <ng-container *ngFor="let r of otrasReviews">
           <div class="comment-item">
@@ -149,9 +149,6 @@
           <ion-spinner name="crescent"></ion-spinner>
         </div>
       </div>
-
     </div>
-    <!-- /reviews-container -->
-
   </div>
 </ion-content>

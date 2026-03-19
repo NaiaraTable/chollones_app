@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { NavController, AlertController } from '@ionic/angular/standalone';
-import { arrowBack, heart, heartOutline, star, starOutline, createOutline, trashOutline, chatbubbleOutline } from 'ionicons/icons';
+import { arrowBack, heart, heartOutline, star, starOutline, createOutline, trashOutline, chatbubbleOutline} from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { Browser } from '@capacitor/browser';
 import { ApiService } from '../services/api.service';
@@ -39,7 +39,7 @@ export class ProductosPage implements OnInit {
     private navCtrl: NavController,
     private alertController: AlertController
   ) {
-    addIcons({ arrowBack, heart, heartOutline, star, starOutline, createOutline, trashOutline, chatbubbleOutline });
+    addIcons({ arrowBack, heart, heartOutline, star, starOutline, createOutline, trashOutline, chatbubbleOutline});
   }
 
   async ngOnInit() {
@@ -273,5 +273,10 @@ export class ProductosPage implements OnInit {
     } else {
       await Browser.open({ url: 'https://search.google.com/local/writereview?placeid=ChIJQch3bfv9cg0RqzsciQc4i4M', presentationStyle: 'popover' });
     }
+  }
+  mostrarTodo: boolean = false;
+
+  toggleDescripcion() {
+    this.mostrarTodo = !this.mostrarTodo;
   }
 }
