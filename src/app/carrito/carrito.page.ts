@@ -93,7 +93,7 @@ export class CarritoPage implements OnInit {
       const toast = await this.toastCtrl.create({
         message: 'Producto eliminado correctamente',
         duration: 2000,
-        position: 'top',
+        position: 'bottom',
         cssClass: 'toast-carrito'
       });
       await toast.present();
@@ -102,7 +102,7 @@ export class CarritoPage implements OnInit {
       const toast = await this.toastCtrl.create({
         message: 'Hubo un error al eliminar. Inténtalo de nuevo.',
         duration: 3000,
-        position: 'top',
+        position: 'bottom',
         cssClass: 'toast-carrito'
       });
       await toast.present();
@@ -135,10 +135,10 @@ export class CarritoPage implements OnInit {
       .then((compraCreada) => {
         // Mostrar confirmación
         alert(`✓ Compra realizada exitosamente!\n\nNúmero de pedido: ${compraCreada.numero_pedido}\nTotal: ${this.total.toFixed(2)}€`);
-        
+
         // Limpiar el carrito
         this.limpiarCarrito();
-        
+
         // Redirigir al historial de compras
         this.router.navigate(['/tabs/historial']);
       })

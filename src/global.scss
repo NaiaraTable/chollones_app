@@ -119,6 +119,7 @@ ion-toast.toast-carrito::part(message) {
 /* Redondear resto de toasts por defecto para que todos sean redondos */
 ion-toast {
   --border-radius: 30px;
+  --box-shadow: 0 4px 15px var(--card-shadow);
 }
 
 /* ==============================================
