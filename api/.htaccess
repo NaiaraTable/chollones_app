@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    
+
     # Esto es lo ÚNICO que necesitas: deja pasar los tokens de Angular a PHP
     RewriteCond %{HTTP:Authorization} ^(.*)
     RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
