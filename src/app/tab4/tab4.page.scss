@@ -1,169 +1,56 @@
-/* --- ESTRUCTURA DEL HEADER --- */
-ion-header {
-  background: var(--ion-color-primary);
-  height: auto !important;
-
-  &.ion-no-border::after {
-    display: none;
-  }
-}
-
-ion-toolbar {
-  --background: var(--ion-color-primary);
-  --color: white;
-  --border-style: none;
-  --padding-top: 8px;
-}
-
 .filters-bar {
   background: var(--ion-color-primary);
-  height: 70px; /* altura fija de la franja roja */
-  display: flex;
-  align-items: center; /* centra verticalmente */
-  width: 100%;
-
+  padding: 4px 0 14px 0;
   .scroll-container {
     display: flex;
     overflow-x: auto;
     padding: 0 16px;
-    gap: 10px;
-    align-items: center;
-    width: 100%;
-
+    gap: 8px;
+    flex-wrap: nowrap;
     &::-webkit-scrollbar { display: none; }
-
     .filter-chip {
       flex: 0 0 auto;
-      background: rgba(255, 255, 255, 0.25);
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1;
-
-      &.active {
-        background: white;
-        color: var(--ion-color-primary);
-      }
+      background: rgba(255, 255, 255, 0.2);
+      color: white; border: none; padding: 8px 16px; border-radius: 50px;
+      font-size: 13px; font-weight: 600; white-space: nowrap;
+      &.active { background: white; color: var(--ion-color-primary); }
     }
   }
 }
 
-/* --- CONTENEDOR DE CHOLLOS --- */
-.chollos-container {
-  /* Aumentamos el margen a 20px para separar las tarjetas de la franja roja */
-  margin-top: 20px;
-  padding: 0 16px 30px 16px;
-  background: transparent;
-}
-
-/* --- GRID Y TARJETAS --- */
-.guardados-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
+.chollos-container { padding: 16px; display: flex; flex-direction: column; gap: 20px; background: #f8f9fa; }
 
 .chollo-card {
-  background: #ffffff;
-  border-radius: 22px;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-  margin-bottom: 5px;
-}
-
-/* --- ICONO FAVORITOS (EN TODAS) --- */
-.fav-icon {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-
-  ion-icon {
-    color: #ff4b4b;
-    font-size: 20px;
+  background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  .image-wrapper {
+    position: relative; height: 180px;
+    img { width: 100%; height: 100%; object-fit: cover; }
+    .discount-tag { position: absolute; top: 15px; left: 15px; background: #ff3b30; color: white; padding: 4px 10px; border-radius: 8px; font-weight: 800; }
+    .fav-circle { position: absolute; top: 15px; right: 15px; width: 38px; height: 38px; border-radius: 50%; background: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #ccc; &.is-fav { color: #ff3b30; } }
   }
-}
+  .card-content {
+    padding: 16px;
+    .top-meta {
+      display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;
+      .vendor { color: var(--ion-color-primary); } // MISMO COLOR
+      .dot { width: 3px; height: 3px; background: #ccc; border-radius: 50%; }
+      .dist { color: #888; }
+    }
+    .title { font-size: 17px; font-weight: 800; color: #1a1a1a; margin-bottom: 6px; }
+    .description { font-size: 13px; color: #666; margin-bottom: 15px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-/* --- IMAGEN --- */
-.image-container {
-  height: 155px;
-  background: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .cover { width: 100%; height: 100%; object-fit: cover; }
-  .no-image {
-    text-align: center;
-    color: #bbb;
-    ion-icon { font-size: 45px; }
-    span { display: block; font-size: 9px; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
+    .card-footer {
+      display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #f0f0f0;
+      .price-box {
+        .main-price { font-size: 22px; font-weight: 900; display: block; }
+        .old-price { font-size: 13px; text-decoration: line-through; color: #bbb; }
+      }
+      .add-to-cart-btn {
+        background: var(--ion-color-primary); // MISMO COLOR QUE EL NOMBRE DEL PROVEEDOR
+        color: white; border: none; padding: 10px 14px; border-radius: 12px;
+        font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px;
+        &:active { opacity: 0.8; transform: scale(0.96); }
+      }
+    }
   }
-}
-
-/* --- TEXTOS Y BOTÓN --- */
-.meta {
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-
-  .provider {
-    font-size: 10px;
-    font-weight: 700;
-    color: #ff5a5f;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .title {
-    font-size: 15px;
-    font-weight: 800;
-    color: #1a1a1a;
-    line-height: 1.2;
-    height: 36px;
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
-
-  .prices .now {
-    font-size: 19px;
-    font-weight: 900;
-    color: #000;
-  }
-}
-
-.btn-cart.red-btn {
-  width: 100%;
-  background: #ff5a5f;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 14px;
-  font-weight: 800;
-  font-size: 13px;
-  margin-top: auto;
-}
-
-/* --- MODO OSCURO --- */
-:host-context(body.dark) {
-  .chollos-container { background: #121212; }
-  .chollo-card { background: #242424; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-  .meta .title, .meta .prices .now { color: #ffffff; }
-  .image-container { background: #2d2d2d; .no-image { color: #444; } }
-  .fav-icon { background: #333; }
 }
