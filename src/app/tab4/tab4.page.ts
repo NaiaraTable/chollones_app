@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonSearchbar,
-  IonButtons, IonButton, IonIcon, IonSpinner, ToastController
+  IonButtons, IonButton, IonIcon, IonSpinner, ToastController,
+  IonImg // <--- IMPORTANTE: Añadido aquí
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   heart, heartOutline, bagOutline, add, searchOutline,
-  locationOutline, storefrontOutline, cartOutline
+  locationOutline, storefrontOutline, cartOutline, imageOutline
 } from 'ionicons/icons';
 import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
@@ -21,7 +22,8 @@ import { Capacitor } from '@capacitor/core';
   standalone: true,
   imports: [
     CommonModule, IonContent, IonHeader, IonToolbar,
-    IonSearchbar, IonButtons, IonButton, IonIcon, IonSpinner
+    IonSearchbar, IonButtons, IonButton, IonIcon, IonSpinner,
+    IonImg // <--- IMPORTANTE: También añadido aquí
   ]
 })
 export class Tab4Page implements OnInit {
@@ -41,44 +43,40 @@ export class Tab4Page implements OnInit {
     private router: Router,
     private toastCtrl: ToastController
   ) {
-    addIcons({
-      heart, heartOutline, bagOutline, add, searchOutline,
-      locationOutline, storefrontOutline, cartOutline
-    });
+    addIcons({ heart, heartOutline, bagOutline, add, searchOutline, locationOutline, storefrontOutline, cartOutline, imageOutline });
   }
 
   async ngOnInit() {
+    await this.obtenerUbicacion();
+  }
+
+  async ionViewWillEnter() {
     await this.cargarDatos();
+  }
+
+  async obtenerUbicacion() {
+    if (Capacitor.getPlatform() !== 'web') {
+      try {
+        const coords = await this.locationService.getPosition();
+        this.miLat = coords.latitude;
+        this.miLng = coords.longitude;
+      } catch (e) { console.warn('Ubicación manual'); }
+    }
   }
 
   async cargarDatos() {
     this.cargando = true;
     try {
-      if (Capacitor.getPlatform() !== 'web') {
-        try {
-          const coords = await this.locationService.getPosition();
-          this.miLat = coords.latitude;
-          this.miLng = coords.longitude;
-        } catch (e) { console.warn('Ubicación manual'); }
-      }
-
       const data = await this.supabaseService.getChollos();
       const favs = await this.supabaseService.getFavoritosIds();
       this.favoritosIds = new Set(favs);
 
       if (data) {
-        this.listadoChollos = data.map((c: any) => {
-          let textoOriginal = (c.descripcion || '').replace(/<[^>]*>/g, '');
-          const palabras = textoOriginal.split(/\s+/);
-          const descCorta = palabras.length > 15 ? palabras.slice(0, 15).join(' ') + '...' : textoOriginal;
-
-          let distancia = '?';
-          if (c.proveedores?.lat && c.proveedores?.lng) {
-            distancia = this.locationService.calcularDistancia(this.miLat, this.miLng, c.proveedores.lat, c.proveedores.lng).toFixed(1);
-          }
-
-          return { ...c, descripcionCorta: descCorta, distanciaKM: distancia };
-        });
+        this.listadoChollos = data.map((c: any) => ({
+          ...c,
+          distanciaKM: c.proveedores?.lat ?
+            this.locationService.calcularDistancia(this.miLat, this.miLng, c.proveedores.lat, c.proveedores.lng).toFixed(1) : '?'
+        }));
 
         const catsMap = new Map();
         data.forEach((c: any) => {
@@ -118,21 +116,25 @@ export class Tab4Page implements OnInit {
   }
 
   calcDescuento(c: any) {
-    if (!c.precio_original || c.precio_original <= c.precio_actual) return 0;
-    return Math.round(((c.precio_original - c.precio_actual) / c.precio_original) * 100);
+    const actual = Number(c.precio_actual);
+    const original = Number(c.precio_original);
+    if (!original || original <= actual) return 0;
+    return Math.round(((original - actual) / original) * 100);
   }
 
   esFavorito(id: string) { return this.favoritosIds.has(id); }
 
   async toggleFavorito(c: any, e: Event) {
     e.stopPropagation();
-    if (this.esFavorito(c.id)) {
-      await this.supabaseService.eliminarCholloFavorito(c.id);
-      this.favoritosIds.delete(c.id);
-    } else {
-      await this.supabaseService.guardarCholloFavorito(c.id);
-      this.favoritosIds.add(c.id);
-    }
+    try {
+      if (this.esFavorito(c.id)) {
+        await this.supabaseService.eliminarCholloFavorito(c.id);
+        this.favoritosIds.delete(c.id);
+      } else {
+        await this.supabaseService.guardarCholloFavorito(c.id);
+        this.favoritosIds.add(c.id);
+      }
+    } catch (error) { console.error('Error toggle favorito', error); }
   }
 
   irADetalle(id: string) { this.router.navigate(['/tabs/producto', id]); }
@@ -144,12 +146,11 @@ export class Tab4Page implements OnInit {
       const toast = await this.toastCtrl.create({
         message: '¡Añadido al carrito!',
         duration: 1500,
-        position: 'bottom',
-        cssClass: 'toast-carrito'
+        position: 'top',
+        color: 'dark', // <--- COMMA AÑADIDA AQUÍ
+        cssClass: 'toast-superior'
       });
       await toast.present();
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) { console.error(error); }
   }
 }
