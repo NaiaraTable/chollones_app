@@ -1,96 +1,63 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Listado de Chollos</ion-title>
+    <ion-searchbar placeholder="Buscar chollos..." (ionInput)="buscar($event)"></ion-searchbar>
+    <ion-buttons slot="end">
+      <ion-button><ion-icon slot="icon-only" name="heart-outline"></ion-icon></ion-button>
+      <ion-button><ion-icon slot="icon-only" name="bag-outline"></ion-icon></ion-button>
+    </ion-buttons>
   </ion-toolbar>
-</ion-header>
 
-<ion-content fullscreen>
-  <div class="filters-container">
-    <div class="categories-scroll">
-      <div class="category-pill" *ngFor="let cat of categorias" [class.active]="categoriaSeleccionada === cat.slug"
-        (click)="seleccionarCategoria(cat.slug)">
+  <div class="filters-bar">
+    <div class="scroll-container">
+      <button class="filter-chip"
+              *ngFor="let cat of categorias"
+              [class.active]="categoriaSeleccionada === cat.slug"
+              (click)="seleccionarCategoria(cat.slug)">
         {{ cat.nombre }}
-      </div>
-    </div>
-
-    <div class="quick-filters-scroll">
-      <div class="quick-filter-chip" *ngFor="let f of filtrosRapidos" [class.active]="filtroRapidoSeleccionado === f.id"
-        (click)="seleccionarFiltroRapido(f.id)">
-        {{ f.nombre }}
-      </div>
+      </button>
     </div>
   </div>
+</ion-header>
 
-  <ion-list lines="full">
-    <ion-item *ngFor="let chollo of filtrados" (click)="irADetalle(chollo.id)" class="chollo-item">
+<ion-content>
+  <div *ngIf="cargando" class="ion-padding ion-text-center">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
 
-      <ion-thumbnail slot="start" class="thumbnail-container">
-        <img [src]="chollo.imagen_url || 'assets/placeholder.png'"
-          (error)="$any($event.target).src='assets/placeholder.png'" />
-      </ion-thumbnail>
+  <div class="chollos-container" *ngIf="!cargando">
+    <div class="chollo-card" *ngFor="let chollo of filtrados" (click)="irADetalle(chollo.id)">
 
-      <ion-label>
-        <h2>{{ chollo.titulo }}</h2>
+      <div class="image-wrapper">
+        <img [src]="chollo.imagen_url || 'assets/placeholder.png'" />
+        <div class="discount-tag" *ngIf="calcDescuento(chollo) > 0">-{{ calcDescuento(chollo) }}%</div>
+        <button class="fav-circle" [class.is-fav]="esFavorito(chollo.id)"
+                (click)="toggleFavorito(chollo, $event); $event.stopPropagation()">
+          <ion-icon [name]="esFavorito(chollo.id) ? 'heart' : 'heart-outline'"></ion-icon>
+        </button>
+      </div>
 
-        <p class="info-row">
-          <ion-icon name="storefront-outline" color="primary"></ion-icon>
-          <span class="vendor-text">{{ chollo.proveedores?.nombre || 'Tienda' }}</span>
-
-          <span class="dot-separator" *ngIf="chollo.distanciaKM !== '?'"> • </span>
-
-          <ion-icon name="location-outline" color="tertiary" *ngIf="chollo.distanciaKM !== '?'"></ion-icon>
-          <span class="distance-text" *ngIf="chollo.distanciaKM !== '?'">
-            A {{ chollo.distanciaKM }} km
-          </span>
-        </p>
-
-        <ion-card-content class="card-content-ios">
-          <p class="description-text">
-            {{ chollo.descripcionCorta }}
-          </p>
-        </ion-card-content>
-
-        <div class="price-row">
-          <span class="current-price">{{ chollo.precio_actual }}€</span>
-
-          <div class="savings-container"
-            *ngIf="chollo.precio_original && chollo.precio_original > chollo.precio_actual">
-            <span class="old-price">{{ chollo.precio_original }}€</span>
-            <span class="savings-amount">
-              Ahorra: {{ (chollo.precio_original - chollo.precio_actual) | number:'1.2-2' }}€
-            </span>
-          </div>
+      <div class="card-content">
+        <div class="top-meta">
+          <span class="vendor">{{ chollo.proveedores?.nombre || 'Tienda' }}</span>
+          <span class="dot" *ngIf="chollo.distanciaKM !== '?'"></span>
+          <span class="dist" *ngIf="chollo.distanciaKM !== '?'">{{ chollo.distanciaKM }} km</span>
         </div>
 
-        <div class="action-buttons-container">
-          <ion-button fill="outline" size="small" color="secondary" *ngIf="chollo.lat && chollo.lng"
-            (click)="abrirNavegacion(chollo)">
-            <ion-icon slot="start" name="navigate-outline"></ion-icon>
-            Cómo llegar
-          </ion-button>
+        <h2 class="title">{{ chollo.titulo }}</h2>
+        <p class="description">{{ chollo.descripcionCorta }}</p>
 
-          <ion-button size="small" color="secondary" (click)="anadirAlCarrito(chollo, $event)">
-            Añadir al carrito
-          </ion-button>
-
-          <div class="fav-icon" [class.active]="esFavorito(chollo.id)"
-            (click)="toggleFavorito(chollo, $event); $event.stopPropagation()">
-            <ion-icon name="heart"></ion-icon>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="main-price">{{ chollo.precio_actual }}€</span>
+            <span class="old-price" *ngIf="chollo.precio_original > chollo.precio_actual">{{ chollo.precio_original }}€</span>
           </div>
 
+          <button class="add-btn" (click)="anadirAlCarrito(chollo, $event); $event.stopPropagation()">
+            <ion-icon name="add"></ion-icon>
+            <span>Añadir</span>
+          </button>
         </div>
-      </ion-label>
-
-      <ion-badge slot="end" color="danger" *ngIf="calcDescuento(chollo) > 0">
-        -{{ calcDescuento(chollo) }}%
-      </ion-badge>
-
-    </ion-item>
-  </ion-list>
-
-  <div class="ver-todos-container" *ngIf="filtradosTotales.length > 10 && !mostrarTodos">
-    <ion-button expand="block" fill="outline" color="primary" (click)="verTodos()">
-      Ver todos ({{ filtradosTotales.length }})
-    </ion-button>
+      </div>
+    </div>
   </div>
 </ion-content>
