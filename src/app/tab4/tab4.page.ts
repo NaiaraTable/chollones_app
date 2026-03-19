@@ -243,14 +243,10 @@ export class Tab4Page implements OnInit {
       const toast = await this.toastCtrl.create({
         message: '¡Añadido al carrito!',
         duration: 1500,
-<<<<<<< HEAD
-        position: 'bottom',
-        cssClass: 'toast-carrito'
-=======
+
         position: 'top',
         color: 'dark',
         cssClass: 'toast-superior'
->>>>>>> 782f349069b36c274db2f1ed5a4c27ca801a4388
       });
 
       await toast.present();
