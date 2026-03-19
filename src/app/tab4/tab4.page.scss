@@ -15,7 +15,7 @@ ion-toolbar {
   --padding-top: 8px;
 }
 
-/* FILTROS CENTRADOS */
+/* FILTROS */
 .filters-bar {
   background: var(--ion-color-primary);
   height: 70px;
@@ -80,6 +80,21 @@ ion-toolbar {
   margin-bottom: 5px;
 }
 
+/* BADGE (Estilo de Tab3) */
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--ion-color-primary);
+  color: #fff;
+  font-weight: 900;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  z-index: 21;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
 /* FAVORITO */
 .fav-icon {
   position: absolute;
@@ -118,11 +133,7 @@ ion-toolbar {
   .no-image {
     text-align: center;
     color: #bbb;
-
-    ion-icon {
-      font-size: 45px;
-    }
-
+    ion-icon { font-size: 45px; }
     span {
       display: block;
       font-size: 9px;
@@ -133,7 +144,7 @@ ion-toolbar {
   }
 }
 
-/* TEXTO */
+/* TEXTO Y PRECIOS */
 .meta {
   padding: 14px;
   display: flex;
@@ -158,10 +169,23 @@ ion-toolbar {
     margin-bottom: 12px;
   }
 
-  .prices .now {
-    font-size: 19px;
-    font-weight: 900;
-    color: #000;
+  .prices {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    .now {
+      font-size: 19px;
+      font-weight: 900;
+      color: #000;
+    }
+
+    .old {
+      font-size: 12px;
+      color: #999;
+      text-decoration: line-through;
+    }
   }
 }
 
@@ -176,33 +200,31 @@ ion-toolbar {
   font-weight: 800;
   font-size: 13px;
   margin-top: auto;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.8;
+  }
 }
 
 /* DARK MODE */
 :host-context(body.dark) {
-  .chollos-container {
-    background: #121212;
-  }
-
+  .chollos-container { background: #121212; }
   .chollo-card {
     background: #242424;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
   }
-
-  .meta .title,
-  .meta .prices .now {
-    color: #ffffff;
-  }
-
+  .meta .title, .meta .prices .now { color: #ffffff; }
   .image-container {
     background: #2d2d2d;
-
-    .no-image {
-      color: #444;
-    }
+    .no-image { color: #444; }
   }
+  .fav-icon { background: #333; }
+}
 
-  .fav-icon {
-    background: #333;
-  }
+/* LOADING */
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 50px;
 }
