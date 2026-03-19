@@ -33,7 +33,7 @@ import {
   close
 } from 'ionicons/icons';
 
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-tabs',
@@ -78,8 +78,22 @@ export class TabsPage {
     });
   }
 
+  textoBusqueda = '';
+
   navegar(ruta: string) {
     this.router.navigate([ruta]);
+  }
+
+  onBuscar(event: any) {
+    const texto = event.target?.value || '';
+    this.textoBusqueda = texto;
+    const extras: NavigationExtras = { queryParams: { q: texto } };
+    this.router.navigate(['/tabs/tab4'], extras);
+  }
+
+  onLimpiarBusqueda() {
+    this.textoBusqueda = '';
+    this.router.navigate(['/tabs/tab4'], { queryParams: { q: '' } });
   }
 
   abrirJuegos() {

@@ -1,6 +1,9 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Listado de Chollos</ion-title>
+    <ion-title *ngIf="!busquedaActiva">Listado de Chollos</ion-title>
+    <ion-title *ngIf="busquedaActiva">
+      Resultados: "{{ busquedaActiva }}"
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -8,14 +11,14 @@
   <div class="filters-container">
     <div class="categories-scroll">
       <div class="category-pill" *ngFor="let cat of categorias" [class.active]="categoriaSeleccionada === cat.slug"
-        (click)="seleccionarCategoria(cat.slug)">
+           (click)="seleccionarCategoria(cat.slug)">
         {{ cat.nombre }}
       </div>
     </div>
 
     <div class="quick-filters-scroll">
       <div class="quick-filter-chip" *ngFor="let f of filtrosRapidos" [class.active]="filtroRapidoSeleccionado === f.id"
-        (click)="seleccionarFiltroRapido(f.id)">
+           (click)="seleccionarFiltroRapido(f.id)">
         {{ f.nombre }}
       </div>
     </div>
@@ -26,7 +29,7 @@
 
       <ion-thumbnail slot="start" class="thumbnail-container">
         <img [src]="chollo.imagen_url || 'assets/placeholder.png'"
-          (error)="$any($event.target).src='assets/placeholder.png'" />
+             (error)="$any($event.target).src='assets/placeholder.png'" />
       </ion-thumbnail>
 
       <ion-label>
@@ -54,7 +57,7 @@
           <span class="current-price">{{ chollo.precio_actual }}€</span>
 
           <div class="savings-container"
-            *ngIf="chollo.precio_original && chollo.precio_original > chollo.precio_actual">
+               *ngIf="chollo.precio_original && chollo.precio_original > chollo.precio_actual">
             <span class="old-price">{{ chollo.precio_original }}€</span>
             <span class="savings-amount">
               Ahorra: {{ (chollo.precio_original - chollo.precio_actual) | number:'1.2-2' }}€
@@ -64,7 +67,7 @@
 
         <div class="action-buttons-container">
           <ion-button fill="outline" size="small" color="secondary" *ngIf="chollo.lat && chollo.lng"
-            (click)="abrirNavegacion(chollo)">
+                      (click)="abrirNavegacion(chollo)">
             <ion-icon slot="start" name="navigate-outline"></ion-icon>
             Cómo llegar
           </ion-button>
@@ -74,7 +77,7 @@
           </ion-button>
 
           <div class="fav-icon" [class.active]="esFavorito(chollo.id)"
-            (click)="toggleFavorito(chollo, $event); $event.stopPropagation()">
+               (click)="toggleFavorito(chollo, $event); $event.stopPropagation()">
             <ion-icon name="heart"></ion-icon>
           </div>
 
@@ -87,6 +90,13 @@
 
     </ion-item>
   </ion-list>
+
+  <!-- Sin resultados -->
+  <div class="no-results" *ngIf="filtrados.length === 0">
+    <ion-icon name="search-outline"></ion-icon>
+    <p *ngIf="busquedaActiva">No hay chollos para "{{ busquedaActiva }}"</p>
+    <p *ngIf="!busquedaActiva">No hay chollos disponibles</p>
+  </div>
 
   <div class="ver-todos-container" *ngIf="filtradosTotales.length > 10 && !mostrarTodos">
     <ion-button expand="block" fill="outline" color="primary" (click)="verTodos()">

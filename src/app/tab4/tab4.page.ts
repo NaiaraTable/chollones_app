@@ -11,7 +11,8 @@ import {
   informationCircleOutline,
   locationOutline,
   navigateOutline,
-  heart, heartOutline
+  heart, heartOutline,
+  searchOutline
 } from 'ionicons/icons';
 import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
@@ -39,6 +40,7 @@ export class Tab4Page implements OnInit {
   favoritosIds: Set<string> = new Set();
 
   textoBusqueda = '';
+  busquedaActiva = '';
   categoriaSeleccionada = 'todas';
   filtroRapidoSeleccionado = '';
 
@@ -61,7 +63,7 @@ export class Tab4Page implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    addIcons({ storefrontOutline, informationCircleOutline, locationOutline, navigateOutline, heart, heartOutline });
+    addIcons({ storefrontOutline, informationCircleOutline, locationOutline, navigateOutline, heart, heartOutline, searchOutline });
   }
 
   async ngOnInit() {
@@ -101,17 +103,26 @@ export class Tab4Page implements OnInit {
     await this.cargarFavoritos();
     await this.cargarChollos();
 
-    // Check query params for active filter
+    // Recoger query params (filtro rápido o búsqueda desde el header)
     this.route.queryParams.subscribe(params => {
+      let cambio = false;
+
+      if (params['q'] !== undefined) {
+        this.textoBusqueda = (params['q'] || '').toLowerCase().trim();
+        this.busquedaActiva = params['q'] || '';
+        cambio = true;
+      }
+
       if (params['filtro']) {
-        // Find if it's a valid quick filter
         const isQuickFilter = this.filtrosRapidos.some(f => f.id === params['filtro']);
         if (isQuickFilter) {
           this.filtroRapidoSeleccionado = params['filtro'];
           this.categoriaSeleccionada = 'todas';
+          cambio = true;
         }
-        this.aplicarFiltros();
       }
+
+      if (cambio) this.aplicarFiltros();
     });
   }
 
