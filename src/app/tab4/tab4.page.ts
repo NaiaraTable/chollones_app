@@ -103,21 +103,21 @@ export class Tab4Page implements OnInit {
     await this.cargarFavoritos();
     await this.cargarChollos();
 
-    // Recoger query params (filtro rápido o búsqueda desde el header)
+    // Recoger query params — búsqueda desde header o filtro rápido
     this.route.queryParams.subscribe(params => {
       let cambio = false;
 
-      if (params['q'] !== undefined) {
-        this.textoBusqueda = (params['q'] || '').toLowerCase().trim();
-        this.busquedaActiva = params['q'] || '';
+      if (params["q"] !== undefined) {
+        this.textoBusqueda = (params["q"] || "").toLowerCase().trim();
+        this.busquedaActiva = params["q"] || "";
         cambio = true;
       }
 
-      if (params['filtro']) {
-        const isQuickFilter = this.filtrosRapidos.some(f => f.id === params['filtro']);
+      if (params["filtro"]) {
+        const isQuickFilter = this.filtrosRapidos.some(f => f.id === params["filtro"]);
         if (isQuickFilter) {
-          this.filtroRapidoSeleccionado = params['filtro'];
-          this.categoriaSeleccionada = 'todas';
+          this.filtroRapidoSeleccionado = params["filtro"];
+          this.categoriaSeleccionada = "todas";
           cambio = true;
         }
       }
@@ -260,12 +260,10 @@ export class Tab4Page implements OnInit {
   aplicarFiltros() {
     let resultado = [...this.listadoChollos];
 
-    // 1. Filtrar por texto
+    // 1. Filtrar solo por título del producto
     if (this.textoBusqueda) {
       resultado = resultado.filter(c =>
-        (c.titulo || '').toLowerCase().includes(this.textoBusqueda) ||
-        (c.proveedores?.nombre || '').toLowerCase().includes(this.textoBusqueda) ||
-        (c.descripcion || '').toLowerCase().includes(this.textoBusqueda)
+        (c.titulo || '').toLowerCase().includes(this.textoBusqueda)
       );
     }
 

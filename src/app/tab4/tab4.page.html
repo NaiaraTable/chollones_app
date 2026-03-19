@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title *ngIf="!busquedaActiva">Listado de Chollos</ion-title>
     <ion-title *ngIf="busquedaActiva">
-      Resultados: "{{ busquedaActiva }}"
+      "{{ busquedaActiva }}" — {{ filtradosTotales.length }} resultado{{ filtradosTotales.length !== 1 ? 's' : '' }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -96,6 +96,7 @@
     <ion-icon name="search-outline"></ion-icon>
     <p *ngIf="busquedaActiva">No hay chollos para "{{ busquedaActiva }}"</p>
     <p *ngIf="!busquedaActiva">No hay chollos disponibles</p>
+    <span *ngIf="busquedaActiva">Prueba con otras palabras o busca por nombre de tienda</span>
   </div>
 
   <div class="ver-todos-container" *ngIf="filtradosTotales.length > 10 && !mostrarTodos">
