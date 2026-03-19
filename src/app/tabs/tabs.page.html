@@ -4,7 +4,14 @@
     <div class="toolbar-content">
       <img src="assets/logo.PNG" class="header-logo" alt="Logo" [routerLink]="['/tabs/tab1']" />
 
-      <ion-searchbar class="top-search" placeholder="Buscar chollos..." animated="true">
+      <ion-searchbar
+        class="top-search"
+        placeholder="Buscar chollos..."
+        animated="true"
+        [value]="textoBusqueda"
+        (ionInput)="onBuscar($event)"
+        (ionClear)="onLimpiarBusqueda()"
+        debounce="400">
       </ion-searchbar>
 
       <ion-buttons slot="end" class="top-actions">
@@ -55,7 +62,7 @@
 
 <div class="contenedor-mascota" style="z-index: 999999; pointer-events: none;">
   <img src="assets/chololo.png" class="monito-animado" alt="Mascota Chollones" (click)="abrirJuegos()"
-    style="cursor: pointer; pointer-events: auto; position: relative; z-index: 999999;">
+       style="cursor: pointer; pointer-events: auto; position: relative; z-index: 999999;">
 </div>
 
 <ion-modal id="modal-juegos" [isOpen]="modalJuegosAbierto" (didDismiss)="cerrarJuegos()">
