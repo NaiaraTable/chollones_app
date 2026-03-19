@@ -19,7 +19,6 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <!-- FILTROS -->
   <div class="filters-bar">
     <div class="scroll-container">
       <button
@@ -38,26 +37,21 @@
 <ion-content>
   <div class="chollos-container">
 
-    <!-- LOADING -->
     <div *ngIf="cargando" class="loading">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
 
-    <!-- LISTA -->
     <div *ngIf="!cargando" class="guardados-list">
       <div class="chollo-card" *ngFor="let chollo of filtrados">
 
-        <!-- FAVORITO -->
         <div class="fav-icon" (click)="toggleFavorito(chollo, $event)">
           <ion-icon [name]="esFavorito(chollo.id) ? 'heart' : 'heart-outline'"></ion-icon>
         </div>
 
-        <!-- DESCUENTO -->
         <div class="badge" *ngIf="calcDescuento(chollo) > 0">
           {{ calcDescuento(chollo) }}%
         </div>
 
-        <!-- IMAGEN -->
         <div class="image-container" (click)="irADetalle(chollo.id)">
           <img
             class="cover"
@@ -72,7 +66,6 @@
           </div>
         </div>
 
-        <!-- INFO -->
         <div class="meta" (click)="irADetalle(chollo.id)">
           <div class="provider">
             <span>{{ chollo.proveedores?.nombre || 'Proveedor' }}</span>
@@ -84,6 +77,9 @@
           <div class="prices">
             <span class="now">
               {{ chollo.precio_actual | number:'1.2-2' }}€
+            </span>
+            <span class="old" *ngIf="chollo.precio_original">
+              {{ chollo.precio_original | number:'1.2-2' }}€
             </span>
           </div>
 
