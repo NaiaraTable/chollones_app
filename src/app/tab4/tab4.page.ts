@@ -7,17 +7,8 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-<<<<<<< HEAD
-  storefrontOutline,
-  informationCircleOutline,
-  locationOutline,
-  navigateOutline,
-  heart, heartOutline,
-  searchOutline
-=======
   heart, heartOutline, bagOutline, add, searchOutline,
   locationOutline, storefrontOutline
->>>>>>> sara
 } from 'ionicons/icons';
 import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
@@ -36,19 +27,7 @@ import { Capacitor } from '@capacitor/core';
 export class Tab4Page implements OnInit {
   listadoChollos: any[] = [];
   filtrados: any[] = [];
-<<<<<<< HEAD
-  mostrarTodos: boolean = false;
-  miLat: number = 0;
-  miLng: number = 0;
-
-  //Estado para favoritos (mg)
-  favoritosIds: Set<string> = new Set();
-
-  textoBusqueda = '';
-  busquedaActiva = '';
-=======
   categorias: any[] = [{ nombre: 'Todas', slug: 'todas' }];
->>>>>>> sara
   categoriaSeleccionada = 'todas';
   textoBusqueda = '';
   cargando = true;
@@ -61,72 +40,9 @@ export class Tab4Page implements OnInit {
     private locationService: LocationService,
     private router: Router
   ) {
-<<<<<<< HEAD
-    addIcons({ storefrontOutline, informationCircleOutline, locationOutline, navigateOutline, heart, heartOutline, searchOutline });
-  }
-
-  async ngOnInit() {
-    try {
-      const coords = await this.locationService.getPosition();
-      this.miLat = coords.latitude;
-      this.miLng = coords.longitude;
-    } catch (e) {
-      console.warn('GPS no disponible, usando Sevilla por defecto');
-      this.miLat = 37.3891;
-      this.miLng = -5.9845;
-    }
-
-    try {
-      const chollos = await this.supabaseService.getChollos();
-      // Extraer categorías únicas de los chollos
-      const catsMap = new Map();
-      chollos.forEach((c: any) => {
-        const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
-        cats.forEach((cat: any) => {
-          if (cat && cat.slug && !catsMap.has(cat.slug)) {
-            catsMap.set(cat.slug, { nombre: cat.nombre, slug: cat.slug });
-          }
-        });
-      });
-      if (catsMap.size > 0) {
-        this.categorias = [
-          { nombre: 'Todas', slug: 'todas' },
-          ...Array.from(catsMap.values())
-        ];
-      }
-    } catch (err) {
-      console.error('Error cargando categorias en tab4', err);
-    }
-
-    // Cargamos favoritos y chollos al iniciar
-    await this.cargarFavoritos();
-    await this.cargarChollos();
-
-    // Recoger query params — búsqueda desde header o filtro rápido
-    this.route.queryParams.subscribe(params => {
-      let cambio = false;
-
-      if (params["q"] !== undefined) {
-        this.textoBusqueda = (params["q"] || "").toLowerCase().trim();
-        this.busquedaActiva = params["q"] || "";
-        cambio = true;
-      }
-
-      if (params["filtro"]) {
-        const isQuickFilter = this.filtrosRapidos.some(f => f.id === params["filtro"]);
-        if (isQuickFilter) {
-          this.filtroRapidoSeleccionado = params["filtro"];
-          this.categoriaSeleccionada = "todas";
-          cambio = true;
-        }
-      }
-
-      if (cambio) this.aplicarFiltros();
-=======
     addIcons({
       heart, heartOutline, bagOutline, add, searchOutline,
       locationOutline, storefrontOutline
->>>>>>> sara
     });
   }
 
@@ -218,72 +134,8 @@ export class Tab4Page implements OnInit {
       await this.supabaseService.eliminarCholloFavorito(c.id);
       this.favoritosIds.delete(c.id);
     } else {
-<<<<<<< HEAD
-      this.filtroRapidoSeleccionado = id;
-    }
-    this.mostrarTodos = false;
-    this.aplicarFiltros();
-  }
-
-  aplicarFiltros() {
-    let resultado = [...this.listadoChollos];
-
-    // 1. Filtrar solo por título del producto
-    if (this.textoBusqueda) {
-      resultado = resultado.filter(c =>
-        (c.titulo || '').toLowerCase().includes(this.textoBusqueda)
-      );
-    }
-
-    // 2. Filtrar por categoría
-    if (this.categoriaSeleccionada !== 'todas') {
-      resultado = resultado.filter((c: any) => {
-        const cats = Array.isArray(c.categorias) ? c.categorias : (c.categorias ? [c.categorias] : []);
-        return cats.some((cat: any) => (cat.slug || '').toLowerCase() === this.categoriaSeleccionada);
-      });
-    }
-
-    // 3. Filtros rápidos
-    if (this.filtroRapidoSeleccionado) {
-      if (this.filtroRapidoSeleccionado === 'recientes') {
-        resultado.sort((a, b) => {
-          const tA = new Date(a.created_at || 0).getTime();
-          const tB = new Date(b.created_at || 0).getTime();
-          return tB - tA;
-        });
-      } else if (this.filtroRapidoSeleccionado === 'destacados') {
-        resultado = resultado.filter(c => c.punto?.estado === 'Caliente');
-      } else if (this.filtroRapidoSeleccionado === 'descuento') {
-        resultado.sort((a, b) => this.calcDescuento(b) - this.calcDescuento(a));
-      } else if (this.filtroRapidoSeleccionado === 'distancia') {
-        resultado.sort((a, b) => {
-          if (a.distanciaKM === '?') return 1;
-          if (b.distanciaKM === '?') return -1;
-          return parseFloat(a.distanciaKM) - parseFloat(b.distanciaKM);
-        });
-      } else if (this.filtroRapidoSeleccionado === 'top_ventas') {
-        resultado.sort((a, b) => (b.ventas || 0) - (a.ventas || 0));
-      }
-      // 'valorados' can either be sorted by an average rating if exists, otherwise do nothing
-    } else {
-      // Orden por cercanía por defecto
-      resultado.sort((a, b) => {
-        if (a.distanciaKM === '?') return 1;
-        if (b.distanciaKM === '?') return -1;
-        return parseFloat(a.distanciaKM) - parseFloat(b.distanciaKM);
-      });
-    }
-
-    this.filtradosTotales = resultado;
-
-    if (this.mostrarTodos) {
-      this.filtrados = resultado;
-    } else {
-      this.filtrados = resultado.slice(0, 10);
-=======
       await this.supabaseService.guardarCholloFavorito(c.id);
       this.favoritosIds.add(c.id);
->>>>>>> sara
     }
   }
 
