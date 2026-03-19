@@ -35,20 +35,20 @@ export class AppComponent implements OnInit {
   }
 
   iniciarNotificaciones() {
-    PushNotifications.requestPermissions().then(result => {
+    PushNotifications.requestPermissions().then((result: any) => {
       if (result.receive === 'granted') {
         PushNotifications.register();
       }
     });
 
 
-    PushNotifications.addListener('registration', (token) => {
+    PushNotifications.addListener('registration', (token: any) => {
       console.log('Token FCM obtenido:', token.value);
       this.guardarTokenEnPhp(token.value);
     });
 
 
-    PushNotifications.addListener('pushNotificationReceived', (notification) => {
+    PushNotifications.addListener('pushNotificationReceived', (notification: any) => {
       console.log('Notificación recibida:', notification);
     });
   }

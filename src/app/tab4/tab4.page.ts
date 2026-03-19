@@ -145,7 +145,7 @@ export class Tab4Page implements OnInit {
         message: '¡Añadido al carrito!',
         duration: 1500,
         position: 'bottom',
-        color: 'dark'
+        cssClass: 'toast-carrito'
       });
       await toast.present();
     } catch (error) {

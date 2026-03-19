@@ -1,0 +1,90 @@
+[33m>[39m Building...
+[32m√[39m Building...
+Application bundle generation failed. [2.911 seconds] - 2026-03-19T13:08:16.767Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: IonLabel is not used within the template of EditarPerfilPage[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/editar-perfil/editar-perfil.page.ts:31:4:
+[37m      31 │     [32mIonLabel[37m
+         ╵     [32m~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: IonText is not used within the template of RegistroPage[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/registro/registro.page.ts:24:4:
+[37m      24 │     [32mIonText[37m, IonIcon
+         ╵     [32m~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: IonText is not used within the template of Tab2Page[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/tab2/tab2.page.ts:19:38:
+[37m      19 │     IonGrid, IonRow, IonCol, IonCard, [32mIonText[37m
+         ╵                                       [32m~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: IonButton is not used within the template of MapaPage[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/tabs/mapa/mapa.page.ts:14:71:
+[37m      14 │ ...monModule, IonHeader, IonToolbar, IonTitle, IonContent, [32mIonButton[37m]
+         ╵                                                            [32m~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: IonList is not used within the template of TabsPage[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/tabs/tabs.page.ts:34:26:
+[37m      34 │     IonFab, IonFabButton, [32mIonList[37m, IonItem,
+         ╵                           [32m~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: IonItem is not used within the template of TabsPage[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/tabs/tabs.page.ts:34:35:
+[37m      34 │     IonFab, IonFabButton, IonList, [32mIonItem[37m,
+         ╵                                    [32m~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe glob pattern import("./**/*.entry.js*") did not match any files[0m [empty-glob]
+
+    node_modules/@stencil/core/internal/client/index.js:173:4:
+[37m      173 │     [32m`./${bundleId}.entry.js${BUILD5.hotModuleReplacement && hmrVe[37m...
+          ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '@capacitor/push-notifications' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/app.component.ts:4:34:
+[37m      4 │ import { PushNotifications } from [32m'@capacitor/push-notifications'[37m;
+        ╵                                   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'result' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/app.component.ts:38:48:
+[37m      38 │     PushNotifications.requestPermissions().then([32mresult[37m => {
+         ╵                                                 [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'token' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/app.component.ts:45:51:
+[37m      45 │     PushNotifications.addListener('registration', ([32mtoken[37m) => {
+         ╵                                                    [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'notification' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/app.component.ts:51:63:
+[37m      51 │ ...ations.addListener('pushNotificationReceived', ([32mnotification[37m) => {
+         ╵                                                    [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "@capacitor/push-notifications"[0m
+
+    src/app/app.component.ts:4:34:
+[37m      4 │ import { PushNotifications } from [32m'@capacitor/push-notifications'[37m;
+        ╵                                   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  You can mark the path "@capacitor/push-notifications" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+
+[39m[22m

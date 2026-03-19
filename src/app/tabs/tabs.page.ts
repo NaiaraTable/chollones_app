@@ -7,7 +7,7 @@ import {
   IonHeader, IonToolbar, IonButtons, IonIcon,
   IonTabs, IonTabBar, IonTabButton, IonLabel,
   IonSearchbar, IonButton, IonModal, IonContent,
-  IonFab, IonFabButton, IonList, IonItem
+  IonFab, IonFabButton
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -31,7 +31,7 @@ import { ApiService } from '../services/api.service';
     IonHeader, IonToolbar, IonButtons, IonIcon,
     IonSearchbar, IonTabs, IonTabBar, IonTabButton,
     IonLabel, IonButton, IonModal, IonContent,
-    IonFab, IonFabButton, IonList, IonItem,
+    IonFab, IonFabButton,
     GameBaseComponent
   ]
 })
