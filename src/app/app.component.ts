@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { PushNotifications } from '@capacitor/push-notifications';
+import { Capacitor } from '@capacitor/core';
 
 const DARK_MODE_KEY = 'chollones_dark_mode';
 
@@ -31,7 +32,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.iniciarNotificaciones();
+    if (Capacitor.isNativePlatform()) {
+      this.iniciarNotificaciones();
+    } else {
+      console.log('Estás en la Web: Las notificaciones nativas están desactivadas.');
+    }
   }
 
   iniciarNotificaciones() {
@@ -41,7 +46,6 @@ export class AppComponent implements OnInit {
       }
     });
 
-
     PushNotifications.addListener('registration', (token: any) => {
       console.log('Token FCM obtenido:', token.value);
       this.guardarTokenEnPhp(token.value);
@@ -50,9 +54,16 @@ export class AppComponent implements OnInit {
 
     PushNotifications.addListener('pushNotificationReceived', (notification: any) => {
       console.log('Notificación recibida:', notification);
-    });
-  }
 
+      // Si la notificación trae datos y es del tipo "NUEVO_CHOLLO"
+      const data = notification.data;
+      if (data && data.tipo === 'NUEVO_CHOLLO') {
+        // Muestra el mensaje directamente en pantalla (In-App)
+        alert(data.mensaje_interno);
+      }
+    });
+    // ---------------------------
+  }
 
   guardarTokenEnPhp(fcmToken: string) {
     const usuarioId = localStorage.getItem('user_id');
