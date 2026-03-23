@@ -16,7 +16,8 @@ ion-toolbar {
 }
 
 .filters-bar {
-  background: var(--ion-color-primary);
+  /* MODO CLARO por defecto: el fondo se funde con el blanco de la app */
+  background: #ffffff;
   height: 65px;
   display: flex;
   align-items: center;
@@ -38,11 +39,10 @@ ion-toolbar {
 
     .filter-chip {
       flex: 0 0 auto;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      /* MODO CLARO: Chip inactivo (fondo gris claro, texto oscuro) */
+      background: #f2f2f2;
+      color: #333333;
+      border: 1px solid #e0e0e0;
       padding: 8px 20px;
       border-radius: 30px;
       font-size: 13px;
@@ -51,11 +51,13 @@ ion-toolbar {
       transition: all 0.3s ease;
 
       &.active {
-        background: white;
-        color: var(--ion-color-primary);
+        /* MODO CLARO: Chip activo (fondo rojo, texto blanco) */
+        background: var(--ion-color-primary);
+        color: #ffffff;
         font-weight: 700;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra suave */
         transform: scale(1.02);
+        border: 1px solid transparent;
       }
     }
   }
@@ -260,6 +262,26 @@ ion-toolbar {
 }
 
 :host-context(body.dark) {
+  /* Ajustes de la barra de filtros para modo oscuro */
+  .filters-bar {
+    background: #121212;
+
+    .filter-chip {
+      /* MODO OSCURO: Chip inactivo (semitransparente, texto blanco) */
+      background: rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      &.active {
+        /* MODO OSCURO: Chip activo (fondo blanco, texto rojo) */
+        background: #ffffff;
+        color: var(--ion-color-primary);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border: 1px solid transparent;
+      }
+    }
+  }
+
   .chollos-container {
     background: #121212;
   }
