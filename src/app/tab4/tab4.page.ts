@@ -11,7 +11,9 @@ import {
   IonIcon,
   IonSpinner,
   ToastController,
-  IonImg
+  IonImg,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -46,13 +48,16 @@ import { Capacitor } from '@capacitor/core';
     IonButton,
     IonIcon,
     IonSpinner,
-    IonImg
+    IonImg,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent
   ]
 })
 export class Tab4Page implements OnInit {
 
   listadoChollos: any[] = [];
   filtrados: any[] = [];
+  chollosPaginados: any[] = [];
 
   categorias: any[] = [{ nombre: 'Todas', slug: 'todas' }];
   categoriaSeleccionada = 'todas';
@@ -64,6 +69,10 @@ export class Tab4Page implements OnInit {
   miLng = -5.9845;
 
   favoritosIds: Set<string> = new Set();
+
+  itemsPorPagina = 10;
+  paginaActual = 0;
+  infiniteScrollDisabled = false;
 
   constructor(
     private supabaseService: SupabaseService,
@@ -92,7 +101,6 @@ export class Tab4Page implements OnInit {
     await this.cargarDatos();
   }
 
-  /* ================= UBICACIÓN ================= */
   async obtenerUbicacion() {
     if (Capacitor.getPlatform() !== 'web') {
       try {
@@ -105,7 +113,6 @@ export class Tab4Page implements OnInit {
     }
   }
 
-  /* ================= DATOS ================= */
   async cargarDatos() {
     this.cargando = true;
 
@@ -129,7 +136,6 @@ export class Tab4Page implements OnInit {
             : '?'
         }));
 
-        /* CATEGORÍAS DINÁMICAS */
         const catsMap = new Map();
 
         data.forEach((c: any) => {
@@ -162,7 +168,6 @@ export class Tab4Page implements OnInit {
     }
   }
 
-  /* ================= FILTROS ================= */
   aplicarFiltros() {
     let tmp = [...this.listadoChollos];
 
@@ -185,6 +190,32 @@ export class Tab4Page implements OnInit {
     }
 
     this.filtrados = tmp;
+
+    this.paginaActual = 0;
+    this.chollosPaginados = [];
+    this.infiniteScrollDisabled = false;
+
+    this.agregarChollos();
+  }
+
+  agregarChollos() {
+    const inicio = this.paginaActual * this.itemsPorPagina;
+    const fin = inicio + this.itemsPorPagina;
+    const nuevosChollos = this.filtrados.slice(inicio, fin);
+
+    this.chollosPaginados = [...this.chollosPaginados, ...nuevosChollos];
+    this.paginaActual++;
+
+    if (this.chollosPaginados.length >= this.filtrados.length) {
+      this.infiniteScrollDisabled = true;
+    }
+  }
+
+  cargarMas(event: any) {
+    setTimeout(() => {
+      this.agregarChollos();
+      event.target.complete();
+    }, 500);
   }
 
   buscar(ev: any) {
@@ -197,7 +228,6 @@ export class Tab4Page implements OnInit {
     this.aplicarFiltros();
   }
 
-  /* ================= UTILIDADES ================= */
   calcDescuento(c: any) {
     const actual = Number(c.precio_actual);
     const original = Number(c.precio_original);
@@ -211,7 +241,6 @@ export class Tab4Page implements OnInit {
     return this.favoritosIds.has(id);
   }
 
-  /* ================= FAVORITOS ================= */
   async toggleFavorito(c: any, e: Event) {
     e.stopPropagation();
 
@@ -228,12 +257,10 @@ export class Tab4Page implements OnInit {
     }
   }
 
-  /* ================= NAVEGACIÓN ================= */
   irADetalle(id: string) {
     this.router.navigate(['/tabs/producto', id]);
   }
 
-  /* ================= CARRITO ================= */
   async anadirAlCarrito(chollo: any, e: Event) {
     e.stopPropagation();
 
@@ -241,12 +268,11 @@ export class Tab4Page implements OnInit {
       await this.supabaseService.anadirAlCarrito(chollo.id, 1);
 
       const toast = await this.toastCtrl.create({
-        message: '¡Añadido al carrito!',
-        duration: 1500,
 
-        position: 'top',
-        color: 'dark',
-        cssClass: 'toast-superior'
+        message: 'Producto añadido al carrito',
+        duration: 2000,
+        position: 'bottom',
+        cssClass: 'toast-carrito'
       });
 
       await toast.present();

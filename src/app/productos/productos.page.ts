@@ -258,22 +258,6 @@ export class ProductosPage implements OnInit {
     } catch (e: any) { console.error('Error:', e); }
   }
 
-  async rateProduct(score: number) {
-    if (!this.producto) return;
-    if (score <= 3) {
-      const alert = await this.alertController.create({
-        header: '¿Qué podríamos mejorar?',
-        inputs: [{ name: 'comentario', type: 'textarea', placeholder: 'Escribe tu comentario...' }],
-        buttons: [
-          { text: 'Cancelar', role: 'cancel' },
-          { text: 'Enviar', handler: async (data) => { await this.supabase.enviarFeedbackNegativo(this.producto.id, score, data.comentario || ''); } }
-        ]
-      });
-      await alert.present();
-    } else {
-      await Browser.open({ url: 'https://search.google.com/local/writereview?placeid=ChIJQch3bfv9cg0RqzsciQc4i4M', presentationStyle: 'popover' });
-    }
-  }
   mostrarTodo: boolean = false;
 
   toggleDescripcion() {
