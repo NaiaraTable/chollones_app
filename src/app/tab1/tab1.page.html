@@ -58,10 +58,7 @@
         </div>
 
         <!-- Favoritos -->
-        <div class="fav-icon" (click)="toggleFavorito(p, $event); $event.stopPropagation()"
-          [class.active]="isFavorito(p.id)">
-          <ion-icon name="heart"></ion-icon>
-        </div>
+        <ion-icon [name]="isFavorito(p.id) ? 'heart' : 'heart-outline'"></ion-icon>
 
         <img class="product-img" [src]="p.imagen" (error)="$any($event.target).src='assets/placeholder.png'" />
 
