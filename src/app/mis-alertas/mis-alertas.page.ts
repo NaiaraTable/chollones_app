@@ -80,8 +80,8 @@ export class MisAlertasPage implements OnInit {
         const toast = await this.toastCtrl.create({
             message: `Código ${codigo} copiado`,
             duration: 2000,
-            color: 'success',
-            position: 'bottom'
+            position: 'bottom',
+            cssClass: 'toast-carrito'
         });
         toast.present();
     }

@@ -199,12 +199,12 @@ export class MisCategoriasComponent implements OnInit {
   // muestra los toast
   async mostrarToast(mensaje: string, color: string) {
     const toast = await this.toastCtrl.create({
-      message: mensaje, // El texto que se va a leer
-      duration: 2500, // Cuánto tiempo dura en pantalla (2.5 segundos)
-      color: color, // El color (success = verde, warning = amarillo, danger = rojo)
-      position: 'bottom' // Sale por la parte de abajo de la pantalla
+      message: mensaje,
+      duration: 2500,
+      position: 'bottom',
+      cssClass: 'toast-carrito'
     });
-    await toast.present(); // Ordena que se muestre en pantalla
+    await toast.present();
   }
 
 }

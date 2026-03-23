@@ -292,7 +292,7 @@ export class Tab1Page implements OnInit {
         const toast = await toastCtrl.create({
           message: 'Producto añadido al carrito',
           duration: 2000,
-          position: 'top',
+          position: 'bottom',
           cssClass: 'toast-carrito'
         });
         toast.present();
@@ -305,7 +305,7 @@ export class Tab1Page implements OnInit {
         const toast = await toastCtrl.create({
           message: 'Error al añadir. ¿Iniciaste sesión?',
           duration: 3000,
-          position: 'top',
+          position: 'bottom',
           cssClass: 'toast-carrito'
         });
         toast.present();

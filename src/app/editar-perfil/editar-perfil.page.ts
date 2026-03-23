@@ -33,15 +33,15 @@ import { ApiService } from '../services/api.service';
 })
 export class EditarPerfilPage implements OnInit, OnDestroy {
 
-  avatarUrl    = '';
-  fullName     = '';
-  phone        = '';
-  address      = '';
-  birthDate    = '';
-  newPassword  = '';
+  avatarUrl = '';
+  fullName = '';
+  phone = '';
+  address = '';
+  birthDate = '';
+  newPassword = '';
   confirmPassword = '';
-  saving          = false;
-  savingPassword  = false;
+  saving = false;
+  savingPassword = false;
 
 
   // Fecha máxima = hoy (no permite fechas futuras)
@@ -66,9 +66,9 @@ export class EditarPerfilPage implements OnInit, OnDestroy {
       if (user) {
         const u = user as any;
         // Los campos pueden estar en user_metadata o directamente en el objeto raíz
-        this.fullName  = u.user_metadata?.['full_name']  || u.display_name || u.full_name  || '';
-        this.phone     = u.user_metadata?.['phone']      || u.phone      || '';
-        this.address   = u.user_metadata?.['address']    || u.address    || '';
+        this.fullName = u.user_metadata?.['full_name'] || u.display_name || u.full_name || '';
+        this.phone = u.user_metadata?.['phone'] || u.phone || '';
+        this.address = u.user_metadata?.['address'] || u.address || '';
         this.birthDate = u.user_metadata?.['birth_date'] || u.birth_date || '';
         this.avatarUrl = u.user_metadata?.['avatar_url'] || u.avatar_url || '';
       }
@@ -130,9 +130,9 @@ export class EditarPerfilPage implements OnInit, OnDestroy {
       this.showToast('Subiendo foto...', 'primary');
       const url = await this.supabase.uploadAvatar(file);
       this.avatarUrl = url;
-      this.showToast('✅ Foto actualizada', 'success');
+      this.showToast(' Foto actualizada', 'success');
     } catch (err: any) {
-      this.showToast('❌ Error al subir foto: ' + (err.message || err), 'danger');
+      this.showToast(' Error al subir foto: ' + (err.message || err), 'danger');
     }
   }
 
@@ -145,14 +145,14 @@ export class EditarPerfilPage implements OnInit, OnDestroy {
     this.saving = true;
     try {
       await this.supabase.updateProfile({
-        full_name:  this.fullName,
-        phone:      this.phone,
-        address:    this.address,
+        full_name: this.fullName,
+        phone: this.phone,
+        address: this.address,
         birth_date: this.birthDate
       });
-      this.showToast('✅ Perfil actualizado correctamente', 'success');
+      this.showToast(' Perfil actualizado correctamente', 'success');
     } catch (err: any) {
-      this.showToast('❌ Error: ' + (err.message || err), 'danger');
+      this.showToast(' Error: ' + (err.message || err), 'danger');
     } finally {
       this.saving = false;
     }
@@ -180,11 +180,11 @@ export class EditarPerfilPage implements OnInit, OnDestroy {
     this.savingPassword = true;
     try {
       await this.supabase.updatePassword(this.newPassword);
-      this.newPassword     = '';
+      this.newPassword = '';
       this.confirmPassword = '';
       this.showToast('✅ Contraseña cambiada correctamente', 'success');
     } catch (err: any) {
-      this.showToast('❌ Error: ' + (err.message || err), 'danger');
+      this.showToast(' Error: ' + (err.message || err), 'danger');
     } finally {
       this.savingPassword = false;
     }
@@ -192,7 +192,10 @@ export class EditarPerfilPage implements OnInit, OnDestroy {
 
   private async showToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
-      message, duration: 2500, color, position: 'bottom'
+      message,
+      duration: 2500,
+      position: 'bottom',
+      cssClass: 'toast-carrito'
     });
     await toast.present();
   }

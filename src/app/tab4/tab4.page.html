@@ -1,18 +1,29 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-searchbar placeholder="Buscar chollos..." (ionInput)="buscar($event)"></ion-searchbar>
+    <ion-searchbar
+      placeholder="Buscar chollos o tiendas..."
+      (ionInput)="buscar($event)">
+    </ion-searchbar>
+
     <ion-buttons slot="end">
-      <ion-button><ion-icon slot="icon-only" name="heart-outline"></ion-icon></ion-button>
-      <ion-button><ion-icon slot="icon-only" name="bag-outline"></ion-icon></ion-button>
+      <ion-button>
+        <ion-icon slot="icon-only" name="heart-outline"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <ion-icon slot="icon-only" name="bag-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 
   <div class="filters-bar">
     <div class="scroll-container">
-      <button type="button" class="filter-chip"
-              *ngFor="let cat of categorias"
-              [class.active]="categoriaSeleccionada === cat.slug"
-              (click)="seleccionarCategoria(cat.slug)">
+      <button
+        type="button"
+        class="filter-chip"
+        *ngFor="let cat of categorias"
+        [class.active]="categoriaSeleccionada === cat.slug"
+        (click)="seleccionarCategoria(cat.slug)"
+      >
         {{ cat.nombre }}
       </button>
     </div>
@@ -20,47 +31,72 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="cargando" class="ion-padding ion-text-center">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p>Cargando chollos...</p>
-  </div>
+  <div class="chollos-container">
 
-  <div class="chollos-container" *ngIf="!cargando">
-    <div class="chollo-card" *ngFor="let chollo of filtrados" (click)="irADetalle(chollo.id)">
+    <div *ngIf="cargando" class="loading">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
 
-      <div class="image-wrapper">
-        <img [src]="chollo.imagen_url || 'assets/placeholder.png'" alt="producto" />
-        <div class="discount-tag" *ngIf="calcDescuento(chollo) > 0">-{{ calcDescuento(chollo) }}%</div>
-        <button class="fav-circle" [class.is-fav]="esFavorito(chollo.id)"
-                (click)="toggleFavorito(chollo, $event); $event.stopPropagation()">
-          <ion-icon [name]="esFavorito(chollo.id) ? 'heart' : 'heart-outline'"></ion-icon>
-        </button>
-      </div>
+    <div *ngIf="!cargando" class="guardados-list">
+      <div class="chollo-card" *ngFor="let chollo of chollosPaginados">
 
-      <div class="card-content">
-        <div class="top-meta">
-          <span class="vendor">{{ chollo.proveedores?.nombre || 'Tienda' }}</span>
-          <span class="dot" *ngIf="chollo.distanciaKM !== '?'"></span>
-          <span class="dist" *ngIf="chollo.distanciaKM !== '?'">{{ chollo.distanciaKM }} km</span>
-        </div>
-
-        <h2 class="title">{{ chollo.titulo }}</h2>
-        <p class="description">{{ chollo.descripcionCorta }}</p>
-
-        <div class="card-footer">
-          <div class="price-box">
-            <span class="main-price">{{ chollo.precio_actual }}€</span>
-            <span class="old-price" *ngIf="chollo.precio_original > chollo.precio_actual">
-              {{ chollo.precio_original }}€
-            </span>
+        <div class="image-container" (click)="irADetalle(chollo.id)">
+          <div class="badge" *ngIf="calcDescuento(chollo) > 0">
+            -{{ calcDescuento(chollo) }}%
           </div>
 
-          <button class="add-to-cart-btn" (click)="anadirAlCarrito(chollo, $event)">
-            <ion-icon name="cart-outline"></ion-icon>
-            <span>Añadir al carrito</span>
-          </button>
+          <img
+            class="cover"
+            *ngIf="chollo.imagen_url"
+            [src]="chollo.imagen_url"
+            (error)="chollo.imagen_url = null"
+          />
+
+          <div class="no-image" *ngIf="!chollo.imagen_url">
+            <ion-icon name="image-outline"></ion-icon>
+            <span>NO IMAGEN</span>
+          </div>
         </div>
+
+        <div class="meta" (click)="irADetalle(chollo.id)">
+
+          <div class="header-meta">
+            <div class="provider-row">
+              <span class="provider">{{ chollo.proveedores?.nombre || 'Proveedor' }}</span>
+              <span class="dist" *ngIf="chollo.distanciaKM && chollo.distanciaKM !== '?'">
+                <ion-icon name="location-outline"></ion-icon>
+                {{ chollo.distanciaKM }} km
+              </span>
+            </div>
+
+            <div class="fav-icon" (click)="toggleFavorito(chollo, $event)">
+              <ion-icon [name]="esFavorito(chollo.id) ? 'heart' : 'heart-outline'"></ion-icon>
+            </div>
+          </div>
+
+          <div class="title">{{ chollo.titulo }}</div>
+
+          <div class="bottom-meta">
+            <div class="prices">
+              <span class="now">{{ chollo.precio_actual | number:'1.2-2' }}€</span>
+              <span class="old" *ngIf="chollo.precio_original">{{ chollo.precio_original | number:'1.2-2' }}€</span>
+            </div>
+
+            <button class="btn-cart red-btn" (click)="anadirAlCarrito(chollo, $event)">
+              <ion-icon name="cart-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
+
+    <ion-infinite-scroll *ngIf="!cargando" [disabled]="infiniteScrollDisabled" (ionInfinite)="cargarMas($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="crescent"
+        loadingText="Cargando más chollos...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
   </div>
 </ion-content>
