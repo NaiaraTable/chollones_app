@@ -3,11 +3,13 @@
 // CONFIGURACIÓN DE LA API - CHOLLONES
 // ======================================================
 
-// --- CORS PRIMERO (antes de cualquier otra cosa) ---
-header('Access-Control-Allow-Origin: *', true);
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS', true);
-header('Access-Control-Allow-Headers: Content-Type, Authorization', true);
-header('Access-Control-Max-Age: 3600', true);
+// --- Desactivar errores HTML de PHP (que rompen JSON) ---
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(E_ALL);
+ini_set('log_errors', 1);
+
+// --- CORS se gestiona en .htaccess (no duplicar aquí) ---
 header('Content-Type: application/json; charset=utf-8', true);
 
 // Responder inmediatamente a las peticiones OPTIONS (preflight)
@@ -184,3 +186,17 @@ function wp_hash_password(string $password): string
 {
     return password_hash($password, PASSWORD_BCRYPT);
 }
+
+// ======================================================
+// STRIPE CONFIGURATION
+// ======================================================
+// IMPORTANT: Configure these as environment variables in production
+// Get them from: https://dashboard.stripe.com/apikeys (when in Test Mode)
+//
+// In production, set environment variables:
+// export STRIPE_SECRET_KEY=sk_test_xxx_or_sk_live_xxx
+// export STRIPE_PUBLISHABLE_KEY=pk_test_xxx_or_pk_live_xxx
+// export STRIPE_WEBHOOK_SECRET=whsec_xxx
+//
+define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY') ?: 'sk_test_placeholder_configure_in_env');
+define('STRIPE_WEBHOOK_SECRET', getenv('STRIPE_WEBHOOK_SECRET') ?: 'whsec_test_placeholder');

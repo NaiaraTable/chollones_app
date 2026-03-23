@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+  import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {
@@ -171,23 +171,28 @@ export class HistorialPage implements OnInit {
   getEstadoIcon(estado: string): string {
     switch (estado) {
       case 'completada':
-        return 'checkmarkCircleOutline';
+        return 'checkmark-circle-outline';
       case 'cancelada':
-        return 'closeCircleOutline';
+        return 'close-circle-outline';
       default:
-        return 'timeOutline';
+        return 'time-outline';
     }
   }
 
   formatearFecha(fecha: string): string {
-    const date = new Date(fecha);
-    return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (!fecha) return 'Fecha no disponible';
+    try {
+      const date = new Date(fecha);
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      return 'Fecha inválida';
+    }
   }
 
   irAlCarrito() {

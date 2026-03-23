@@ -17,58 +17,57 @@
   <!-- Sin compras -->
   <div *ngIf="!cargando && sinCompras" class="empty-state">
     <div class="empty-icon">
-      <ion-icon name="bagOutline"></ion-icon>
+      <ion-icon name="bag-outline"></ion-icon>
     </div>
     <h2>No tienes compras aún</h2>
     <p>Comienza a explorar nuestros chollos y haz tu primera compra</p>
     <ion-button expand="block" color="primary" (click)="irAlCarrito()">
-      <ion-icon name="bagOutline" slot="start"></ion-icon>
+      <ion-icon name="bag-outline" slot="start"></ion-icon>
       Ir al Carrito
     </ion-button>
   </div>
 
   <!-- Lista de compras -->
   <div *ngIf="!cargando && !sinCompras">
-    <ion-card *ngFor="let compra of compras" class="compra-card" (click)="abrirDetalles(compra)">
-      <ion-card-header>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="8">
-              <ion-card-title>{{ compra.numero_pedido }}</ion-card-title>
-              <p class="fecha-compra">{{ formatearFecha(compra.fecha_compra) }}</p>
-            </ion-col>
-            <ion-col size="4" class="estado-column">
-              <ion-badge
-                [color]="getEstadoBadgeColor(compra.estado)"
-                class="estado-badge"
-              >
-                <ion-icon [name]="getEstadoIcon(compra.estado)"></ion-icon>
-                {{ getEstadoTexto(compra.estado) }}
-              </ion-badge>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card-header>
-
-      <ion-card-content>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="6">
-              <p class="label">Artículos</p>
-              <p class="valor">{{ compra.cantidad_items }}</p>
-            </ion-col>
-            <ion-col size="6">
-              <p class="label">Total</p>
-              <p class="valor precio">{{ compra.total.toFixed(2) }}€</p>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-
-        <div class="detalles-link">
-          <ion-icon name="openOutline"></ion-icon>
-          Ver detalles
+    <ion-card *ngFor="let compra of compras; let i = index" class="compra-card" [style.animation]="'slideIn 0.4s ease-out ' + (i * 0.1) + 's both'" (click)="abrirDetalles(compra)">
+      <div class="card-header-custom">
+        <div class="header-left">
+          <div class="numero-pedido">{{ compra.numero_pedido }}</div>
+          <div class="fecha-compra">{{ formatearFecha(compra.fecha_compra) }}</div>
         </div>
-      </ion-card-content>
+        <ion-badge
+          [color]="getEstadoBadgeColor(compra.estado)"
+          class="estado-badge"
+        >
+          <ion-icon [name]="getEstadoIcon(compra.estado)"></ion-icon>
+          {{ getEstadoTexto(compra.estado) }}
+        </ion-badge>
+      </div>
+
+      <div class="card-body-custom">
+        <div class="stat-item">
+          <span class="stat-label">
+            <ion-icon name="cube"></ion-icon>
+            Artículos
+          </span>
+          <span class="stat-value">{{ compra.cantidad_items }}</span>
+        </div>
+        <div class="divider"></div>
+        <div class="stat-item">
+          <span class="stat-label">
+            <ion-icon name="pricetag"></ion-icon>
+            Total
+          </span>
+          <span class="stat-value total">{{ (compra.total || 0).toFixed(2) }}€</span>
+        </div>
+      </div>
+
+      <div class="card-footer-custom">
+        <span class="click-hint">
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+          Ver detalles
+        </span>
+      </div>
     </ion-card>
   </div>
 </ion-content>
@@ -91,88 +90,105 @@
         <p>Cargando detalles...</p>
       </div>
 
-      <div *ngIf="!cargandoDetalles && detallesActuales" [@.disabled]="true">
-        <!-- Información general -->
-        <ion-card class="info-card">
-          <ion-card-header>
-            <ion-card-title>{{ detallesActuales.numero_pedido }}</ion-card-title>
-            <p>{{ formatearFecha(detallesActuales.fecha_compra) }}</p>
-          </ion-card-header>
+      <div *ngIf="!cargandoDetalles && detallesActuales">
+        <!-- Información general con gradiente -->
+        <div class="details-header">
+          <div class="header-content">
+            <h1 class="order-number">{{ detallesActuales.numero_pedido }}</h1>
+            <p class="order-date">{{ formatearFecha(detallesActuales.fecha_compra) }}</p>
+            <ion-badge [color]="getEstadoBadgeColor(detallesActuales.estado)" class="header-badge">
+              <ion-icon [name]="getEstadoIcon(detallesActuales.estado)"></ion-icon>
+              {{ getEstadoTexto(detallesActuales.estado) }}
+            </ion-badge>
+          </div>
+        </div>
 
+        <!-- Resumen rápido -->
+        <ion-card class="summary-quick-card">
           <ion-card-content>
-            <ion-grid>
-              <ion-row>
-                <ion-col size="6">
-                  <p class="label">Estado</p>
-                  <ion-badge [color]="getEstadoBadgeColor(detallesActuales.estado)">
-                    {{ getEstadoTexto(detallesActuales.estado) }}
-                  </ion-badge>
-                </ion-col>
-                <ion-col size="6">
-                  <p class="label">Total</p>
-                  <p class="total-price">{{ detallesActuales.total.toFixed(2) }}€</p>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <span class="label">
+                  <ion-icon name="cube"></ion-icon>
+                  Artículos
+                </span>
+                <span class="value">{{ detallesActuales.cantidad_items }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">
+                  <ion-icon name="pricetag"></ion-icon>
+                  Total
+                </span>
+                <span class="value amount">{{ (detallesActuales.total || 0).toFixed(2) }}€</span>
+              </div>
+            </div>
           </ion-card-content>
         </ion-card>
 
-        <!-- Items -->
-        <h3 class="items-title">Artículos ({{ detallesActuales.cantidad_items }})</h3>
+        <!-- Items comprados -->
+        <h3 class="items-title">
+          <ion-icon name="bag"></ion-icon>
+          Artículos de la Compra
+        </h3>
 
-        <ion-card *ngFor="let item of detallesActuales.articulos" class="item-card">
-          <ion-card-content>
-            <ion-grid>
-              <ion-row>
+        <div class="items-container">
+          <ion-card *ngFor="let item of detallesActuales.articulos; let i = index" 
+                    class="item-card" 
+                    [style.animation]="'slideIn 0.3s ease-out ' + (i * 0.05) + 's both'">
+            <ion-card-content>
+              <div class="item-layout">
                 <!-- Imagen -->
-                <ion-col size="3" *ngIf="item.imagen_url">
+                <div class="item-image-container">
                   <img
+                    *ngIf="item.imagen_url && !item.error"
                     [src]="item.imagen_url"
                     alt="{{ item.titulo }}"
                     class="item-image"
+                    (error)="item.error = true"
                   />
-                </ion-col>
+                  <div *ngIf="!item.imagen_url || item.error" class="image-placeholder">
+                    <ion-icon name="bag-outline"></ion-icon>
+                  </div>
+                </div>
 
-                <!-- Info -->
-                <ion-col [size]="item.imagen_url ? '9' : '12'">
-                  <p class="item-titulo">{{ item.titulo }}</p>
+                <!-- Info del item -->
+                <div class="item-info">
+                  <h4 class="item-titulo">{{ item.titulo }}</h4>
+                  <div class="item-details">
+                    <span class="item-quantity">Qty: {{ item.cantidad }}</span>
+                    <span class="item-divider">•</span>
+                    <span class="item-unit-price">{{ (item.precio_unitario || 0).toFixed(2) }}€ c/u</span>
+                  </div>
+                </div>
 
-                  <p class="item-cantidad">Cantidad: {{ item.cantidad }}</p>
-                  <p class="item-precio">
-                    {{ item.precio_unitario.toFixed(2) }}€
-                    <span class="item-subtotal" *ngIf="item.cantidad > 1">
-                      × {{ item.cantidad }} = {{ item.subtotal.toFixed(2) }}€
-                    </span>
-                  </p>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-content>
-        </ion-card>
+                <!-- Subtotal -->
+                <div class="item-subtotal-box">
+                  <p class="item-subtotal">{{ (item.subtotal || 0).toFixed(2) }}€</p>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
 
-        <!-- Resumen -->
-        <ion-card class="summary-card">
-          <ion-card-content>
-            <ion-grid>
-              <ion-row class="summary-row">
-                <ion-col>
-                  <p class="summary-label">Total a pagar</p>
-                </ion-col>
-                <ion-col class="text-right">
-                  <p class="summary-total">{{ detallesActuales.total.toFixed(2) }}€</p>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-content>
-        </ion-card>
+        <!-- Total final -->
+        <div class="final-total-card">
+          <div class="total-content">
+            <span class="total-label">
+              <ion-icon name="wallet-outline"></ion-icon>
+              Total de la Compra
+            </span>
+            <span class="total-amount">{{ (detallesActuales.total || 0).toFixed(2) }}€</span>
+          </div>
+        </div>
 
-        <!-- Acciones -->
+        <!-- Botón de cerrar -->
         <ion-button
           expand="block"
           color="primary"
           class="action-button"
           (click)="cerrarModal()"
         >
+          <ion-icon name="chevron-down-outline" slot="start"></ion-icon>
           Volver
         </ion-button>
       </div>

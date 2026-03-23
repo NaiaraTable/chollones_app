@@ -3,11 +3,7 @@
 // API DEL CARRITO
 // ======================================================
 
-// --- CORS HEADERS (PRIMERO - antes de cualquier otra cosa) ---
-header('Access-Control-Allow-Origin: *', true);
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS', true);
-header('Access-Control-Allow-Headers: Content-Type, Authorization', true);
-header('Access-Control-Max-Age: 3600', true);
+// CORS headers are managed by .htaccess, not here
 header('Content-Type: application/json; charset=utf-8', true);
 
 // Responder inmediatamente a las peticiones OPTIONS (preflight)
@@ -26,25 +22,30 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 
 require_once __DIR__ . '/config.php';
 
-$db = getDB();
-$prefix = TABLE_PREFIX;
-$action = $_GET['action'] ?? 'list';
+try {
+    $db = getDB();
+    $prefix = TABLE_PREFIX;
+    $action = $_GET['action'] ?? 'list';
 
-switch ($action) {
-    case 'list':
-        getCarrito($db, $prefix);
-        break;
-    case 'add':
-        addToCarrito($db, $prefix);
-        break;
-    case 'update':
-        updateCarrito($db, $prefix);
-        break;
-    case 'remove':
-        removeFromCarrito($db, $prefix);
-        break;
-    default:
-        jsonError('Acción no válida');
+    switch ($action) {
+        case 'list':
+            getCarrito($db, $prefix);
+            break;
+        case 'add':
+            addToCarrito($db, $prefix);
+            break;
+        case 'update':
+            updateCarrito($db, $prefix);
+            break;
+        case 'remove':
+            removeFromCarrito($db, $prefix);
+            break;
+        default:
+            jsonError('Acción no válida');
+    }
+} catch (Exception $e) {
+    error_log("CARRITO ERROR: " . $e->getMessage() . " | " . $e->getFile() . ":" . $e->getLine());
+    jsonError('Error: ' . $e->getMessage(), 500);
 }
 
 // -------------------------------------------------------
@@ -218,10 +219,35 @@ function getImageUrlCart(PDO $db, string $prefix, ?string $thumbnailId): ?string
 {
     if (!$thumbnailId)
         return null;
-    $stmt = $db->prepare("SELECT meta_value FROM {$prefix}postmeta WHERE post_id = :id AND meta_key = '_wp_attached_file'");
-    $stmt->execute(['id' => $thumbnailId]);
-    $file = $stmt->fetchColumn();
-    return $file ? SITE_URL . '/wp-content/uploads/' . $file : null;
+    
+    try {
+        // Buscar en postmeta primero
+        $stmt = $db->prepare("
+            SELECT meta_value FROM {$prefix}postmeta 
+            WHERE post_id = :id AND meta_key = '_wp_attached_file' 
+            LIMIT 1
+        ");
+        $stmt->execute(['id' => $thumbnailId]);
+        $result = $stmt->fetch();
+        
+        if ($result && $result['meta_value']) {
+            return SITE_URL . '/wp-content/uploads/' . $result['meta_value'];
+        }
+        
+        // Si no encuentra, buscar el GUID
+        $stmt = $db->prepare("SELECT guid FROM {$prefix}posts WHERE ID = :id LIMIT 1");
+        $stmt->execute(['id' => $thumbnailId]);
+        $result = $stmt->fetch();
+        
+        if ($result && $result['guid']) {
+            return $result['guid'];
+        }
+        
+        return null;
+    } catch (Exception $e) {
+        error_log("getImageUrlCart error: " . $e->getMessage());
+        return null;
+    }
 }
 
 function getVendorCart(PDO $db, string $prefix, ?string $authorId): ?array
