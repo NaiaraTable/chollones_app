@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import {
   IonContent,
   IonHeader,
@@ -33,6 +33,7 @@ import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
 import { Capacitor } from '@capacitor/core';
 
+
 @Component({
   selector: 'app-tab4',
   templateUrl: './tab4.page.html',
@@ -54,6 +55,8 @@ import { Capacitor } from '@capacitor/core';
   ]
 })
 export class Tab4Page implements OnInit {
+
+  @ViewChild('searchbar') searchbarRef!: IonSearchbar;
 
   listadoChollos: any[] = [];
   filtrados: any[] = [];
@@ -78,7 +81,9 @@ export class Tab4Page implements OnInit {
     private supabaseService: SupabaseService,
     private locationService: LocationService,
     private router: Router,
-    private toastCtrl: ToastController
+    private route: ActivatedRoute,
+    private toastCtrl: ToastController,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({
       heart,
@@ -98,6 +103,24 @@ export class Tab4Page implements OnInit {
   }
 
   async ionViewWillEnter() {
+    const q = this.route.snapshot.queryParamMap.get('q');
+
+    // Solo actualizar si viene búsqueda desde el header
+    if (q !== null) {
+      this.textoBusqueda = q.trim();
+      // Setear el valor visual del searchbar sin disparar ionInput
+      setTimeout(() => {
+        if (this.searchbarRef) {
+          this.searchbarRef.value = this.textoBusqueda;
+        }
+      }, 0);
+    }
+
+    if (this.listadoChollos.length > 0) {
+      this.aplicarFiltros();
+      return;
+    }
+
     await this.cargarDatos();
   }
 
@@ -171,9 +194,12 @@ export class Tab4Page implements OnInit {
   aplicarFiltros() {
     let tmp = [...this.listadoChollos];
 
-    if (this.textoBusqueda) {
+    console.log('[tab4] aplicarFiltros() texto:', this.textoBusqueda, '| total antes filtro:', tmp.length);
+
+    if (this.textoBusqueda.trim()) {
+      const q = this.textoBusqueda.trim().toLowerCase();
       tmp = tmp.filter(c =>
-        c.titulo?.toLowerCase().includes(this.textoBusqueda.toLowerCase())
+        c.titulo?.toLowerCase().includes(q)
       );
     }
 
@@ -209,6 +235,8 @@ export class Tab4Page implements OnInit {
     if (this.chollosPaginados.length >= this.filtrados.length) {
       this.infiniteScrollDisabled = true;
     }
+
+    this.cdr.detectChanges();
   }
 
   cargarMas(event: any) {
@@ -219,7 +247,13 @@ export class Tab4Page implements OnInit {
   }
 
   buscar(ev: any) {
-    this.textoBusqueda = ev.detail.value || '';
+    console.log('[tab4] evento completo:', ev);
+    console.log('[tab4] ev.detail:', ev?.detail);
+    console.log('[tab4] ev.detail.value:', ev?.detail?.value);
+    console.log('[tab4] ev.target.value:', ev?.target?.value);
+    const valor = ev?.detail?.value ?? ev?.target?.value ?? '';
+    this.textoBusqueda = valor;
+    console.log('[tab4] textoBusqueda asignado:', this.textoBusqueda);
     this.aplicarFiltros();
   }
 
@@ -268,11 +302,10 @@ export class Tab4Page implements OnInit {
       await this.supabaseService.anadirAlCarrito(chollo.id, 1);
 
       const toast = await this.toastCtrl.create({
-        message: '¡Añadido al carrito!',
-        duration: 1500,
-        position: 'top',
-        color: 'dark',
-        cssClass: 'toast-superior'
+        message: 'Producto añadido al carrito',
+        duration: 2000,
+        position: 'bottom',
+        cssClass: 'toast-carrito'
       });
 
       await toast.present();

@@ -2,7 +2,9 @@
   <ion-toolbar color="primary">
     <ion-searchbar
       placeholder="Buscar chollos o tiendas..."
-      (ionInput)="buscar($event)">
+      #searchbar
+      (ionInput)="buscar($event)"
+      debounce="300">
     </ion-searchbar>
 
     <ion-buttons slot="end">
