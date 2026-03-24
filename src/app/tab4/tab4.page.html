@@ -1,4 +1,22 @@
 <ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-searchbar
+      placeholder="Buscar chollos o tiendas..."
+      #searchbar
+      (ionInput)="buscar($event)"
+      debounce="300">
+    </ion-searchbar>
+
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="heart-outline"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <ion-icon slot="icon-only" name="bag-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
   <div class="filters-bar">
     <div class="scroll-container">
       <button
