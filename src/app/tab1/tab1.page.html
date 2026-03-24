@@ -18,7 +18,7 @@
     </div>
     <div class="quick-row">
       <div class="quick-circle-item" *ngFor="let q of quickLinks"
-        (click)="router.navigate(['/tabs/tab4'], { queryParams: { filtro: q.id } })">
+           (click)="router.navigate(['/tabs/tab4'], { queryParams: { filtro: q.id } })">
         <div class="circle-bg" [style.background-color]="q.bgColor">
           <img [src]="q.img" />
         </div>
@@ -58,7 +58,10 @@
         </div>
 
         <!-- Favoritos -->
-        <ion-icon [name]="isFavorito(p.id) ? 'heart' : 'heart-outline'"></ion-icon>
+        <div class="fav-icon" (click)="toggleFavorito(p, $event); $event.stopPropagation()"
+             [class.active]="isFavorito(p.id)">
+          <ion-icon name="heart"></ion-icon>
+        </div>
 
         <img class="product-img" [src]="p.imagen" (error)="$any($event.target).src='assets/placeholder.png'" />
 
@@ -102,7 +105,7 @@
 
         <!-- Favoritos -->
         <div class="fav-icon" (click)="toggleFavorito(p, $event); $event.stopPropagation()"
-          [class.active]="isFavorito(p.id)">
+             [class.active]="isFavorito(p.id)">
           <ion-icon name="heart"></ion-icon>
         </div>
 
@@ -141,23 +144,23 @@
       <div class="product-card" *ngFor="let c of chollosFiltrados" (click)="irAProducto(c)">
 
         <div class="disc" *ngIf="calcDescuento(c) > 0" [class.badge-hot]="c?.punto?.estado === 'Caliente'"> -{{
-          calcDescuento(c) }}%
+            calcDescuento(c) }}%
         </div>
 
         <!-- Favoritos -->
         <div class="fav-icon" (click)="toggleFavorito(c, $event); $event.stopPropagation()"
-          [class.active]="isFavorito(c.id)">
+             [class.active]="isFavorito(c.id)">
           <ion-icon name="heart"></ion-icon>
         </div>
 
         <img class="product-img" [src]="c?.imagen_url || c?.imagen || 'assets/placeholder.png'"
-          (error)="$any($event.target).src='assets/placeholder.png'" />
+             (error)="$any($event.target).src='assets/placeholder.png'" />
 
         <div class="product-body">
           <div class="product-prov" *ngIf="c?.proveedores || c?.proveedor">
             <img class="logo" [src]="(c?.proveedores?.logo || c?.proveedor?.logo)"
-              style="width:20px;height:20px;border-radius:50%;object-fit:cover;"
-              *ngIf="(c?.proveedores?.logo || c?.proveedor?.logo)" (click)="$event.stopPropagation()" />
+                 style="width:20px;height:20px;border-radius:50%;object-fit:cover;"
+                 *ngIf="(c?.proveedores?.logo || c?.proveedor?.logo)" (click)="$event.stopPropagation()" />
 
             <span>
               {{ (c?.proveedores?.nombre || c?.proveedor?.nombre) }}
