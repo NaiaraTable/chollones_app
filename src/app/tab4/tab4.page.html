@@ -5,10 +5,15 @@
       #searchbar
       [value]="textoBusqueda"
       (ionInput)="buscar($event)"
-      debounce="300">
+      [debounce]="300">
     </ion-searchbar>
 
     <ion-buttons slot="end">
+      <!-- Botón de categoría colocado en la derecha, estilo de botón compacto -->
+      <ion-button id="cat-button" class="cat-trigger" fill="solid" color="light" aria-haspopup="dialog" aria-label="Seleccionar categoría">
+        <span class="cat-label">{{ categoriaSeleccionadaNombre }}</span>
+        <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
+      </ion-button>
       <ion-button>
         <ion-icon slot="icon-only" name="heart-outline"></ion-icon>
       </ion-button>
@@ -18,19 +23,23 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <div class="filters-bar">
-    <div class="scroll-container">
-      <button
-        type="button"
-        class="filter-chip"
-        *ngFor="let cat of categorias"
-        [class.active]="categoriaSeleccionada === cat.slug"
-        (click)="seleccionarCategoria(cat.slug)"
-      >
-        {{ cat.nombre }}
-      </button>
-    </div>
-  </div>
+
+  <!-- Popover con buscador y lista filtrable -->
+  <ion-popover #popoverCats trigger="cat-button">
+    <ng-template>
+      <ion-content>
+        <ion-searchbar placeholder="Buscar categoría..." [value]="catSearch" (ionInput)="onCatSearchInput($event)"></ion-searchbar>
+        <ion-list>
+          <ng-container *ngFor="let cat of categorias">
+            <ion-item [button]="true" *ngIf="matchesCategory(cat)" (click)="onSelectCategory(cat.slug)">
+              <ion-label>{{ cat.nombre }}</ion-label>
+              <ion-icon slot="end" name="checkmark-outline" *ngIf="categoriaSeleccionada === cat.slug"></ion-icon>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
 
   <div class="sub-filters-bar" *ngIf="categoriaSeleccionada === 'todas'">
     <div class="scroll-container">
@@ -100,11 +109,12 @@
           </div>
 
           <img
-            class="cover"
-            *ngIf="chollo.imagen_url"
-            [src]="chollo.imagen_url"
-            (error)="chollo.imagen_url = null"
-          />
+             class="cover"
+             *ngIf="chollo.imagen_url"
+             [src]="chollo.imagen_url"
+             (error)="chollo.imagen_url = null"
+             [alt]="chollo.titulo || 'Imagen'"
+           />
 
           <div class="no-image" *ngIf="!chollo.imagen_url">
             <ion-icon name="image-outline"></ion-icon>

@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import {
@@ -11,9 +11,9 @@ import {
   IonButton,
   IonIcon,
   IonSpinner,
-  IonImg,
   IonInfiniteScroll,
-  IonInfiniteScrollContent, IonSearchbar
+  IonInfiniteScrollContent, IonSearchbar,
+  IonPopover, IonList, IonItem, IonLabel
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -49,10 +49,10 @@ import { ToastController } from '@ionic/angular/standalone';
     IonButton,
     IonIcon,
     IonSpinner,
-    IonImg,
     IonInfiniteScroll,
     IonInfiniteScrollContent,
-    IonSearchbar
+    IonSearchbar,
+    IonPopover, IonList, IonItem, IonLabel
   ]
 })
 export class Tab4Page implements OnInit, OnDestroy {
@@ -64,7 +64,6 @@ export class Tab4Page implements OnInit, OnDestroy {
   categorias: any[] = [{ nombre: 'Todas', slug: 'todas' }];
   categoriaSeleccionada = 'todas';
 
-  // Variable para el subfiltro
   subFiltroSeleccionado = 'destacados';
 
   textoBusqueda = '';
@@ -79,24 +78,38 @@ export class Tab4Page implements OnInit, OnDestroy {
   paginaActual = 0;
   infiniteScrollDisabled = false;
 
+  // Referencia al searchbar del template
+  @ViewChild('searchbar', { static: false }) searchbarRef?: IonSearchbar;
+
+  // Referencia al popover de categorías
+  @ViewChild('popoverCats') popoverCats?: IonPopover;
+
   private searchSub?: Subscription;
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private locationService: LocationService,
-    private searchService: SearchService,
-    private router: Router,
-    private toastCtrl: ToastController,
-    private cdr: ChangeDetectorRef
-  ) {
+  // Inyecciones usando `inject()` para evitar la regla prefer-inject
+  private supabaseService = inject(SupabaseService);
+  private locationService = inject(LocationService);
+  private searchService = inject(SearchService);
+  private router = inject(Router);
+  private toastCtrl = inject(ToastController);
+  private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+
+  // Búsqueda interna del popover de categorías
+  catSearch: string = '';
+
+  constructor() {
+    // constructor vacío intencionalmente (inyecciones con inject())
+  }
+
+  async ngOnInit() {
+    // Registrar iconos aquí (antes estaba en el constructor)
     addIcons({
       heart, heartOutline, bagOutline, add,
       searchOutline, locationOutline, storefrontOutline,
       cartOutline, imageOutline
     });
-  }
 
-  async ngOnInit() {
     await this.obtenerUbicacion();
 
     // Suscripción reactiva al buscador del header
@@ -115,6 +128,12 @@ export class Tab4Page implements OnInit, OnDestroy {
   buscar(event: any) {
     const texto = event.detail?.value || '';
     this.searchService.setBusqueda(texto);
+  }
+
+  onCatSearchInput(event: any) {
+    // Normalizar valor: si viene undefined lo convertimos a cadena vacía
+    const v = event?.detail?.value;
+    this.catSearch = (v === undefined || v === null) ? '' : String(v);
   }
 
   async ionViewWillEnter() {
@@ -222,11 +241,11 @@ export class Tab4Page implements OnInit, OnDestroy {
           console.log("🔍 Estructura del primer chollo:", tmp[0]);
         }
 
+        // Explicación: Simplificar la lógica del filtro de valoraciones usando una expresión ternaria
+        // para evitar la advertencia del linter sobre 'if' simplificable.
         tmp = tmp.filter(c => {
-          // Buscamos cualquier posible nombre de campo de valoración
           const val = parseFloat(c.valoracion ?? c.rating ?? c.puntuacion ?? c.average_rating ?? c._wc_average_rating ?? 0) || 0;
 
-          // Buscamos comentarios por número o si es un array
           const numComentarios = parseInt(c.comentarios ?? c.rating_count ?? c.review_count ?? c.cantidad_comentarios ?? 0) || 0;
           const arrayComentarios = Array.isArray(c.comentarios) ? c.comentarios.length : 0;
           const arrayReviews = Array.isArray(c.reviews) ? c.reviews.length : 0;
@@ -234,20 +253,9 @@ export class Tab4Page implements OnInit, OnDestroy {
           const totalComentarios = numComentarios + arrayComentarios + arrayReviews;
 
           const estaValorado = val > 0;
-          const tieneComentarios = totalComentarios > 0;
 
-          // Si descomentas esta línea, verás por qué se ocultan en la consola
-          // console.log(`Chollo: ${c.titulo} | Nota: ${val} | Comentarios: ${totalComentarios}`);
-
-          if (!estaValorado && !tieneComentarios) {
-            return false;
-          }
-
-          if (estaValorado && val < 2.3) {
-            return false;
-          }
-
-          return true;
+          // Si está valorado, lo incluimos solo si la nota >= 2.3; si no está valorado, lo incluimos solo si tiene comentarios
+          return estaValorado ? val >= 2.3 : totalComentarios > 0;
         });
 
         // Ordenar de mayor nota a menor
@@ -295,20 +303,23 @@ export class Tab4Page implements OnInit, OnDestroy {
     }, 500);
   }
 
-  buscar(ev: any) {
-    console.log('[tab4] evento completo:', ev);
-    console.log('[tab4] ev.detail:', ev?.detail);
-    console.log('[tab4] ev.detail.value:', ev?.detail?.value);
-    console.log('[tab4] ev.target.value:', ev?.target?.value);
-    const valor = ev?.detail?.value ?? ev?.target?.value ?? '';
-    this.textoBusqueda = valor;
-    console.log('[tab4] textoBusqueda asignado:', this.textoBusqueda);
-    this.aplicarFiltros();
-  }
-
   seleccionarCategoria(slug: string) {
     this.categoriaSeleccionada = slug;
     this.aplicarFiltros();
+  }
+
+  onSelectCategory(slug: string) {
+    // Cerrar el popover y limpiar la búsqueda de categoría
+    this.popoverCats?.dismiss();
+    this.catSearch = '';
+    this.seleccionarCategoria(slug);
+  }
+
+  // Determina si una categoría coincide con el texto de búsqueda del popover
+  matchesCategory(cat: any): boolean {
+    const name = (cat?.nombre || '').toString();
+    const search = (this.catSearch || '').toString().trim().toLowerCase();
+    return !search || name.toLowerCase().includes(search);
   }
 
   calcDescuento(c: any): number {
@@ -356,5 +367,10 @@ export class Tab4Page implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error añadiendo al carrito:', error);
     }
+  }
+
+  get categoriaSeleccionadaNombre(): string {
+    const cat = this.categorias.find(x => x.slug === this.categoriaSeleccionada);
+    return cat?.nombre || 'Todas';
   }
 }
