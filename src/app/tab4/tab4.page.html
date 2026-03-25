@@ -3,11 +3,17 @@
     <ion-searchbar
       placeholder="Buscar chollos o tiendas..."
       #searchbar
+      [value]="textoBusqueda"
       (ionInput)="buscar($event)"
-      debounce="300">
+      [debounce]="300">
     </ion-searchbar>
 
     <ion-buttons slot="end">
+      <!-- Botón de categoría colocado en la derecha, estilo de botón compacto -->
+      <ion-button id="cat-button" class="cat-trigger" fill="solid" color="light" aria-haspopup="dialog" aria-label="Seleccionar categoría">
+        <span class="cat-label">{{ categoriaSeleccionadaNombre }}</span>
+        <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
+      </ion-button>
       <ion-button>
         <ion-icon slot="icon-only" name="heart-outline"></ion-icon>
       </ion-button>
@@ -17,19 +23,23 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <div class="filters-bar">
-    <div class="scroll-container">
-      <button
-        type="button"
-        class="filter-chip"
-        *ngFor="let cat of categorias"
-        [class.active]="categoriaSeleccionada === cat.slug"
-        (click)="seleccionarCategoria(cat.slug)"
-      >
-        {{ cat.nombre }}
-      </button>
-    </div>
-  </div>
+
+  <!-- Popover con buscador y lista filtrable -->
+  <ion-popover #popoverCats trigger="cat-button">
+    <ng-template>
+      <ion-content>
+        <ion-searchbar placeholder="Buscar categoría..." [value]="catSearch" (ionInput)="onCatSearchInput($event)"></ion-searchbar>
+        <ion-list>
+          <ng-container *ngFor="let cat of categorias">
+            <ion-item [button]="true" *ngIf="matchesCategory(cat)" (click)="onSelectCategory(cat.slug)">
+              <ion-label>{{ cat.nombre }}</ion-label>
+              <ion-icon slot="end" name="checkmark-outline" *ngIf="categoriaSeleccionada === cat.slug"></ion-icon>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
 
   <div class="sub-filters-bar" *ngIf="categoriaSeleccionada === 'todas'">
     <div class="scroll-container">
@@ -70,13 +80,27 @@
 </ion-header>
 
 <ion-content>
+
+  <!-- Banner de búsqueda activa -->
+  <div class="search-banner" *ngIf="textoBusqueda.trim()">
+    <ion-icon name="search-outline"></ion-icon>
+    <span>Resultados para <strong>"{{ textoBusqueda }}"</strong></span>
+    <span class="search-count">({{ filtrados.length }})</span>
+  </div>
+
   <div class="chollos-container">
 
     <div *ngIf="cargando" class="loading">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
 
-    <div *ngIf="!cargando" class="guardados-list">
+    <!-- Sin resultados -->
+    <div *ngIf="!cargando && filtrados.length === 0" class="empty-state">
+      <ion-icon name="search-outline"></ion-icon>
+      <p>No se encontraron chollos{{ textoBusqueda ? ' para "' + textoBusqueda + '"' : '' }}</p>
+    </div>
+
+    <div *ngIf="!cargando && filtrados.length > 0" class="guardados-list">
       <div class="chollo-card" *ngFor="let chollo of chollosPaginados">
 
         <div class="image-container" (click)="irADetalle(chollo.id)">
@@ -85,11 +109,12 @@
           </div>
 
           <img
-            class="cover"
-            *ngIf="chollo.imagen_url"
-            [src]="chollo.imagen_url"
-            (error)="chollo.imagen_url = null"
-          />
+             class="cover"
+             *ngIf="chollo.imagen_url"
+             [src]="chollo.imagen_url"
+             (error)="chollo.imagen_url = null"
+             [alt]="chollo.titulo || 'Imagen'"
+           />
 
           <div class="no-image" *ngIf="!chollo.imagen_url">
             <ion-icon name="image-outline"></ion-icon>
@@ -130,7 +155,10 @@
       </div>
     </div>
 
-    <ion-infinite-scroll *ngIf="!cargando" [disabled]="infiniteScrollDisabled" (ionInfinite)="cargarMas($event)">
+    <ion-infinite-scroll
+      *ngIf="!cargando"
+      [disabled]="infiniteScrollDisabled"
+      (ionInfinite)="cargarMas($event)">
       <ion-infinite-scroll-content
         loadingSpinner="crescent"
         loadingText="Cargando más chollos...">

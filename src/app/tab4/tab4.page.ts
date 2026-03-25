@@ -1,19 +1,19 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+
 import {
   IonContent,
   IonHeader,
   IonToolbar,
-  IonSearchbar,
   IonButtons,
   IonButton,
   IonIcon,
   IonSpinner,
-  ToastController,
-  IonImg,
   IonInfiniteScroll,
-  IonInfiniteScrollContent
+  IonInfiniteScrollContent, IonSearchbar,
+  IonPopover, IonList, IonItem, IonLabel
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -31,8 +31,9 @@ import {
 
 import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
+import { SearchService } from '../services/Search.service';
 import { Capacitor } from '@capacitor/core';
-
+import { ToastController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-tab4',
@@ -44,19 +45,17 @@ import { Capacitor } from '@capacitor/core';
     IonContent,
     IonHeader,
     IonToolbar,
-    IonSearchbar,
     IonButtons,
     IonButton,
     IonIcon,
     IonSpinner,
-    IonImg,
     IonInfiniteScroll,
-    IonInfiniteScrollContent
+    IonInfiniteScrollContent,
+    IonSearchbar,
+    IonPopover, IonList, IonItem, IonLabel
   ]
 })
-export class Tab4Page implements OnInit {
-
-  @ViewChild('searchbar') searchbarRef!: IonSearchbar;
+export class Tab4Page implements OnInit, OnDestroy {
 
   listadoChollos: any[] = [];
   filtrados: any[] = [];
@@ -65,7 +64,6 @@ export class Tab4Page implements OnInit {
   categorias: any[] = [{ nombre: 'Todas', slug: 'todas' }];
   categoriaSeleccionada = 'todas';
 
-  // Variable para el subfiltro
   subFiltroSeleccionado = 'destacados';
 
   textoBusqueda = '';
@@ -80,32 +78,67 @@ export class Tab4Page implements OnInit {
   paginaActual = 0;
   infiniteScrollDisabled = false;
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private locationService: LocationService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toastCtrl: ToastController,
-    private cdr: ChangeDetectorRef
-  ) {
-    addIcons({
-      heart,
-      heartOutline,
-      bagOutline,
-      add,
-      searchOutline,
-      locationOutline,
-      storefrontOutline,
-      cartOutline,
-      imageOutline
-    });
+  // Referencia al searchbar del template
+  @ViewChild('searchbar', { static: false }) searchbarRef?: IonSearchbar;
+
+  // Referencia al popover de categorías
+  @ViewChild('popoverCats') popoverCats?: IonPopover;
+
+  private searchSub?: Subscription;
+
+  // Inyecciones usando `inject()` para evitar la regla prefer-inject
+  private supabaseService = inject(SupabaseService);
+  private locationService = inject(LocationService);
+  private searchService = inject(SearchService);
+  private router = inject(Router);
+  private toastCtrl = inject(ToastController);
+  private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+
+  // Búsqueda interna del popover de categorías
+  catSearch: string = '';
+
+  constructor() {
+    // constructor vacío intencionalmente (inyecciones con inject())
   }
 
   async ngOnInit() {
+    // Registrar iconos aquí (antes estaba en el constructor)
+    addIcons({
+      heart, heartOutline, bagOutline, add,
+      searchOutline, locationOutline, storefrontOutline,
+      cartOutline, imageOutline
+    });
+
     await this.obtenerUbicacion();
+
+    // Suscripción reactiva al buscador del header
+    this.searchSub = this.searchService.getBusqueda$().subscribe(texto => {
+      this.textoBusqueda = texto;
+      if (this.listadoChollos.length > 0) {
+        this.aplicarFiltros();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.searchSub?.unsubscribe();
+  }
+
+  buscar(event: any) {
+    const texto = event.detail?.value || '';
+    this.searchService.setBusqueda(texto);
+  }
+
+  onCatSearchInput(event: any) {
+    // Normalizar valor: si viene undefined lo convertimos a cadena vacía
+    const v = event?.detail?.value;
+    this.catSearch = (v === undefined || v === null) ? '' : String(v);
   }
 
   async ionViewWillEnter() {
+    // Sincronizar con el valor actual del servicio (por si se navegó desde otra pestaña)
+    this.textoBusqueda = this.searchService.valorActual;
     // 1. Recibir búsqueda por texto
     const q = this.route.snapshot.queryParamMap.get('q');
     if (q !== null) {
@@ -138,7 +171,7 @@ export class Tab4Page implements OnInit {
         this.miLat = coords.latitude;
         this.miLng = coords.longitude;
       } catch (e) {
-        console.warn('Ubicación manual');
+        console.warn('Usando ubicación por defecto');
       }
     }
   }
@@ -156,43 +189,24 @@ export class Tab4Page implements OnInit {
           ...c,
           distanciaKM: c.proveedores?.lat
             ? this.locationService
-              .calcularDistancia(
-                this.miLat,
-                this.miLng,
-                c.proveedores.lat,
-                c.proveedores.lng
-              )
+              .calcularDistancia(this.miLat, this.miLng, c.proveedores.lat, c.proveedores.lng)
               .toFixed(1)
             : '?'
         }));
 
-        const catsMap = new Map();
-
+        const catsMap = new Map<string, any>();
         data.forEach((c: any) => {
-          const cats = Array.isArray(c.categorias)
-            ? c.categorias
-            : [c.categorias];
-
+          const cats = Array.isArray(c.categorias) ? c.categorias : [c.categorias];
           cats.forEach((cat: any) => {
-            if (cat?.slug) {
-              catsMap.set(cat.slug, {
-                nombre: cat.nombre,
-                slug: cat.slug
-              });
-            }
+            if (cat?.slug) catsMap.set(cat.slug, { nombre: cat.nombre, slug: cat.slug });
           });
         });
 
-        this.categorias = [
-          { nombre: 'Todas', slug: 'todas' },
-          ...Array.from(catsMap.values())
-        ];
-
+        this.categorias = [{ nombre: 'Todas', slug: 'todas' }, ...Array.from(catsMap.values())];
         this.aplicarFiltros();
       }
-
     } catch (e) {
-      console.error(e);
+      console.error('Error cargando chollos:', e);
     } finally {
       this.cargando = false;
     }
@@ -203,20 +217,13 @@ export class Tab4Page implements OnInit {
 
     if (this.textoBusqueda.trim()) {
       const q = this.textoBusqueda.trim().toLowerCase();
-      tmp = tmp.filter(c =>
-        c.titulo?.toLowerCase().includes(q)
-      );
+      tmp = tmp.filter(c => c.titulo?.toLowerCase().includes(q));
     }
 
     if (this.categoriaSeleccionada !== 'todas') {
       tmp = tmp.filter((c: any) => {
-        const cats = Array.isArray(c.categorias)
-          ? c.categorias
-          : [c.categorias];
-
-        return cats.some(
-          (cat: any) => cat?.slug === this.categoriaSeleccionada
-        );
+        const cats = Array.isArray(c.categorias) ? c.categorias : [c.categorias];
+        return cats.some((cat: any) => cat?.slug === this.categoriaSeleccionada);
       });
     }
 
@@ -234,11 +241,11 @@ export class Tab4Page implements OnInit {
           console.log("🔍 Estructura del primer chollo:", tmp[0]);
         }
 
+        // Explicación: Simplificar la lógica del filtro de valoraciones usando una expresión ternaria
+        // para evitar la advertencia del linter sobre 'if' simplificable.
         tmp = tmp.filter(c => {
-          // Buscamos cualquier posible nombre de campo de valoración
           const val = parseFloat(c.valoracion ?? c.rating ?? c.puntuacion ?? c.average_rating ?? c._wc_average_rating ?? 0) || 0;
 
-          // Buscamos comentarios por número o si es un array
           const numComentarios = parseInt(c.comentarios ?? c.rating_count ?? c.review_count ?? c.cantidad_comentarios ?? 0) || 0;
           const arrayComentarios = Array.isArray(c.comentarios) ? c.comentarios.length : 0;
           const arrayReviews = Array.isArray(c.reviews) ? c.reviews.length : 0;
@@ -246,20 +253,9 @@ export class Tab4Page implements OnInit {
           const totalComentarios = numComentarios + arrayComentarios + arrayReviews;
 
           const estaValorado = val > 0;
-          const tieneComentarios = totalComentarios > 0;
 
-          // Si descomentas esta línea, verás por qué se ocultan en la consola
-          // console.log(`Chollo: ${c.titulo} | Nota: ${val} | Comentarios: ${totalComentarios}`);
-
-          if (!estaValorado && !tieneComentarios) {
-            return false;
-          }
-
-          if (estaValorado && val < 2.3) {
-            return false;
-          }
-
-          return true;
+          // Si está valorado, lo incluimos solo si la nota >= 2.3; si no está valorado, lo incluimos solo si tiene comentarios
+          return estaValorado ? val >= 2.3 : totalComentarios > 0;
         });
 
         // Ordenar de mayor nota a menor
@@ -275,11 +271,9 @@ export class Tab4Page implements OnInit {
     }
 
     this.filtrados = tmp;
-
     this.paginaActual = 0;
     this.chollosPaginados = [];
     this.infiniteScrollDisabled = false;
-
     this.agregarChollos();
   }
 
@@ -292,9 +286,7 @@ export class Tab4Page implements OnInit {
   agregarChollos() {
     const inicio = this.paginaActual * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
-    const nuevosChollos = this.filtrados.slice(inicio, fin);
-
-    this.chollosPaginados = [...this.chollosPaginados, ...nuevosChollos];
+    this.chollosPaginados = [...this.chollosPaginados, ...this.filtrados.slice(inicio, fin)];
     this.paginaActual++;
 
     if (this.chollosPaginados.length >= this.filtrados.length) {
@@ -311,33 +303,38 @@ export class Tab4Page implements OnInit {
     }, 500);
   }
 
-  buscar(ev: any) {
-    const valor = ev?.detail?.value ?? ev?.target?.value ?? '';
-    this.textoBusqueda = valor;
-    this.aplicarFiltros();
-  }
-
   seleccionarCategoria(slug: string) {
     this.categoriaSeleccionada = slug;
     this.aplicarFiltros();
   }
 
-  calcDescuento(c: any) {
+  onSelectCategory(slug: string) {
+    // Cerrar el popover y limpiar la búsqueda de categoría
+    this.popoverCats?.dismiss();
+    this.catSearch = '';
+    this.seleccionarCategoria(slug);
+  }
+
+  // Determina si una categoría coincide con el texto de búsqueda del popover
+  matchesCategory(cat: any): boolean {
+    const name = (cat?.nombre || '').toString();
+    const search = (this.catSearch || '').toString().trim().toLowerCase();
+    return !search || name.toLowerCase().includes(search);
+  }
+
+  calcDescuento(c: any): number {
     const actual = Number(c.precio_actual);
     const original = Number(c.precio_original);
-
     if (!original || original <= actual) return 0;
-
     return Math.round(((original - actual) / original) * 100);
   }
 
-  esFavorito(id: string) {
+  esFavorito(id: string): boolean {
     return this.favoritosIds.has(id);
   }
 
   async toggleFavorito(c: any, e: Event) {
     e.stopPropagation();
-
     try {
       if (this.esFavorito(c.id)) {
         await this.supabaseService.eliminarCholloFavorito(c.id);
@@ -346,6 +343,7 @@ export class Tab4Page implements OnInit {
         await this.supabaseService.guardarCholloFavorito(c.id);
         this.favoritosIds.add(c.id);
       }
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Error toggle favorito', error);
     }
@@ -357,21 +355,22 @@ export class Tab4Page implements OnInit {
 
   async anadirAlCarrito(chollo: any, e: Event) {
     e.stopPropagation();
-
     try {
       await this.supabaseService.anadirAlCarrito(chollo.id, 1);
-
       const toast = await this.toastCtrl.create({
         message: 'Producto añadido al carrito',
         duration: 2000,
         position: 'bottom',
         cssClass: 'toast-carrito'
       });
-
       await toast.present();
-
     } catch (error) {
-      console.error(error);
+      console.error('Error añadiendo al carrito:', error);
     }
+  }
+
+  get categoriaSeleccionadaNombre(): string {
+    const cat = this.categorias.find(x => x.slug === this.categoriaSeleccionada);
+    return cat?.nombre || 'Todas';
   }
 }
