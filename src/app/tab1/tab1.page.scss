@@ -8,7 +8,8 @@
   scroll-snap-type: x mandatory;
   padding: 10px;
   gap: 15px;
-  -webkit-overflow-scrolling: touch; /* Suavidad en iOS */
+  -webkit-overflow-scrolling: touch;
+  /* Suavidad en iOS */
 
   /* Opcional: ocultar barra de scroll en navegadores WebKit */
   &::-webkit-scrollbar {
@@ -18,7 +19,8 @@
 
 /* Las tarjetas deben tener un ancho definido para deslizarse */
 .scroll-item {
-  flex: 0 0 250px; /* Ajusta este ancho según lo que necesites */
+  flex: 0 0 250px;
+  /* Ajusta este ancho según lo que necesites */
   scroll-snap-align: start;
 }
 
@@ -289,28 +291,45 @@ ion-content {
     right: 12px;
     width: 32px;
     height: 32px;
-    background: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
+
+    /* Fondo adaptativo (usa el fondo de la tarjeta) combinado con desenfoque estilo glassmorphism */
+    background: var(--card-background);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    /* Borde muy sutil para delimitarlo del fondo de la imagen, adaptativo al tema */
+    border: 1px solid var(--card-border);
     border-radius: 50%;
+
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease; /* Para que el cambio sea suave */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
     ion-icon {
-      color: #888; /* Gris cuando no es favorito */
+      /* En lugar de gris fijo, usamos el texto silenciado del tema (se ve bien en blanco y negro) */
+      color: var(--text-muted);
       font-size: 18px;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
 
     &.active {
-      background: #fff;
+      /* Efecto glow cuando le das a me gusta */
+      border-color: rgba(255, 71, 87, 0.4);
+      box-shadow: 0 4px 14px rgba(255, 71, 87, 0.25);
 
       ion-icon {
-        color: #ff4757; /* Rojo vibrante */
-        transform: scale(1.2); /* Efecto de latido al activarse */
+        color: #ff4757;
+        /* Rojo vibrante */
+        transform: scale(1.25);
+        /* Latido */
       }
     }
   }
@@ -406,7 +425,7 @@ ion-content {
   display: flex !important;
   align-items: center;
   justify-content: center;
-  background: var(--card-background-alt, rgba(0,0,0,0.02));
+  background: var(--card-background-alt, rgba(0, 0, 0, 0.02));
   cursor: pointer;
   border: 2px dashed var(--ion-color-primary, #ccc) !important;
   box-shadow: none !important;
@@ -441,17 +460,17 @@ ion-content {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--card-background-alt, rgba(0,0,0,0.02));
+  background: var(--card-background-alt, rgba(0, 0, 0, 0.02));
   border: 2px dashed var(--ion-color-primary, #ccc) !important;
   box-shadow: none !important;
-  
+
   ion-icon {
     font-size: 32px;
     color: var(--ion-color-primary);
     margin: 0 auto 8px;
     transition: transform 0.2s ease;
   }
-  
+
   div {
     color: var(--ion-color-primary) !important;
     font-size: 14px;

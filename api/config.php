@@ -192,13 +192,9 @@ function wp_hash_password(string $password): string
 // ======================================================
 // Get them from: https://dashboard.stripe.com/apikeys (when in Test Mode)
 //
-// IMPORTANTE: Use environment variables in production
-// define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY'));
-// define('STRIPE_PUBLISHABLE_KEY', getenv('STRIPE_PUBLISHABLE_KEY'));
+// IMPORTANTE: Usa tus propias claves de Stripe TEST
+// Se pueden pasar por variables de entorno o hardcodear para desarrollo
 //
-// For development: Set environment variables in your .env file or server config
-// NUNCA hardcodees las claves reales en el repositorio
-//
-define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY') ?: 'sk_test_placeholder_set_in_env');
-define('STRIPE_PUBLISHABLE_KEY', getenv('STRIPE_PUBLISHABLE_KEY') ?: 'pk_test_placeholder_set_in_env');
-define('STRIPE_WEBHOOK_SECRET', getenv('STRIPE_WEBHOOK_SECRET') ?: 'whsec_test_placeholder');
+define('STRIPE_SECRET_KEY', '');
+define('STRIPE_PUBLISHABLE_KEY', '');
+define('STRIPE_WEBHOOK_SECRET', 'whsec_test_placeholder');
