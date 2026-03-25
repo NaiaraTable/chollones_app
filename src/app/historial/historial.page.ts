@@ -1,6 +1,7 @@
-  import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
@@ -14,7 +15,8 @@ import {
   IonCard,
   IonCardContent,
   IonBadge,
-  IonModal
+  IonModal,
+  IonTextarea
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -29,7 +31,10 @@ import {
   pricetagOutline,
   walletOutline,
   chevronDownOutline,
-  bagCheckOutline
+  bagCheckOutline,
+  logoGoogle,
+  star,
+  starOutline
 } from 'ionicons/icons';
 
 import { ApiService } from '../services/api.service';
@@ -56,6 +61,7 @@ interface DetallesCompra extends Compra {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     IonContent,
     IonHeader,
     IonTitle,
@@ -68,7 +74,8 @@ interface DetallesCompra extends Compra {
     IonCard,
     IonCardContent,
     IonBadge,
-    IonModal
+    IonModal,
+    IonTextarea
   ]
 })
 export class HistorialPage implements OnInit {
@@ -77,11 +84,17 @@ export class HistorialPage implements OnInit {
   compras: Compra[] = [];
   cargando = true;
   sinCompras = false;
-  
+
   // Modal de detalles
   modalAbierto = false;
   detallesActuales: DetallesCompra | null = null;
   cargandoDetalles = false;
+
+  // Lógica de Feedback/Reseñas
+  estrellasSeleccionadas = 0;
+  comentarioInterno = '';
+  enviandoFeedback = false;
+  feedbackEnviado = false;
 
   constructor(
     private apiService: ApiService,
@@ -99,7 +112,10 @@ export class HistorialPage implements OnInit {
       pricetagOutline,
       walletOutline,
       chevronDownOutline,
-      bagCheckOutline
+      bagCheckOutline,
+      logoGoogle,
+      star,
+      starOutline
     });
   }
 
@@ -115,8 +131,6 @@ export class HistorialPage implements OnInit {
     this.cargando = true;
     try {
       this.compras = await this.apiService.getHistorialCompras();
-      console.log('📋 Historial cargado:', this.compras);
-      console.log('🖼️ Primer compra articulos_preview:', this.compras[0]?.articulos_preview);
       this.sinCompras = this.compras.length === 0;
     } catch (e) {
       console.error('Error cargando historial:', e);
@@ -129,74 +143,90 @@ export class HistorialPage implements OnInit {
   async abrirDetalles(compra: Compra) {
     this.cargandoDetalles = true;
     this.modalAbierto = true;
-    
+    // Resetear feedback al abrir
+    this.estrellasSeleccionadas = 0;
+    this.comentarioInterno = '';
+    this.feedbackEnviado = false;
+
     try {
       this.detallesActuales = await this.apiService.obtenerDetallesCompra(compra.id);
     } catch (e) {
       console.error('Error cargando detalles:', e);
-      alert('Error al cargar los detalles de la compra');
       this.modalAbierto = false;
     } finally {
       this.cargandoDetalles = false;
     }
   }
 
+  seleccionarEstrellas(n: number) {
+    this.estrellasSeleccionadas = n;
+    if (n >= 4) {
+      // Redirección directa a Google si son 4 o 5 estrellas
+      const url = `https://www.google.com/search?newwindow=1&sca_esv=484202b0491193e0&sxsrf=ANbL-n4Kzh1-TTGMghAK6HMwjMKSnVfSYQ:1774444629224&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOdneXHFjpY5OmMn2YSHUuxEp54HlOVNGcngZA_PO3QCmtwAcJsfq7-uSqYu3jq8_18jtOLvr1yOvXXPwyXSrf4UAC1ta&q=Chollones+Rese%C3%B1as&sa=X&ved=2ahUKEwi5rLGukbuTAxURTaQEHfxuH1wQ0bkNegQIHBAF&biw=1536&bih=730&dpr=1.25`;
+      window.open(url, '_system');
+    }
+  }
+
+  async enviarFeedbackInterno() {
+    if (!this.comentarioInterno.trim()) return;
+    this.enviandoFeedback = true;
+    try {
+      // Aquí iría tu llamada al API de chollones.com
+      // await this.apiService.enviarCriticaInterna(this.detallesActuales.id, this.estrellasSeleccionadas, this.comentarioInterno);
+
+      // Simulación de éxito
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      this.feedbackEnviado = true;
+    } catch (e) {
+      console.error('Error enviando feedback:', e);
+    } finally {
+      this.enviandoFeedback = false;
+    }
+  }
+
   cerrarModal() {
-    this.modal.dismiss();
     this.modalAbierto = false;
     this.detallesActuales = null;
   }
 
   getEstadoBadgeColor(estado: string): string {
     switch (estado) {
-      case 'completada':
-        return 'success';
-      case 'pendiente':
-        return 'warning';
-      case 'cancelada':
-        return 'danger';
-      default:
-        return 'medium';
+      case 'completada': return 'success';
+      case 'pendiente': return 'warning';
+      case 'cancelada': return 'danger';
+      default: return 'medium';
     }
   }
 
   getEstadoTexto(estado: string): string {
     switch (estado) {
-      case 'completada':
-        return '✓ Completada';
-      case 'pendiente':
-        return '⏳ Pendiente';
-      case 'cancelada':
-        return '✕ Cancelada';
-      default:
-        return estado;
+      case 'completada': return '✓ Completada';
+      case 'pendiente': return '⏳ Pendiente';
+      case 'cancelada': return '✕ Cancelada';
+      default: return estado;
     }
   }
 
   getEstadoIcon(estado: string): string {
     switch (estado) {
-      case 'completada':
-        return 'checkmark-circle-outline';
-      case 'cancelada':
-        return 'close-circle-outline';
-      default:
-        return 'time-outline';
+      case 'completada': return 'checkmark-circle-outline';
+      case 'cancelada': return 'close-circle-outline';
+      default: return 'time-outline';
     }
   }
 
   formatearFecha(fecha: string): string {
-    if (!fecha) return 'Fecha no disponible';
+    if (!fecha) return '';
     try {
       const date = new Date(fecha);
       return date.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long',
         day: 'numeric',
+        month: 'long',
         hour: '2-digit',
         minute: '2-digit'
       });
     } catch (e) {
-      return 'Fecha inválida';
+      return '';
     }
   }
 

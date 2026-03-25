@@ -102,11 +102,11 @@ export class StripeService {
   // Crear Payment Element (para Stripe Payment Element - incluye Google Pay)
   async crearPaymentElement(clientSecret: string, elementoId: string): Promise<any> {
     const stripe = await this.esperarStripe();
-    
+
     this.elements = stripe.elements({ clientSecret });
     const paymentElement = this.elements.create('payment');
     paymentElement.mount(`#${elementoId}`);
-    
+
     return paymentElement;
   }
 
@@ -116,18 +116,18 @@ export class StripeService {
       console.log('🔐 [STRIPE.SERVICE] Esperando Stripe en confirmarPaymentElement...');
       const stripe = await this.esperarStripe();
       console.log('✓ [STRIPE.SERVICE] Stripe cargado, elementos disponibles:', !!this.elements);
-      
+
       // PASO 1: Llamar elements.submit() PRIMERO (obligatorio según Stripe)
       console.log('✅ [STRIPE.SERVICE] Paso 1: Validando formulario con elements.submit()...');
       const submitResult = await this.elements.submit();
-      
+
       if (submitResult.error) {
         console.error('❌ [STRIPE.SERVICE] Error en elements.submit():', submitResult.error);
         throw new Error(submitResult.error.message);
       }
-      
+
       console.log('✅ [STRIPE.SERVICE] Paso 1 completado: Formulario validado correctamente');
-      
+
       // PASO 2: Llamar confirmPayment() después de submit()
       console.log('📤 [STRIPE.SERVICE] Paso 2: Llamando stripe.confirmPayment()...');
       const result = stripe.confirmPayment({
@@ -141,14 +141,14 @@ export class StripeService {
 
       console.log('⏳ [STRIPE.SERVICE] confirmPayment es una promesa, esperando respuesta...');
       const response = await result;
-      
+
       console.log('✅ [STRIPE.SERVICE] Respuesta de confirmPayment:', {
         hasError: !!response.error,
         hasPaymentIntent: !!response.paymentIntent,
         paymentIntentStatus: response.paymentIntent?.status,
         errorMessage: response.error?.message
       });
-      
+
       return response;
     } catch (error) {
       console.error('❌ [STRIPE.SERVICE] Error en confirmarPaymentElement:', error);

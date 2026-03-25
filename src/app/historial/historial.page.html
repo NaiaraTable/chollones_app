@@ -1,212 +1,116 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+      <ion-back-button defaultHref="/tabs/tab1" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Historial de Compras</ion-title>
+    <ion-title>Historial</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- Cargando -->
-  <div *ngIf="cargando" class="loading-container">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando tu historial...</p>
-  </div>
+<ion-content class="main-bg">
+  <div class="orders-list" *ngIf="!cargando">
+    <div *ngFor="let compra of compras" class="clean-card" (click)="abrirDetalles(compra)">
+      <div class="status-bar" [class]="compra.estado"></div>
 
-  <!-- Sin compras -->
-  <div *ngIf="!cargando && sinCompras" class="empty-state">
-    <div class="empty-icon">
-      <ion-icon name="bag-outline"></ion-icon>
+      <div class="card-content">
+        <div class="card-header">
+          <span class="order-label">PEDIDO</span>
+          <div class="status-tag" [class]="compra.estado">
+            <ion-icon [name]="getEstadoIcon(compra.estado)"></ion-icon>
+            <span>{{ compra.estado | uppercase }}</span>
+          </div>
+        </div>
+
+        <h2 class="order-number">{{ compra.numero_pedido }}</h2>
+
+        <div class="card-footer">
+          <div class="date-info">
+            <ion-icon name="calendar-outline"></ion-icon>
+            {{ formatearFecha(compra.fecha_compra) }}
+          </div>
+          <div class="price-pill">{{ (compra.total || 0).toFixed(2) }}€</div>
+        </div>
+      </div>
     </div>
-    <h2>No tienes compras aún</h2>
-    <p>Comienza a explorar nuestros chollos y haz tu primera compra</p>
-    <ion-button expand="block" color="primary" (click)="irAlCarrito()">
-      <ion-icon name="bag-outline" slot="start"></ion-icon>
-      Ir al Carrito
-    </ion-button>
-  </div>
-
-  <!-- Lista de compras -->
-  <div *ngIf="!cargando && !sinCompras">
-    <ion-card *ngFor="let compra of compras; let i = index" class="compra-card" [style.animation]="'slideIn 0.4s ease-out ' + (i * 0.1) + 's both'" (click)="abrirDetalles(compra)">
-      <div class="card-header-custom">
-        <div class="header-left">
-          <div class="fecha-compra">{{ formatearFecha(compra.fecha_compra) }}</div>
-          <div class="estado-text">{{ getEstadoTexto(compra.estado) }}</div>
-        </div>
-        <ion-badge
-          [color]="getEstadoBadgeColor(compra.estado)"
-          class="estado-badge"
-        >
-          <ion-icon [name]="getEstadoIcon(compra.estado)"></ion-icon>
-        </ion-badge>
-      </div>
-
-      <!-- Preview de productos -->
-      <div class="productos-preview">
-        <div *ngFor="let producto of compra.articulos_preview" class="producto-preview-item">
-          <div class="producto-imagen">
-            <img 
-              *ngIf="producto.imagen_url" 
-              [src]="producto.imagen_url" 
-              alt="{{ producto.titulo }}"
-              class="imagen"
-            />
-            <div *ngIf="!producto.imagen_url" class="imagen-placeholder">
-              <div class="placeholder-icon">📦</div>
-            </div>
-            <div class="cantidad-badge">{{ producto.cantidad }}</div>
-          </div>
-          <div class="producto-info">
-            <div class="producto-titulo">{{ producto.titulo }}</div>
-          </div>
-        </div>
-        <div *ngIf="compra.articulos_count > 4" class="mas-productos">
-          <div class="mas-badge">+{{ compra.articulos_count - 4 }}</div>
-          <p>más</p>
-        </div>
-      </div>
-
-      <div class="card-body-custom">
-        <div class="stat-item">
-          <span class="stat-label">
-            <ion-icon name="pricetag-outline"></ion-icon>
-            Total
-          </span>
-          <span class="stat-value total">{{ (compra.total || 0).toFixed(2) }}€</span>
-        </div>
-      </div>
-
-      <div class="card-footer-custom">
-        <span class="click-hint">
-          <ion-icon name="chevron-forward-outline"></ion-icon>
-          Ver detalles
-        </span>
-      </div>
-    </ion-card>
   </div>
 </ion-content>
 
-<!-- Modal de detalles -->
-<ion-modal [isOpen]="modalAbierto" [breakpoints]="[0, 0.75, 1]" [initialBreakpoint]="0.75" (ionModalDidDismiss)="cerrarModal()">
+<ion-modal [isOpen]="modalAbierto" [breakpoints]="[0, 0.95]" [initialBreakpoint]="0.95" (ionModalDidDismiss)="cerrarModal()">
   <ng-template>
-    <ion-header [translucent]="true">
+    <ion-header class="ion-no-border">
       <ion-toolbar>
+        <ion-title>Detalle del Pedido</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="cerrarModal()">Cerrar</ion-button>
+          <ion-button (click)="cerrarModal()" color="medium">Cerrar</ion-button>
         </ion-buttons>
-        <ion-title>Detalles de Compra</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [fullscreen]="true" class="ion-padding">
-      <div *ngIf="cargandoDetalles" class="loading-container">
-        <ion-spinner name="crescent"></ion-spinner>
-        <p>Cargando detalles...</p>
-      </div>
+    <ion-content class="modal-bg">
+      <div class="modal-container" *ngIf="detallesActuales">
 
-      <div *ngIf="!cargandoDetalles && detallesActuales">
-        <!-- Información general con gradiente -->
-        <div class="details-header">
-          <div class="header-content">
-            <h1 class="order-number">{{ detallesActuales.numero_pedido }}</h1>
-            <p class="order-date">{{ formatearFecha(detallesActuales.fecha_compra) }}</p>
-            <ion-badge [color]="getEstadoBadgeColor(detallesActuales.estado)" class="header-badge">
-              <ion-icon [name]="getEstadoIcon(detallesActuales.estado)"></ion-icon>
-              {{ getEstadoTexto(detallesActuales.estado) }}
-            </ion-badge>
+        <div class="order-main-info">
+          <div class="big-status-icon" [class]="detallesActuales.estado">
+            <ion-icon [name]="getEstadoIcon(detallesActuales.estado)"></ion-icon>
           </div>
+          <p class="id-hint">Identificador de pedido</p>
+          <h1 class="id-value">{{ detallesActuales.numero_pedido }}</h1>
         </div>
 
-        <!-- Resumen rápido -->
-        <ion-card class="summary-quick-card">
-          <ion-card-content>
-            <div class="summary-grid">
-              <div class="summary-item">
-                <span class="label">
-                  <ion-icon name="cube-outline"></ion-icon>
-                  Artículos
-                </span>
-                <span class="value">{{ detallesActuales.cantidad_items }}</span>
-              </div>
-              <div class="summary-item">
-                <span class="label">
-                  <ion-icon name="pricetag-outline"></ion-icon>
-                  Total
-                </span>
-                <span class="value amount">{{ (detallesActuales.total || 0).toFixed(2) }}€</span>
-              </div>
+        <div *ngIf="detallesActuales.estado === 'completada'" class="feedback-section">
+          <div class="feedback-card">
+            <h3>¿Qué tal tu experiencia?</h3>
+            <div class="stars-container" *ngIf="!feedbackEnviado">
+              <ion-icon *ngFor="let n of [1,2,3,4,5]"
+                        [name]="estrellasSeleccionadas >= n ? 'star' : 'star-outline'"
+                        (click)="seleccionarEstrellas(n)"
+                        [class.active]="estrellasSeleccionadas >= n">
+              </ion-icon>
             </div>
-          </ion-card-content>
-        </ion-card>
 
-        <!-- Items comprados -->
-        <h3 class="items-title">
-          <ion-icon name="bag-outline"></ion-icon>
-          Artículos de la Compra
-        </h3>
+            <div class="low-score-box" *ngIf="estrellasSeleccionadas > 0 && estrellasSeleccionadas <= 3 && !feedbackEnviado">
+              <ion-textarea [(ngModel)]="comentarioInterno" placeholder="Cuéntanos cómo mejorar..." fill="solid"></ion-textarea>
+              <ion-button expand="block" mode="ios" color="dark" (click)="enviarFeedbackInterno()">Enviar mensaje</ion-button>
+            </div>
 
-        <div class="items-container">
-          <ion-card *ngFor="let item of detallesActuales.articulos; let i = index" 
-                    class="item-card" 
-                    [style.animation]="'slideIn 0.3s ease-out ' + (i * 0.05) + 's both'">
-            <ion-card-content>
-              <div class="item-layout">
-                <!-- Imagen -->
-                <div class="item-image-container">
-                  <img
-                    *ngIf="item.imagen_url && !item.error"
-                    [src]="item.imagen_url"
-                    alt="{{ item.titulo }}"
-                    class="item-image"
-                    (error)="item.error = true"
-                  />
-                  <div *ngIf="!item.imagen_url || item.error" class="image-placeholder">
-                    <ion-icon name="bag-outline"></ion-icon>
-                  </div>
-                </div>
-
-                <!-- Info del item -->
-                <div class="item-info">
-                  <h4 class="item-titulo">{{ item.titulo }}</h4>
-                  <div class="item-details">
-                    <span class="item-quantity">Qty: {{ item.cantidad }}</span>
-                    <span class="item-divider">•</span>
-                    <span class="item-unit-price">{{ (item.precio_unitario || 0).toFixed(2) }}€ c/u</span>
-                  </div>
-                </div>
-
-                <!-- Subtotal -->
-                <div class="item-subtotal-box">
-                  <p class="item-subtotal">{{ (item.subtotal || 0).toFixed(2) }}€</p>
-                </div>
-              </div>
-            </ion-card-content>
-          </ion-card>
-        </div>
-
-        <!-- Total final -->
-        <div class="final-total-card">
-          <div class="total-content">
-            <span class="total-label">
-              <ion-icon name="wallet-outline"></ion-icon>
-              Total de la Compra
-            </span>
-            <span class="total-amount">{{ (detallesActuales.total || 0).toFixed(2) }}€</span>
+            <div class="feedback-success" *ngIf="feedbackEnviado">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <p>¡Gracias por tu opinión!</p>
+            </div>
           </div>
         </div>
 
-        <!-- Botón de cerrar -->
-        <ion-button
-          expand="block"
-          color="primary"
-          class="action-button"
-          (click)="cerrarModal()"
-        >
-          <ion-icon name="chevron-down-outline" slot="start"></ion-icon>
-          Volver
-        </ion-button>
+        <div class="products-block">
+          <h4 class="section-title">Artículos en este pedido</h4>
+          <div class="mini-product-card" *ngFor="let item of detallesActuales.articulos">
+            <div class="img-wrapper">
+              <img [src]="item.imagen_url" />
+            </div>
+            <div class="info-wrapper">
+              <p class="name">{{ item.titulo }}</p>
+              <p class="qty">Cantidad: {{ item.cantidad }}</p>
+            </div>
+            <div class="price-wrapper">
+              {{ (item.subtotal || 0).toFixed(2) }}€
+            </div>
+          </div>
+        </div>
+
+        <div class="checkout-card">
+          <div class="bill-line">
+            <span>Subtotal</span>
+            <span>{{ (detallesActuales.total * 0.85).toFixed(2) }}€</span>
+          </div>
+          <div class="bill-line">
+            <span>Envío</span>
+            <span class="free">GRATIS</span>
+          </div>
+          <div class="bill-total">
+            <span>Total Pagado</span>
+            <span>{{ detallesActuales.total.toFixed(2) }}€</span>
+          </div>
+        </div>
+
       </div>
     </ion-content>
   </ng-template>
