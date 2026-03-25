@@ -400,3 +400,65 @@ ion-content {
   border: none;
   cursor: pointer;
 }
+
+/* --- VER TODOS CARDS --- */
+.view-all-card {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-background-alt, rgba(0,0,0,0.02));
+  cursor: pointer;
+  border: 2px dashed var(--ion-color-primary, #ccc) !important;
+  box-shadow: none !important;
+
+  /* No that big minimal width if we want it tighter, but let's match product-card min-width which is 250px so it fits well */
+
+  .view-all-content {
+    text-align: center;
+    color: var(--ion-color-primary);
+
+    ion-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  &:active ion-icon {
+    transform: translateX(4px);
+  }
+}
+
+.view-all-cat {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-background-alt, rgba(0,0,0,0.02));
+  border: 2px dashed var(--ion-color-primary, #ccc) !important;
+  box-shadow: none !important;
+  
+  ion-icon {
+    font-size: 32px;
+    color: var(--ion-color-primary);
+    margin: 0 auto 8px;
+    transition: transform 0.2s ease;
+  }
+  
+  div {
+    color: var(--ion-color-primary) !important;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  &:active ion-icon {
+    transform: translateX(4px);
+  }
+}

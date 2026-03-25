@@ -32,13 +32,18 @@
   <div class="section">
     <div class="section-title">
       <h3>Categorías más populares</h3>
-      <a class="link" (click)="router.navigate(['/tabs/tab2'])">Ver todas</a>
     </div>
 
     <div class="cat-strip">
       <div class="cat-item" *ngFor="let cat of categorias" (click)="irACategoria(cat.slug)">
         <img [src]="cat.img" />
         <div>{{ cat.nombre }}</div>
+      </div>
+      <!-- Ver todas las categorías -->
+      <div class="cat-item view-all-cat" *ngIf="categorias && categorias.length > 0"
+        (click)="router.navigate(['/tabs/tab2'])">
+        <ion-icon name="arrow-forward-circle-outline"></ion-icon>
+        <div>Ver todas</div>
       </div>
     </div>
   </div>
@@ -84,6 +89,15 @@
           Añadir al carrito
         </button>
       </div>
+
+      <!-- Ver todos -->
+      <div class="product-card view-all-card" *ngIf="topVentas && topVentas.length > 0"
+        (click)="router.navigate(['/tabs/tab4'])">
+        <div class="view-all-content">
+          <ion-icon name="arrow-forward-circle-outline"></ion-icon>
+          <h3>Ver todos</h3>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -91,7 +105,6 @@
   <div class="section">
     <div class="section-title">
       <h3>Productos populares</h3>
-      <a class="link" (click)="router.navigate(['/tabs/tab4'])">Ver todos</a>
     </div>
 
 
@@ -130,6 +143,15 @@
           Añadir al carrito
         </button>
       </div>
+
+      <!-- Ver todos -->
+      <div class="product-card view-all-card" *ngIf="productosPopulares && productosPopulares.length > 0"
+        (click)="router.navigate(['/tabs/tab4'])">
+        <div class="view-all-content">
+          <ion-icon name="arrow-forward-circle-outline"></ion-icon>
+          <h3>Ver todos</h3>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -137,7 +159,6 @@
   <div class="section">
     <div class="section-title">
       <h3>Nuestros chollos</h3>
-      <a class="link" (click)="router.navigate(['/tabs/tab4'])">Ver todos</a>
     </div>
 
     <div class="cards-row">
@@ -184,6 +205,15 @@
           Añadir al carrito
         </button>
 
+      </div>
+
+      <!-- Ver todos -->
+      <div class="product-card view-all-card" *ngIf="chollosFiltrados && chollosFiltrados.length > 0"
+        (click)="router.navigate(['/tabs/tab4'])">
+        <div class="view-all-content">
+          <ion-icon name="arrow-forward-circle-outline"></ion-icon>
+          <h3>Ver todos</h3>
+        </div>
       </div>
     </div>
   </div>
