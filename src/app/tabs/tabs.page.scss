@@ -66,6 +66,31 @@ ion-modal#modal-juegos {
   --box-shadow: 0 10px 40px var(--card-shadow);
   --backdrop-opacity: 0.7;
 }
+
+/* Mascota animada */
+.contenedor-mascota {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+}
+
+.monito-animado {
+  width: 120px !important;
+  height: 120px !important;
+  object-fit: contain;
+  display: block;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 /* ---- Wrapper del buscador con dropdown ---- */
 .search-wrapper {
   position: relative;
