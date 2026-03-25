@@ -3,6 +3,7 @@
     <ion-searchbar
       placeholder="Buscar chollos o tiendas..."
       #searchbar
+      [value]="textoBusqueda"
       (ionInput)="buscar($event)"
       debounce="300">
     </ion-searchbar>
@@ -33,13 +34,27 @@
 </ion-header>
 
 <ion-content>
+
+  <!-- Banner de búsqueda activa -->
+  <div class="search-banner" *ngIf="textoBusqueda.trim()">
+    <ion-icon name="search-outline"></ion-icon>
+    <span>Resultados para <strong>"{{ textoBusqueda }}"</strong></span>
+    <span class="search-count">({{ filtrados.length }})</span>
+  </div>
+
   <div class="chollos-container">
 
     <div *ngIf="cargando" class="loading">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
 
-    <div *ngIf="!cargando" class="guardados-list">
+    <!-- Sin resultados -->
+    <div *ngIf="!cargando && filtrados.length === 0" class="empty-state">
+      <ion-icon name="search-outline"></ion-icon>
+      <p>No se encontraron chollos{{ textoBusqueda ? ' para "' + textoBusqueda + '"' : '' }}</p>
+    </div>
+
+    <div *ngIf="!cargando && filtrados.length > 0" class="guardados-list">
       <div class="chollo-card" *ngFor="let chollo of chollosPaginados">
 
         <div class="image-container" (click)="irADetalle(chollo.id)">
@@ -93,7 +108,10 @@
       </div>
     </div>
 
-    <ion-infinite-scroll *ngIf="!cargando" [disabled]="infiniteScrollDisabled" (ionInfinite)="cargarMas($event)">
+    <ion-infinite-scroll
+      *ngIf="!cargando"
+      [disabled]="infiniteScrollDisabled"
+      (ionInfinite)="cargarMas($event)">
       <ion-infinite-scroll-content
         loadingSpinner="crescent"
         loadingText="Cargando más chollos...">
