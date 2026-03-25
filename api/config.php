@@ -195,6 +195,4 @@ function wp_hash_password(string $password): string
 // IMPORTANTE: Usa tus propias claves de Stripe TEST
 // Se pueden pasar por variables de entorno o hardcodear para desarrollo
 //
-define('STRIPE_SECRET_KEY', '');
-define('STRIPE_PUBLISHABLE_KEY', '');
-define('STRIPE_WEBHOOK_SECRET', 'whsec_test_placeholder');
+
