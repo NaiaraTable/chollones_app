@@ -60,3 +60,61 @@
     </ion-button>
   </div>
 </ion-footer>
+
+<!-- Modal de Pago Stripe -->
+<ion-modal [isOpen]="modalPagoAbierto" (didDismiss)="cerrarModalPago()" [breakpoints]="[0.5, 0.75, 0.9]" [initialBreakpoint]="0.9">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Completar Pago</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cerrarModalPago()" [disabled]="procesandoPago">✕</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding" [scrollY]="true">
+      <div class="payment-modal-container">
+        <div class="payment-summary">
+          <h3>Resumen de la compra</h3>
+          <p>Total: <strong>{{ total | number:'1.2-2' }}€</strong></p>
+        </div>
+
+        <!-- Estado de carga del elemento de pago -->
+        <div *ngIf="!clientSecret" class="payment-loading">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p>Preparando formulario de pago...</p>
+        </div>
+
+        <!-- Formulario de Pago Stripe -->
+        <div *ngIf="clientSecret" id="payment-element" class="stripe-container"></div>
+
+        <!-- Botones de acción -->
+        <div *ngIf="clientSecret" class="payment-actions">
+          <ion-button 
+            expand="block" 
+            shape="round" 
+            color="primary"
+            (click)="confirmarPago()"
+            [disabled]="procesandoPago">
+            <ion-spinner *ngIf="procesandoPago" name="crescent"></ion-spinner>
+            <span *ngIf="!procesandoPago">Pagar {{ total | number:'1.2-2' }}€</span>
+            <span *ngIf="procesandoPago">Procesando...</span>
+          </ion-button>
+          <ion-button 
+            expand="block" 
+            fill="clear"
+            (click)="cerrarModalPago()"
+            [disabled]="procesandoPago">
+            Cancelar
+          </ion-button>
+        </div>
+
+        <div class="payment-info">
+          <p class="info-text">
+            ℹ️ Puedes pagar con tarjeta, Google Pay o Apple Pay. Tus datos están seguros con Stripe.
+          </p>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

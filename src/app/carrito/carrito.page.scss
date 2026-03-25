@@ -173,3 +173,185 @@ ion-content {
     --border-radius: 12px;
     font-weight: 600;
 }
+
+/* Estilos para el modal de pago */
+.payment-modal-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 20px;
+
+    .payment-summary {
+        background: var(--card-background-alt);
+        border-radius: 12px;
+        padding: 16px;
+        flex-shrink: 0;
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 8px 0;
+        }
+
+        p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+
+            strong {
+                color: var(--ion-color-primary);
+                font-size: 18px;
+            }
+        }
+    }
+
+    .stripe-container {
+        flex: 1;
+        background: var(--card-background);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 20px;
+        min-height: 250px;
+        overflow-y: auto;
+        
+        // Estilos para los elementos de Stripe
+        ::ng-deep {
+            .StripeElement {
+                padding: 12px;
+                border-radius: 8px;
+                border: 1px solid var(--card-border);
+                font-family: inherit;
+                font-size: 16px;
+            }
+
+            .StripeElement--focus {
+                border-color: var(--ion-color-primary);
+                box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.1);
+            }
+
+            .StripeElement--invalid {
+                border-color: #dc3545;
+            }
+
+            // Estilos para Payment Element
+            .Container {
+                margin: 0 !important;
+            }
+
+            .Input {
+                padding: 12px 16px !important;
+                background: var(--input-background, #f5f5f5) !important;
+                border: 1px solid var(--card-border) !important;
+                border-radius: 8px !important;
+                font-size: 16px !important;
+                color: var(--text-primary) !important;
+            }
+
+            .Input:focus {
+                border-color: var(--ion-color-primary) !important;
+                box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.1) !important;
+                outline: none !important;
+            }
+
+            .Label {
+                color: var(--text-primary) !important;
+                font-weight: 500 !important;
+                font-size: 14px !important;
+            }
+
+            .Error {
+                color: #dc3545 !important;
+                font-size: 13px !important;
+            }
+
+            // Estilos para tabbed element (tabs de métodos de pago)
+            .Tab {
+                border-bottom: 2px solid transparent !important;
+                padding: 12px 16px !important;
+            }
+
+            .Tab--selected {
+                border-bottom-color: var(--ion-color-primary) !important;
+                color: var(--ion-color-primary) !important;
+            }
+        }
+    }
+
+    .payment-loading {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 250px;
+        background: var(--card-background);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        gap: 16px;
+
+        ion-spinner {
+            --circle-diameter: 48px;
+            --stroke-width: 4px;
+            color: var(--ion-color-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin: 0;
+        }
+    }
+
+    .payment-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        flex-shrink: 0;
+
+        ion-button {
+            --border-radius: 12px;
+            margin: 0;
+        }
+    }
+
+    .payment-info {
+        .info-text {
+            background: #f0f8ff;
+            border-left: 4px solid var(--ion-color-primary);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+    }
+}
+
+.payment-actions {
+    margin-bottom: 16px;
+
+    ion-button {
+        margin: 0 0 8px 0;
+        font-weight: 600;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.payment-info {
+    padding-top: 12px;
+    border-top: 1px solid var(--card-border);
+
+    .info-text {
+        background: #f0f8ff;
+        border-left: 4px solid var(--ion-color-primary);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+}

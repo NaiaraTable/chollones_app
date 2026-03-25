@@ -10,7 +10,7 @@ import { GameService } from '../../services/game.service';
     template: `
     <div class="home-container">
       <div class="logo-area">
-          <img src="assets/chololo.png" class="main-mascot animate-pop" alt="Chololo" style="width: 150px; margin-bottom: 20px;">
+          <img src="assets/chololo.png" class="main-mascot animate-pop" alt="Chololo" width="150" height="150" style="width: 150px; height: 150px; margin-bottom: 20px; object-fit: contain;">
           <h1 class="glass-title animate-pop" style="animation-delay: 0.1s; margin-bottom: 30px; line-height: 1.2;">
               ¡Atrapa Tus<br>
               <span style="color: #2c3e50;">Chollones!</span>

@@ -298,15 +298,39 @@ export class ApiService {
     if (!this.token) throw new Error('Debes estar logueado para realizar una compra');
 
     try {
-      console.log('Enviando compra:', { articulos, total });
-      const resultado = await this.request('historial.php?action=create', {
+      console.log('Creando orden Dokan:', { articulos, total });
+      
+      // Crear orden en WooCommerce/Dokan
+      const resultado = await this.request('dokan-orden.php?action=crear', {
         method: 'POST',
-        body: JSON.stringify({ articulos, total }),
+        body: JSON.stringify({ 
+          articulos,
+          total,
+          metodo_pago: 'dokan_gateway'
+        }),
       });
-      console.log('Compra guardada exitosamente:', resultado);
+      
+      console.log('Orden Dokan creada exitosamente:', resultado);
+      
+      // También guardar en historial local de la app para referencia rápida
+      // (es un registro secundario, el principal es la orden de WooCommerce)
+      try {
+        await this.request('historial.php?action=create', {
+          method: 'POST',
+          body: JSON.stringify({ 
+            articulos, 
+            total,
+            numero_pedido_wc: resultado.numero_orden
+          }),
+        });
+      } catch (err) {
+        console.warn('Aviso: No se pudo guardar en historial local:', err);
+        // No es crítico, continuamos
+      }
+      
       return resultado;
     } catch (error: any) {
-      console.error('Error al guardar compra:', error.message, error);
+      console.error('Error al crear orden Dokan:', error.message, error);
       throw error;
     }
   }
@@ -317,6 +341,29 @@ export class ApiService {
     } catch (error) {
       console.error('Error al obtener detalles de compra:', error);
       return null;
+    }
+  }
+
+  async obtenerOrdenDokan(ordenId: number) {
+    try {
+      return await this.request(`dokan-orden.php?action=get&id=${ordenId}`);
+    } catch (error) {
+      console.error('Error al obtener orden Dokan:', error);
+      return null;
+    }
+  }
+
+  async procesarPagoDokan(ordenId: number) {
+    try {
+      const orden = await this.obtenerOrdenDokan(ordenId);
+      if (!orden || !orden.url_pago) {
+        throw new Error('No se pudo obtener URL de pago de Dokan');
+      }
+      // Redirigir al checkout de Dokan/WooCommerce
+      return orden.url_pago;
+    } catch (error) {
+      console.error('Error al procesar pago Dokan:', error);
+      throw error;
     }
   }
 
