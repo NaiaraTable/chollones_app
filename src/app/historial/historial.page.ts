@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+  import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {
@@ -12,14 +12,9 @@ import {
   IonButtons,
   IonBackButton,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonCardContent,
   IonBadge,
-  IonModal,
-  IonGrid,
-  IonRow,
-  IonCol
+  IonModal
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -28,7 +23,13 @@ import {
   timeOutline,
   closeCircleOutline,
   openOutline,
-  bagOutline
+  bagOutline,
+  chevronForwardOutline,
+  cubeOutline,
+  pricetagOutline,
+  walletOutline,
+  chevronDownOutline,
+  bagCheckOutline
 } from 'ionicons/icons';
 
 import { ApiService } from '../services/api.service';
@@ -41,6 +42,7 @@ interface Compra {
   estado: string;
   cantidad_items: number;
   articulos_count: number;
+  articulos_preview: Array<{ titulo: string; imagen_url: string; cantidad: number }>;
 }
 
 interface DetallesCompra extends Compra {
@@ -64,14 +66,9 @@ interface DetallesCompra extends Compra {
     IonButtons,
     IonBackButton,
     IonCard,
-    IonCardHeader,
-    IonCardTitle,
     IonCardContent,
     IonBadge,
-    IonModal,
-    IonGrid,
-    IonRow,
-    IonCol
+    IonModal
   ]
 })
 export class HistorialPage implements OnInit {
@@ -96,7 +93,13 @@ export class HistorialPage implements OnInit {
       timeOutline,
       closeCircleOutline,
       openOutline,
-      bagOutline
+      bagOutline,
+      chevronForwardOutline,
+      cubeOutline,
+      pricetagOutline,
+      walletOutline,
+      chevronDownOutline,
+      bagCheckOutline
     });
   }
 
@@ -112,6 +115,8 @@ export class HistorialPage implements OnInit {
     this.cargando = true;
     try {
       this.compras = await this.apiService.getHistorialCompras();
+      console.log('📋 Historial cargado:', this.compras);
+      console.log('🖼️ Primer compra articulos_preview:', this.compras[0]?.articulos_preview);
       this.sinCompras = this.compras.length === 0;
     } catch (e) {
       console.error('Error cargando historial:', e);
@@ -171,23 +176,28 @@ export class HistorialPage implements OnInit {
   getEstadoIcon(estado: string): string {
     switch (estado) {
       case 'completada':
-        return 'checkmarkCircleOutline';
+        return 'checkmark-circle-outline';
       case 'cancelada':
-        return 'closeCircleOutline';
+        return 'close-circle-outline';
       default:
-        return 'timeOutline';
+        return 'time-outline';
     }
   }
 
   formatearFecha(fecha: string): string {
-    const date = new Date(fecha);
-    return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (!fecha) return 'Fecha no disponible';
+    try {
+      const date = new Date(fecha);
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      return 'Fecha inválida';
+    }
   }
 
   irAlCarrito() {

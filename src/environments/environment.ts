@@ -4,6 +4,7 @@
 
 export const environment = {
   apiUrl: 'http://localhost/chollones-api',
+  stripePublicKey: 'pk_test_51TE5k6D6J49AJcg4Bs1F7eT6ciod9ALi8ZFLQznxLjijmIkNXjailVf26VKRAXY2Px7hdUDajoorNjiM7SZWc7qk00jWu6ZGUy',
   // Credenciales de Supabase (desactivadas, ahora usamos MySQL local)
   supabaseUrl: 'https://disabled.supabase.co',
   supabaseKey: 'disabled-key'

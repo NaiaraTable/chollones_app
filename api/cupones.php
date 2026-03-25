@@ -3,11 +3,7 @@
 // API DE CUPONES (WooCommerce shop_coupon)
 // ======================================================
 
-// --- CORS HEADERS (PRIMERO - antes de cualquier otra cosa) ---
-header('Access-Control-Allow-Origin: *', true);
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS', true);
-header('Access-Control-Allow-Headers: Content-Type, Authorization', true);
-header('Access-Control-Max-Age: 3600', true);
+// CORS headers are managed by .htaccess, not here
 header('Content-Type: application/json; charset=utf-8', true);
 
 // Responder inmediatamente a las peticiones OPTIONS (preflight)
@@ -26,10 +22,11 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 
 require_once __DIR__ . '/config.php';
 
-$db = getDB();
-$prefix = TABLE_PREFIX;
+try {
+    $db = getDB();
+    $prefix = TABLE_PREFIX;
 
-$today = date('Y-m-d');
+    $today = date('Y-m-d');
 
 $sql = "
     SELECT

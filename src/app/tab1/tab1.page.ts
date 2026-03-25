@@ -15,7 +15,8 @@ import {
   bagOutline,
   flameOutline,
   timeOutline,
-  openOutline
+  openOutline,
+  arrowForwardCircleOutline
 } from 'ionicons/icons';
 
 import { ApiService } from '../services/api.service';
@@ -59,7 +60,7 @@ export class Tab1Page implements OnInit {
   ) {
     addIcons({
       searchOutline, heartOutline, heart, personOutline, bagOutline,
-      flameOutline, timeOutline, openOutline
+      flameOutline, timeOutline, openOutline, arrowForwardCircleOutline
     });
   }
 
