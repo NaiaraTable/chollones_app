@@ -38,11 +38,12 @@ export class Tab1Page implements OnInit {
   cartCount = 0;
   bannerUrl = 'https://images.unsplash.com/photo-1607083206968-13611e3d76db?q=80&w=1400&auto=format&fit=crop';
 
+  // AQUÍ ESTÁN LOS IDs CORREGIDOS
   quickLinks = [
     { id: 'recientes', title: 'Recientes', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600&auto=format&fit=crop', bgColor: 'rgba(255, 244, 204, 0.4)' },
     { id: 'destacados', title: 'Destacados', img: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=600&auto=format&fit=crop', bgColor: 'rgba(226, 226, 226, 0.4)' },
-    { id: 'valorados', title: 'Mejor valorados', img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=600&auto=format&fit=crop', bgColor: 'rgba(255, 226, 230, 0.4)' },
-    { id: 'descuento', title: 'Mejores descuentos', img: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=600&auto=format&fit=crop', bgColor: 'rgba(230, 240, 250, 0.4)' }
+    { id: 'valoracion', title: 'Mejor valorados', img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=600&auto=format&fit=crop', bgColor: 'rgba(255, 226, 230, 0.4)' },
+    { id: 'descuentos', title: 'Mejores descuentos', img: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=600&auto=format&fit=crop', bgColor: 'rgba(230, 240, 250, 0.4)' }
   ];
 
   productosPopulares: any[] = [];

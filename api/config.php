@@ -195,4 +195,3 @@ function wp_hash_password(string $password): string
 // IMPORTANTE: Usa tus propias claves de Stripe TEST
 // Se pueden pasar por variables de entorno o hardcodear para desarrollo
 //
-
