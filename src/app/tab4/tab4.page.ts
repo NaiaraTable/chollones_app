@@ -1,19 +1,19 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+
 import {
   IonContent,
   IonHeader,
   IonToolbar,
-  IonSearchbar,
   IonButtons,
   IonButton,
   IonIcon,
   IonSpinner,
-  ToastController,
   IonImg,
   IonInfiniteScroll,
-  IonInfiniteScrollContent
+  IonInfiniteScrollContent, IonSearchbar
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -31,8 +31,9 @@ import {
 
 import { SupabaseService } from '../services/supabase.service';
 import { LocationService } from '../services/location.service';
+import { SearchService } from '../services/Search.service';
 import { Capacitor } from '@capacitor/core';
-
+import { ToastController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-tab4',
@@ -44,19 +45,17 @@ import { Capacitor } from '@capacitor/core';
     IonContent,
     IonHeader,
     IonToolbar,
-    IonSearchbar,
     IonButtons,
     IonButton,
     IonIcon,
     IonSpinner,
     IonImg,
     IonInfiniteScroll,
-    IonInfiniteScrollContent
+    IonInfiniteScrollContent,
+    IonSearchbar
   ]
 })
-export class Tab4Page implements OnInit {
-
-  @ViewChild('searchbar') searchbarRef!: IonSearchbar;
+export class Tab4Page implements OnInit, OnDestroy {
 
   listadoChollos: any[] = [];
   filtrados: any[] = [];
@@ -77,44 +76,47 @@ export class Tab4Page implements OnInit {
   paginaActual = 0;
   infiniteScrollDisabled = false;
 
+  private searchSub?: Subscription;
+
   constructor(
     private supabaseService: SupabaseService,
     private locationService: LocationService,
+    private searchService: SearchService,
     private router: Router,
-    private route: ActivatedRoute,
     private toastCtrl: ToastController,
     private cdr: ChangeDetectorRef
   ) {
     addIcons({
-      heart,
-      heartOutline,
-      bagOutline,
-      add,
-      searchOutline,
-      locationOutline,
-      storefrontOutline,
-      cartOutline,
-      imageOutline
+      heart, heartOutline, bagOutline, add,
+      searchOutline, locationOutline, storefrontOutline,
+      cartOutline, imageOutline
     });
   }
 
   async ngOnInit() {
     await this.obtenerUbicacion();
+
+    // Suscripción reactiva al buscador del header
+    this.searchSub = this.searchService.getBusqueda$().subscribe(texto => {
+      this.textoBusqueda = texto;
+      if (this.listadoChollos.length > 0) {
+        this.aplicarFiltros();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.searchSub?.unsubscribe();
+  }
+
+  buscar(event: any) {
+    const texto = event.detail?.value || '';
+    this.searchService.setBusqueda(texto);
   }
 
   async ionViewWillEnter() {
-    const q = this.route.snapshot.queryParamMap.get('q');
-
-    // Solo actualizar si viene búsqueda desde el header
-    if (q !== null) {
-      this.textoBusqueda = q.trim();
-      // Setear el valor visual del searchbar sin disparar ionInput
-      setTimeout(() => {
-        if (this.searchbarRef) {
-          this.searchbarRef.value = this.textoBusqueda;
-        }
-      }, 0);
-    }
+    // Sincronizar con el valor actual del servicio (por si se navegó desde otra pestaña)
+    this.textoBusqueda = this.searchService.valorActual;
 
     if (this.listadoChollos.length > 0) {
       this.aplicarFiltros();
@@ -131,7 +133,7 @@ export class Tab4Page implements OnInit {
         this.miLat = coords.latitude;
         this.miLng = coords.longitude;
       } catch (e) {
-        console.warn('Ubicación manual');
+        console.warn('Usando ubicación por defecto');
       }
     }
   }
@@ -149,43 +151,24 @@ export class Tab4Page implements OnInit {
           ...c,
           distanciaKM: c.proveedores?.lat
             ? this.locationService
-              .calcularDistancia(
-                this.miLat,
-                this.miLng,
-                c.proveedores.lat,
-                c.proveedores.lng
-              )
+              .calcularDistancia(this.miLat, this.miLng, c.proveedores.lat, c.proveedores.lng)
               .toFixed(1)
             : '?'
         }));
 
-        const catsMap = new Map();
-
+        const catsMap = new Map<string, any>();
         data.forEach((c: any) => {
-          const cats = Array.isArray(c.categorias)
-            ? c.categorias
-            : [c.categorias];
-
+          const cats = Array.isArray(c.categorias) ? c.categorias : [c.categorias];
           cats.forEach((cat: any) => {
-            if (cat?.slug) {
-              catsMap.set(cat.slug, {
-                nombre: cat.nombre,
-                slug: cat.slug
-              });
-            }
+            if (cat?.slug) catsMap.set(cat.slug, { nombre: cat.nombre, slug: cat.slug });
           });
         });
 
-        this.categorias = [
-          { nombre: 'Todas', slug: 'todas' },
-          ...Array.from(catsMap.values())
-        ];
-
+        this.categorias = [{ nombre: 'Todas', slug: 'todas' }, ...Array.from(catsMap.values())];
         this.aplicarFiltros();
       }
-
     } catch (e) {
-      console.error(e);
+      console.error('Error cargando chollos:', e);
     } finally {
       this.cargando = false;
     }
@@ -194,42 +177,29 @@ export class Tab4Page implements OnInit {
   aplicarFiltros() {
     let tmp = [...this.listadoChollos];
 
-    console.log('[tab4] aplicarFiltros() texto:', this.textoBusqueda, '| total antes filtro:', tmp.length);
-
     if (this.textoBusqueda.trim()) {
       const q = this.textoBusqueda.trim().toLowerCase();
-      tmp = tmp.filter(c =>
-        c.titulo?.toLowerCase().includes(q)
-      );
+      tmp = tmp.filter(c => c.titulo?.toLowerCase().includes(q));
     }
 
     if (this.categoriaSeleccionada !== 'todas') {
       tmp = tmp.filter((c: any) => {
-        const cats = Array.isArray(c.categorias)
-          ? c.categorias
-          : [c.categorias];
-
-        return cats.some(
-          (cat: any) => cat?.slug === this.categoriaSeleccionada
-        );
+        const cats = Array.isArray(c.categorias) ? c.categorias : [c.categorias];
+        return cats.some((cat: any) => cat?.slug === this.categoriaSeleccionada);
       });
     }
 
     this.filtrados = tmp;
-
     this.paginaActual = 0;
     this.chollosPaginados = [];
     this.infiniteScrollDisabled = false;
-
     this.agregarChollos();
   }
 
   agregarChollos() {
     const inicio = this.paginaActual * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
-    const nuevosChollos = this.filtrados.slice(inicio, fin);
-
-    this.chollosPaginados = [...this.chollosPaginados, ...nuevosChollos];
+    this.chollosPaginados = [...this.chollosPaginados, ...this.filtrados.slice(inicio, fin)];
     this.paginaActual++;
 
     if (this.chollosPaginados.length >= this.filtrados.length) {
@@ -246,38 +216,24 @@ export class Tab4Page implements OnInit {
     }, 500);
   }
 
-  buscar(ev: any) {
-    console.log('[tab4] evento completo:', ev);
-    console.log('[tab4] ev.detail:', ev?.detail);
-    console.log('[tab4] ev.detail.value:', ev?.detail?.value);
-    console.log('[tab4] ev.target.value:', ev?.target?.value);
-    const valor = ev?.detail?.value ?? ev?.target?.value ?? '';
-    this.textoBusqueda = valor;
-    console.log('[tab4] textoBusqueda asignado:', this.textoBusqueda);
-    this.aplicarFiltros();
-  }
-
   seleccionarCategoria(slug: string) {
     this.categoriaSeleccionada = slug;
     this.aplicarFiltros();
   }
 
-  calcDescuento(c: any) {
+  calcDescuento(c: any): number {
     const actual = Number(c.precio_actual);
     const original = Number(c.precio_original);
-
     if (!original || original <= actual) return 0;
-
     return Math.round(((original - actual) / original) * 100);
   }
 
-  esFavorito(id: string) {
+  esFavorito(id: string): boolean {
     return this.favoritosIds.has(id);
   }
 
   async toggleFavorito(c: any, e: Event) {
     e.stopPropagation();
-
     try {
       if (this.esFavorito(c.id)) {
         await this.supabaseService.eliminarCholloFavorito(c.id);
@@ -286,6 +242,7 @@ export class Tab4Page implements OnInit {
         await this.supabaseService.guardarCholloFavorito(c.id);
         this.favoritosIds.add(c.id);
       }
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Error toggle favorito', error);
     }
@@ -297,21 +254,17 @@ export class Tab4Page implements OnInit {
 
   async anadirAlCarrito(chollo: any, e: Event) {
     e.stopPropagation();
-
     try {
       await this.supabaseService.anadirAlCarrito(chollo.id, 1);
-
       const toast = await this.toastCtrl.create({
         message: 'Producto añadido al carrito',
         duration: 2000,
         position: 'bottom',
         cssClass: 'toast-carrito'
       });
-
       await toast.present();
-
     } catch (error) {
-      console.error(error);
+      console.error('Error añadiendo al carrito:', error);
     }
   }
 }
