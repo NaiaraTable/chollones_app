@@ -31,6 +31,43 @@
       </button>
     </div>
   </div>
+
+  <div class="sub-filters-bar" *ngIf="categoriaSeleccionada === 'todas'">
+    <div class="scroll-container">
+      <button
+        type="button"
+        class="sub-filter-chip"
+        [class.active]="subFiltroSeleccionado === 'destacados'"
+        (click)="seleccionarSubFiltro('destacados')"
+      >
+        Destacados
+      </button>
+      <button
+        type="button"
+        class="sub-filter-chip"
+        [class.active]="subFiltroSeleccionado === 'recientes'"
+        (click)="seleccionarSubFiltro('recientes')"
+      >
+         Recientes
+      </button>
+      <button
+        type="button"
+        class="sub-filter-chip"
+        [class.active]="subFiltroSeleccionado === 'valoracion'"
+        (click)="seleccionarSubFiltro('valoracion')"
+      >
+        Mejor valoración
+      </button>
+      <button
+        type="button"
+        class="sub-filter-chip"
+        [class.active]="subFiltroSeleccionado === 'descuentos'"
+        (click)="seleccionarSubFiltro('descuentos')"
+      >
+        Mejores descuentos
+      </button>
+    </div>
+  </div>
 </ion-header>
 
 <ion-content>

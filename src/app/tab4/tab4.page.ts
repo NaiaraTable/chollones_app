@@ -64,6 +64,9 @@ export class Tab4Page implements OnInit, OnDestroy {
   categorias: any[] = [{ nombre: 'Todas', slug: 'todas' }];
   categoriaSeleccionada = 'todas';
 
+  // Variable para el subfiltro
+  subFiltroSeleccionado = 'destacados';
+
   textoBusqueda = '';
   cargando = true;
 
@@ -117,6 +120,22 @@ export class Tab4Page implements OnInit, OnDestroy {
   async ionViewWillEnter() {
     // Sincronizar con el valor actual del servicio (por si se navegó desde otra pestaña)
     this.textoBusqueda = this.searchService.valorActual;
+    // 1. Recibir búsqueda por texto
+    const q = this.route.snapshot.queryParamMap.get('q');
+    if (q !== null) {
+      this.textoBusqueda = q.trim();
+      setTimeout(() => {
+        if (this.searchbarRef) {
+          this.searchbarRef.value = this.textoBusqueda;
+        }
+      }, 0);
+    }
+
+    const filtro = this.route.snapshot.queryParamMap.get('filtro');
+    if (filtro) {
+      this.categoriaSeleccionada = 'todas';
+      this.subFiltroSeleccionado = filtro;
+    }
 
     if (this.listadoChollos.length > 0) {
       this.aplicarFiltros();
@@ -189,11 +208,71 @@ export class Tab4Page implements OnInit, OnDestroy {
       });
     }
 
+    if (this.categoriaSeleccionada === 'todas') {
+      if (this.subFiltroSeleccionado === 'recientes') {
+        tmp.sort((a, b) => {
+          const dateA = new Date(a.created_at || a.fecha_creacion || a.date_created || 0).getTime();
+          const dateB = new Date(b.created_at || b.fecha_creacion || b.date_created || 0).getTime();
+          return dateB - dateA;
+        });
+      } else if (this.subFiltroSeleccionado === 'valoracion') {
+
+        console.log("---- DEBUG FILTRO MEJOR VALORADOS ----");
+        if (tmp.length > 0) {
+          console.log("🔍 Estructura del primer chollo:", tmp[0]);
+        }
+
+        tmp = tmp.filter(c => {
+          // Buscamos cualquier posible nombre de campo de valoración
+          const val = parseFloat(c.valoracion ?? c.rating ?? c.puntuacion ?? c.average_rating ?? c._wc_average_rating ?? 0) || 0;
+
+          // Buscamos comentarios por número o si es un array
+          const numComentarios = parseInt(c.comentarios ?? c.rating_count ?? c.review_count ?? c.cantidad_comentarios ?? 0) || 0;
+          const arrayComentarios = Array.isArray(c.comentarios) ? c.comentarios.length : 0;
+          const arrayReviews = Array.isArray(c.reviews) ? c.reviews.length : 0;
+
+          const totalComentarios = numComentarios + arrayComentarios + arrayReviews;
+
+          const estaValorado = val > 0;
+          const tieneComentarios = totalComentarios > 0;
+
+          // Si descomentas esta línea, verás por qué se ocultan en la consola
+          // console.log(`Chollo: ${c.titulo} | Nota: ${val} | Comentarios: ${totalComentarios}`);
+
+          if (!estaValorado && !tieneComentarios) {
+            return false;
+          }
+
+          if (estaValorado && val < 2.3) {
+            return false;
+          }
+
+          return true;
+        });
+
+        // Ordenar de mayor nota a menor
+        tmp.sort((a, b) => {
+          const valA = parseFloat(a.valoracion ?? a.rating ?? a.puntuacion ?? a.average_rating ?? a._wc_average_rating ?? 0) || 0;
+          const valB = parseFloat(b.valoracion ?? b.rating ?? b.puntuacion ?? b.average_rating ?? b._wc_average_rating ?? 0) || 0;
+          return valB - valA;
+        });
+
+      } else if (this.subFiltroSeleccionado === 'descuentos') {
+        tmp.sort((a, b) => this.calcDescuento(b) - this.calcDescuento(a));
+      }
+    }
+
     this.filtrados = tmp;
     this.paginaActual = 0;
     this.chollosPaginados = [];
     this.infiniteScrollDisabled = false;
     this.agregarChollos();
+  }
+
+
+  seleccionarSubFiltro(subFiltro: string) {
+    this.subFiltroSeleccionado = subFiltro;
+    this.aplicarFiltros();
   }
 
   agregarChollos() {
@@ -214,6 +293,17 @@ export class Tab4Page implements OnInit, OnDestroy {
       this.agregarChollos();
       event.target.complete();
     }, 500);
+  }
+
+  buscar(ev: any) {
+    console.log('[tab4] evento completo:', ev);
+    console.log('[tab4] ev.detail:', ev?.detail);
+    console.log('[tab4] ev.detail.value:', ev?.detail?.value);
+    console.log('[tab4] ev.target.value:', ev?.target?.value);
+    const valor = ev?.detail?.value ?? ev?.target?.value ?? '';
+    this.textoBusqueda = valor;
+    console.log('[tab4] textoBusqueda asignado:', this.textoBusqueda);
+    this.aplicarFiltros();
   }
 
   seleccionarCategoria(slug: string) {

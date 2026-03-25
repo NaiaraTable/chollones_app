@@ -99,6 +99,50 @@ ion-header {
   }
 }
 
+/* ESTILOS PARA LA NUEVA BARRA DE SUBFILTROS */
+.sub-filters-bar {
+  background: #f9f9f9;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eeeeee;
+
+  .scroll-container {
+    display: flex;
+    overflow-x: auto;
+    padding: 0 16px;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    scroll-behavior: smooth;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sub-filter-chip {
+      flex: 0 0 auto;
+      background: #ffffff;
+      color: #666666;
+      border: 1px solid #dddddd;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+
+      &.active {
+        background: #333333;
+        color: #ffffff;
+        border-color: #333333;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
 .chollos-container {
   padding: 8px 16px 40px 16px;
   background: transparent;
@@ -314,6 +358,24 @@ ion-header {
         color: var(--ion-color-primary);
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         border: 1px solid transparent;
+      }
+    }
+  }
+
+  /* MODO OSCURO PARA SUBFILTROS */
+  .sub-filters-bar {
+    background: #1a1a1a;
+    border-bottom: 1px solid #2a2a2a;
+
+    .sub-filter-chip {
+      background: transparent;
+      color: #bbbbbb;
+      border-color: #444444;
+
+      &.active {
+        background: #eeeeee;
+        color: #111111;
+        border-color: #eeeeee;
       }
     }
   }
