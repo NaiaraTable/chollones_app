@@ -32,30 +32,46 @@
     <ion-card *ngFor="let compra of compras; let i = index" class="compra-card" [style.animation]="'slideIn 0.4s ease-out ' + (i * 0.1) + 's both'" (click)="abrirDetalles(compra)">
       <div class="card-header-custom">
         <div class="header-left">
-          <div class="numero-pedido">{{ compra.numero_pedido }}</div>
           <div class="fecha-compra">{{ formatearFecha(compra.fecha_compra) }}</div>
+          <div class="estado-text">{{ getEstadoTexto(compra.estado) }}</div>
         </div>
         <ion-badge
           [color]="getEstadoBadgeColor(compra.estado)"
           class="estado-badge"
         >
           <ion-icon [name]="getEstadoIcon(compra.estado)"></ion-icon>
-          {{ getEstadoTexto(compra.estado) }}
         </ion-badge>
+      </div>
+
+      <!-- Preview de productos -->
+      <div class="productos-preview">
+        <div *ngFor="let producto of compra.articulos_preview" class="producto-preview-item">
+          <div class="producto-imagen">
+            <img 
+              *ngIf="producto.imagen_url" 
+              [src]="producto.imagen_url" 
+              alt="{{ producto.titulo }}"
+              class="imagen"
+            />
+            <div *ngIf="!producto.imagen_url" class="imagen-placeholder">
+              <div class="placeholder-icon">📦</div>
+            </div>
+            <div class="cantidad-badge">{{ producto.cantidad }}</div>
+          </div>
+          <div class="producto-info">
+            <div class="producto-titulo">{{ producto.titulo }}</div>
+          </div>
+        </div>
+        <div *ngIf="compra.articulos_count > 4" class="mas-productos">
+          <div class="mas-badge">+{{ compra.articulos_count - 4 }}</div>
+          <p>más</p>
+        </div>
       </div>
 
       <div class="card-body-custom">
         <div class="stat-item">
           <span class="stat-label">
-            <ion-icon name="cube"></ion-icon>
-            Artículos
-          </span>
-          <span class="stat-value">{{ compra.cantidad_items }}</span>
-        </div>
-        <div class="divider"></div>
-        <div class="stat-item">
-          <span class="stat-label">
-            <ion-icon name="pricetag"></ion-icon>
+            <ion-icon name="pricetag-outline"></ion-icon>
             Total
           </span>
           <span class="stat-value total">{{ (compra.total || 0).toFixed(2) }}€</span>
@@ -109,14 +125,14 @@
             <div class="summary-grid">
               <div class="summary-item">
                 <span class="label">
-                  <ion-icon name="cube"></ion-icon>
+                  <ion-icon name="cube-outline"></ion-icon>
                   Artículos
                 </span>
                 <span class="value">{{ detallesActuales.cantidad_items }}</span>
               </div>
               <div class="summary-item">
                 <span class="label">
-                  <ion-icon name="pricetag"></ion-icon>
+                  <ion-icon name="pricetag-outline"></ion-icon>
                   Total
                 </span>
                 <span class="value amount">{{ (detallesActuales.total || 0).toFixed(2) }}€</span>
@@ -127,7 +143,7 @@
 
         <!-- Items comprados -->
         <h3 class="items-title">
-          <ion-icon name="bag"></ion-icon>
+          <ion-icon name="bag-outline"></ion-icon>
           Artículos de la Compra
         </h3>
 

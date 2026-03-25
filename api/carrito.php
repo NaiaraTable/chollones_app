@@ -68,12 +68,13 @@ function getCarrito(PDO $db, string $prefix): void
             p.post_author as autor_id,
             MAX(CASE WHEN pm.meta_key = '_price' THEN pm.meta_value END) as precio_actual,
             MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) as precio_original,
-            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id
+            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id,
+            p.guid as post_guid
         FROM {$prefix}app_carro c
         JOIN {$prefix}posts p ON c.chollo_id = p.ID
         LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
         WHERE c.usuario_id = :user_id
-        GROUP BY c.id, p.ID
+        GROUP BY c.id, p.ID, p.guid
         ORDER BY c.creado_en DESC
     ";
 
@@ -84,6 +85,25 @@ function getCarrito(PDO $db, string $prefix): void
     // Formatear igual que Supabase
     $result = [];
     foreach ($items as $item) {
+        $imagenUrl = getImageUrlCart($db, $prefix, $item['thumbnail_id']);
+        
+        // Si no se encontró imagen por thumbnail, buscar attachments del producto
+        if (!$imagenUrl && isset($item['chollo_id'])) {
+            // Buscar en attachments asociados al producto
+            $attachStmt = $db->prepare("
+                SELECT guid FROM {$prefix}posts 
+                WHERE post_parent = :parent_id 
+                AND post_type = 'attachment'
+                AND post_mime_type LIKE 'image/%'
+                LIMIT 1
+            ");
+            $attachStmt->execute(['parent_id' => $item['chollo_id']]);
+            $attach = $attachStmt->fetch();
+            if ($attach) {
+                $imagenUrl = $attach['guid'];
+            }
+        }
+        
         $result[] = [
             'id' => $item['id'],
             'cantidad' => intval($item['cantidad']),
@@ -92,7 +112,7 @@ function getCarrito(PDO $db, string $prefix): void
                 'titulo' => $item['titulo'],
                 'precio_actual' => $item['precio_actual'] ? floatval($item['precio_actual']) : null,
                 'precio_original' => $item['precio_original'] ? floatval($item['precio_original']) : null,
-                'imagen_url' => getImageUrlCart($db, $prefix, $item['thumbnail_id']),
+                'imagen_url' => $imagenUrl,
                 'proveedores' => getVendorCart($db, $prefix, $item['autor_id']),
             ]
         ];

@@ -71,19 +71,98 @@ function obtenerHistorialCompras(PDO $db, string $prefix): void
     $stmt->execute(['user_id' => $userId]);
     $compras = $stmt->fetchAll();
 
+    error_log('DEBUG: Total compras encontradas: ' . count($compras));
+
     $result = [];
     foreach ($compras as $compra) {
-        $result[] = [
+        // Obtener un preview de los primeros 4 artículos
+        $sqlItems = "
+            SELECT
+                hi.id,
+                hi.titulo,
+                hi.precio_unitario,
+                hi.cantidad,
+                hi.imagen_url,
+                hi.chollo_id
+            FROM {$prefix}app_historial_items hi
+            WHERE hi.historial_id = :historial_id
+            ORDER BY hi.id ASC
+            LIMIT 4
+        ";
+        
+        $stmtItems = $db->prepare($sqlItems);
+        $stmtItems->execute(['historial_id' => $compra['id']]);
+        $articulos_preview = $stmtItems->fetchAll();
+        
+        error_log('DEBUG: Compra ID ' . $compra['id'] . ' tiene ' . count($articulos_preview) . ' items');
+        
+        $articulos_preview_array = [];
+        foreach ($articulos_preview as $articulo) {
+            $imagenUrl = $articulo['imagen_url'];
+            
+            // Si no hay imagen, intentar obtenerla del producto
+            if (!$imagenUrl && isset($articulo['chollo_id'])) {
+                $prodStmt = $db->prepare("
+                    SELECT p.ID, p.guid,
+                           MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id
+                    FROM {$prefix}posts p
+                    LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
+                    WHERE p.ID = :id
+                    GROUP BY p.ID
+                ");
+                $prodStmt->execute(['id' => $articulo['chollo_id']]);
+                $prod = $prodStmt->fetch();
+                
+                if ($prod && $prod['thumbnail_id']) {
+                    $imagenUrl = getImageUrl($db, $prefix, $prod['thumbnail_id']);
+                }
+                
+                if (!$imagenUrl && $prod && $prod['guid']) {
+                    $imagenUrl = $prod['guid'];
+                }
+                
+                if (!$imagenUrl && $prod) {
+                    $attachStmt = $db->prepare("
+                        SELECT guid FROM {$prefix}posts 
+                        WHERE post_parent = :parent_id 
+                        AND post_type = 'attachment'
+                        AND post_mime_type LIKE 'image/%'
+                        LIMIT 1
+                    ");
+                    $attachStmt->execute(['parent_id' => $prod['ID']]);
+                    $attach = $attachStmt->fetch();
+                    if ($attach && $attach['guid']) {
+                        $imagenUrl = $attach['guid'];
+                    }
+                }
+            }
+            
+            error_log('DEBUG HISTORIAL: Artículo: ' . $articulo['titulo'] . ' | ImgURL: ' . ($imagenUrl ?: 'NULL') . ' | Chollo_ID: ' . ($articulo['chollo_id'] ?: 'NULL'));
+            
+            $articulos_preview_array[] = [
+                'titulo' => $articulo['titulo'],
+                'imagen_url' => $imagenUrl,
+                'cantidad' => intval($articulo['cantidad'])
+            ];
+        }
+        
+        $item = [
             'id' => intval($compra['id']),
             'numero_pedido' => $compra['numero_pedido'],
             'fecha_compra' => $compra['fecha_compra'],
             'total' => floatval($compra['total']),
             'estado' => $compra['estado'],
             'cantidad_items' => intval($compra['cantidad_items']),
-            'articulos_count' => intval($compra['articulos_count'])
+            'articulos_count' => intval($compra['articulos_count']),
+            'articulos_preview' => $articulos_preview_array
         ];
+        
+        error_log('DEBUG: Agregando item con articulos_preview: ' . json_encode($articulos_preview_array));
+        
+        $result[] = $item;
     }
 
+    error_log('DEBUG: RESULTADO FINAL - ' . json_encode($result));
     jsonResponse($result);
 }
 
@@ -184,6 +263,54 @@ function crearCompra(PDO $db, string $prefix): void
             );
             $subtotal = $precioUnitario * $cantidad;
 
+            // Obtener imagen URL de varias formas
+            $imagenUrl = null;
+            
+            // Opción 1: Si viene en el artículo
+            if (isset($articulo['imagen_url']) && !empty($articulo['imagen_url'])) {
+                $imagenUrl = $articulo['imagen_url'];
+            }
+            
+            // Opción 2: Obtener del producto original
+            if (!$imagenUrl && isset($articulo['chollo_id'])) {
+                $prodStmt = $db->prepare("
+                    SELECT p.ID, p.guid,
+                           MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id
+                    FROM {$prefix}posts p
+                    LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
+                    WHERE p.ID = :id
+                    GROUP BY p.ID
+                ");
+                $prodStmt->execute(['id' => $articulo['chollo_id']]);
+                $prod = $prodStmt->fetch();
+                
+                // Intentar por thumbnail
+                if ($prod && $prod['thumbnail_id']) {
+                    $imagenUrl = getImageUrl($db, $prefix, $prod['thumbnail_id']);
+                }
+                
+                // Opción 3: Usar GUID del producto
+                if (!$imagenUrl && $prod && $prod['guid']) {
+                    $imagenUrl = $prod['guid'];
+                }
+                
+                // Opción 4: Buscar attachment directo
+                if (!$imagenUrl && $prod) {
+                    $attachStmt = $db->prepare("
+                        SELECT guid FROM {$prefix}posts 
+                        WHERE post_parent = :parent_id 
+                        AND post_type = 'attachment'
+                        AND post_mime_type LIKE 'image/%'
+                        LIMIT 1
+                    ");
+                    $attachStmt->execute(['parent_id' => $prod['ID']]);
+                    $attach = $attachStmt->fetch();
+                    if ($attach && $attach['guid']) {
+                        $imagenUrl = $attach['guid'];
+                    }
+                }
+            }
+
             $stmtItems->execute([
                 'historial_id' => $historialId,
                 'chollo_id' => $articulo['chollo_id'] ?? null,
@@ -191,7 +318,7 @@ function crearCompra(PDO $db, string $prefix): void
                 'precio_unitario' => $precioUnitario,
                 'cantidad' => $cantidad,
                 'subtotal' => $subtotal,
-                'imagen_url' => $articulo['imagen_url'] ?? null
+                'imagen_url' => $imagenUrl
             ]);
         }
 
@@ -344,4 +471,28 @@ function ensureHistorialTable(PDO $db, string $prefix): void
         // Las tablas probablemente ya existen, ignorar errores de creación
         error_log("ensureHistorialTable error: " . $e->getMessage());
     }
+}
+
+function getImageUrl(PDO $db, string $prefix, ?string $thumbnailId): ?string
+{
+    if (!$thumbnailId)
+        return null;
+
+    // Intentar obtener la URL de la imagen del attachment
+    $stmt = $db->prepare("
+        SELECT pm.meta_value
+        FROM {$prefix}postmeta pm
+        WHERE pm.post_id = :id AND pm.meta_key = '_wp_attached_file'
+    ");
+    $stmt->execute(['id' => $thumbnailId]);
+    $file = $stmt->fetchColumn();
+
+    if ($file) {
+        return SITE_URL . '/wp-content/uploads/' . $file;
+    }
+
+    // Fallback: usar guid del post
+    $stmt = $db->prepare("SELECT guid FROM {$prefix}posts WHERE ID = :id");
+    $stmt->execute(['id' => $thumbnailId]);
+    return $stmt->fetchColumn() ?: null;
 }

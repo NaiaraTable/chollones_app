@@ -376,6 +376,54 @@ function confirmarPago(PDO $db, string $prefix): void
 
             // Agregar items en historial
             foreach ($articulos as $articulo) {
+                // Intentar obtener imagen URL de varias formas
+                $imagenUrl = null;
+                
+                // Opción 1: Si viene en el artículo
+                if (isset($articulo['imagen_url']) && !empty($articulo['imagen_url'])) {
+                    $imagenUrl = $articulo['imagen_url'];
+                }
+                
+                // Opción 2: Obtener del producto original (thumbnail_id)
+                if (!$imagenUrl && isset($articulo['chollo_id'])) {
+                    $prodStmt = $db->prepare("
+                        SELECT p.ID, p.guid,
+                               MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id
+                        FROM {$prefix}posts p
+                        LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
+                        WHERE p.ID = :id
+                        GROUP BY p.ID
+                    ");
+                    $prodStmt->execute(['id' => $articulo['chollo_id']]);
+                    $prod = $prodStmt->fetch();
+                    
+                    // Intentar por thumbnail
+                    if ($prod && $prod['thumbnail_id']) {
+                        $imagenUrl = getImageUrl($db, $prefix, $prod['thumbnail_id']);
+                    }
+                    
+                    // Opción 3: Usar GUID del producto si existe
+                    if (!$imagenUrl && $prod && $prod['guid']) {
+                        $imagenUrl = $prod['guid'];
+                    }
+                    
+                    // Opción 4: Buscar attachment directo del producto
+                    if (!$imagenUrl && $prod) {
+                        $attachStmt = $db->prepare("
+                            SELECT guid FROM {$prefix}posts 
+                            WHERE post_parent = :parent_id 
+                            AND post_type = 'attachment'
+                            AND post_mime_type LIKE 'image/%'
+                            LIMIT 1
+                        ");
+                        $attachStmt->execute(['parent_id' => $prod['ID']]);
+                        $attach = $attachStmt->fetch();
+                        if ($attach && $attach['guid']) {
+                            $imagenUrl = $attach['guid'];
+                        }
+                    }
+                }
+                
                 $itemStmt = $db->prepare("
                     INSERT INTO {$prefix}app_historial_items (
                         historial_id, chollo_id, titulo,
@@ -397,7 +445,7 @@ function confirmarPago(PDO $db, string $prefix): void
                     'precio_unitario' => $precio,
                     'cantidad' => $cantidad,
                     'subtotal' => $subtotal,
-                    'imagen_url' => $articulo['imagen_url'] ?? null
+                    'imagen_url' => $imagenUrl
                 ]);
             }
         } catch (Exception $e) {
@@ -565,4 +613,28 @@ function ensurePagosTable(PDO $db, string $prefix): void
         error_log('Error creating app_pagos table: ' . $e->getMessage());
         // No es crítico, puede existir ya
     }
+}
+
+function getImageUrl(PDO $db, string $prefix, ?string $thumbnailId): ?string
+{
+    if (!$thumbnailId)
+        return null;
+
+    // Intentar obtener la URL de la imagen del attachment
+    $stmt = $db->prepare("
+        SELECT pm.meta_value
+        FROM {$prefix}postmeta pm
+        WHERE pm.post_id = :id AND pm.meta_key = '_wp_attached_file'
+    ");
+    $stmt->execute(['id' => $thumbnailId]);
+    $file = $stmt->fetchColumn();
+
+    if ($file) {
+        return SITE_URL . '/wp-content/uploads/' . $file;
+    }
+
+    // Fallback: usar guid del post
+    $stmt = $db->prepare("SELECT guid FROM {$prefix}posts WHERE ID = :id");
+    $stmt->execute(['id' => $thumbnailId]);
+    return $stmt->fetchColumn() ?: null;
 }

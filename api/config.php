@@ -190,13 +190,15 @@ function wp_hash_password(string $password): string
 // ======================================================
 // STRIPE CONFIGURATION
 // ======================================================
-// IMPORTANT: Configure these as environment variables in production
 // Get them from: https://dashboard.stripe.com/apikeys (when in Test Mode)
 //
-// In production, set environment variables:
-// export STRIPE_SECRET_KEY=sk_test_xxx_or_sk_live_xxx
-// export STRIPE_PUBLISHABLE_KEY=pk_test_xxx_or_pk_live_xxx
-// export STRIPE_WEBHOOK_SECRET=whsec_xxx
+// IMPORTANTE: Use environment variables in production
+// define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY'));
+// define('STRIPE_PUBLISHABLE_KEY', getenv('STRIPE_PUBLISHABLE_KEY'));
 //
-define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY') ?: 'sk_test_placeholder_configure_in_env');
+// For development: Set environment variables in your .env file or server config
+// NUNCA hardcodees las claves reales en el repositorio
+//
+define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY') ?: 'sk_test_placeholder_set_in_env');
+define('STRIPE_PUBLISHABLE_KEY', getenv('STRIPE_PUBLISHABLE_KEY') ?: 'pk_test_placeholder_set_in_env');
 define('STRIPE_WEBHOOK_SECRET', getenv('STRIPE_WEBHOOK_SECRET') ?: 'whsec_test_placeholder');
