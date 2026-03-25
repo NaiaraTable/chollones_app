@@ -289,22 +289,29 @@ ion-content {
     right: 12px;
     width: 32px;
     height: 32px;
-    background: var(--ion-color-primary);
+    background: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease; /* Para que el cambio sea suave */
 
     ion-icon {
-      color: #fff;
+      color: #888; /* Gris cuando no es favorito */
       font-size: 18px;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    &.active ion-icon {
-      color: #ffeb3b;
+    &.active {
+      background: #fff;
+
+      ion-icon {
+        color: #ff4757; /* Rojo vibrante */
+        transform: scale(1.2); /* Efecto de latido al activarse */
+      }
     }
   }
 }

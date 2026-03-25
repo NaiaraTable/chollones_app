@@ -98,7 +98,7 @@ export class CarritoPage implements OnInit {
       const toast = await this.toastCtrl.create({
         message: 'Producto eliminado correctamente',
         duration: 2000,
-        position: 'top',
+        position: 'bottom',
         cssClass: 'toast-carrito'
       });
       await toast.present();
@@ -107,7 +107,7 @@ export class CarritoPage implements OnInit {
       const toast = await this.toastCtrl.create({
         message: 'Hubo un error al eliminar. Inténtalo de nuevo.',
         duration: 3000,
-        position: 'top',
+        position: 'bottom',
         cssClass: 'toast-carrito'
       });
       await toast.present();

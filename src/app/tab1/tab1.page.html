@@ -50,7 +50,7 @@
     </div>
 
     <div class="popular-row">
-      <div class="product-card" *ngFor="let p of topVentas" (click)="irAProducto(p)">
+      <div class="product-card" *ngFor="let p of topVentas | slice:0:10" (click)="irAProducto(p)">
 
         <!-- Descuento -->
         <div class="disc" *ngIf="calcDescuentoPopular(p) > 0">
@@ -96,7 +96,7 @@
 
 
     <div class="popular-row">
-      <div class="product-card" *ngFor="let p of productosPopulares" (click)="irAProducto(p)">
+      <div class="product-card" *ngFor="let p of productosPopulares | slice:0:10" (click)="irAProducto(p)">
 
         <!-- Descuento -->
         <div class="disc" *ngIf="calcDescuentoPopular(p) > 0">
@@ -141,7 +141,7 @@
     </div>
 
     <div class="cards-row">
-      <div class="product-card" *ngFor="let c of chollosFiltrados" (click)="irAProducto(c)">
+      <div class="product-card" *ngFor="let c of chollosFiltrados | slice:0:10" (click)="irAProducto(c)">
 
         <div class="disc" *ngIf="calcDescuento(c) > 0" [class.badge-hot]="c?.punto?.estado === 'Caliente'"> -{{
           calcDescuento(c) }}%

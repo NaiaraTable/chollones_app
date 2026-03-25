@@ -69,11 +69,11 @@ body {
   }
 
   80% {
-    transform: translateX(-90px) rotate(-5deg);
+    transform: translateX(-140px) rotate(-5deg);
   }
 
   92% {
-    transform: translateX(-90px) rotate(0) scale(1.1);
+    transform: translateX(-140px) rotate(0) scale(1.1);
   }
 
   100% {
@@ -84,33 +84,42 @@ body {
 .contenedor-mascota {
   position: fixed;
   bottom: 85px;
-  right: -80px;
+  right: -130px;
   z-index: 999999;
-  width: 100px !important;
+  width: 140px !important;
   pointer-events: none !important;
   display: flex;
   justify-content: flex-end;
 
   .monito-animado {
-    width: 70%;
+    width: 110px;
     animation: cicloMascota 20s ease-in-out infinite;
     transform-origin: bottom right;
   }
 }
 
 /* ==============================================
-   TOAST DEL CARRITO
+   TOAST DEL CARRITO Y NOTIFICACIONES
    ============================================== */
-.toast-carrito::part(container) {
-  background: var(--card-background) !important;
-  border: 1.5px solid var(--ion-color-secondary) !important;
-  border-radius: 30px !important;
-  box-shadow: 0 4px 15px var(--card-shadow) !important;
+ion-toast.toast-carrito {
+  --background: var(--card-background);
+  --border-radius: 30px;
+  --border-color: var(--ion-color-secondary);
+  --border-width: 1.5px;
+  --border-style: solid;
+  --box-shadow: 0 4px 15px var(--card-shadow);
+  --color: var(--ion-color-secondary);
 }
 
-.toast-carrito::part(message) {
-  color: var(--ion-color-secondary) !important;
-  font-weight: 600 !important;
+ion-toast.toast-carrito::part(message) {
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Redondear resto de toasts por defecto para que todos sean redondos */
+ion-toast {
+  --border-radius: 30px;
+  --box-shadow: 0 4px 15px var(--card-shadow);
 }
 
 /* ==============================================

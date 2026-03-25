@@ -1,15 +1,18 @@
 <ion-content *ngIf="producto">
   <div class="header-image">
-    <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'" (error)="$any($event.target).src='assets/placeholder.png'" />
+    <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'"
+         (error)="$any($event.target).src='assets/placeholder.png'" />
     <div class="back-button-float" (click)="volverAtras()"><ion-icon name="arrow-back"></ion-icon></div>
-    <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()"><ion-icon [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon></div>
-    <div class="discount-badge" *ngIf="producto.precio_original">-{{ (((producto.precio_original - producto.precio_actual) / producto.precio_original) * 100).toFixed(0) }}% DTO</div>
+    <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()"><ion-icon
+      [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon></div>
+    <div class="discount-badge" *ngIf="producto.precio_original">-{{ (((producto.precio_original -
+      producto.precio_actual) / producto.precio_original) * 100).toFixed(0) }}% DTO</div>
   </div>
 
   <div class="ion-padding">
     <h1 class="product-title">{{ producto.titulo }}</h1>
 
-    <div class="short-description" *ngIf="producto.extracto_limpio" style="margin-bottom: 10px; font-weight: 600;">
+    <div class="short-description" *ngIf="producto.extracto_limpio">
       <p>{{ producto.extracto_limpio }}</p>
     </div>
 
@@ -18,31 +21,124 @@
       <span class="old-price" *ngIf="producto.precio_original">{{ producto.precio_original }}€</span>
     </div>
 
-    <div class="product-description" *ngIf="producto.descripcion_limpia" style="margin: 20px 0;">
-      <p style="white-space: pre-wrap; color: #555; line-height: 1.6;">{{ producto.descripcion_limpia }}</p>
+    <div class="description-container" *ngIf="producto.descripcion_limpia">
+      <div class="description-wrapper" [class.expanded]="mostrarTodo">
+        <div class="product-description">
+          <p>{{ producto.descripcion_limpia }}</p>
+        </div>
+        <div class="fade-overlay" *ngIf="!mostrarTodo" (click)="toggleDescripcion()"></div>
+      </div>
+
+      <div class="read-more-btn" (click)="toggleDescripcion()">
+        <span>{{ mostrarTodo ? 'Leer menos' : 'Descripción completa' }}</span>
+      </div>
     </div>
 
     <ion-item lines="none" class="vendor-info">
       <ion-avatar slot="start"><img [src]="producto.proveedores?.logo || 'assets/placeholder.png'" /></ion-avatar>
       <ion-label>
-        <p>Vendido por</p>
-        <h3>{{ producto.proveedores?.nombre }}</h3>
+        <p class="vendor-subtitle">Vendido por</p>
+        <h3 class="vendor-name">{{ producto.proveedores?.nombre }}</h3>
       </ion-label>
     </ion-item>
 
-    <div class="rating-section ion-text-center ion-margin-top">
-      <h3>¿Qué te parece esta oferta?</h3>
-      <div class="faces-container">
-        <span class="face-icon" (click)="rateProduct(1)">😠</span>
-        <span class="face-icon" (click)="rateProduct(2)">😕</span>
-        <span class="face-icon" (click)="rateProduct(3)">😐</span>
-        <span class="face-icon" (click)="rateProduct(4)">🙂</span>
-        <span class="face-icon" (click)="rateProduct(5)">🤩</span>
-      </div>
-    </div>
 
     <ion-button expand="block" color="primary" class="ion-margin-top btn-action" (click)="anadirAlCarrito()">
       AÑADIR AL CARRITO
     </ion-button>
+
+    <div class="reviews-container">
+      <div class="reviews-header">
+        <div class="header-top">
+          <h3>Reseñas</h3>
+          <div class="average-badge" *ngIf="reviews.length > 0">
+            <ion-icon name="star"></ion-icon>
+            {{ mediaReviews() | number:'1.1-1' }} ({{ reviews.length }})
+          </div>
+        </div>
+
+        <ion-button
+          *ngIf="!miReview && !mostrarFormulario"
+          expand="block"
+          fill="outline"
+          color="primary"
+          (click)="abrirFormulario()">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Escribir una reseña
+        </ion-button>
+      </div>
+
+      <div class="review-form" *ngIf="mostrarFormulario && !miReview">
+        <p class="form-label">Tu puntuación</p>
+        <div class="star-rating-input">
+          <ion-icon
+            *ngFor="let s of [1,2,3,4,5]"
+            [name]="s <= nuevaReviewPuntuacion ? 'star' : 'star-outline'"
+            (click)="nuevaReviewPuntuacion = s">
+          </ion-icon>
+        </div>
+
+        <ion-textarea
+          [(ngModel)]="nuevaReviewComentario"
+          placeholder="Cuéntanos tu experiencia con este chollo…"
+          rows="4"
+          autoGrow="true">
+        </ion-textarea>
+
+        <div class="form-actions">
+          <ion-button fill="clear" color="medium" (click)="cerrarFormulario()">Cancelar</ion-button>
+          <ion-button color="primary" [disabled]="enviandoReview" (click)="enviarReview()">
+            <ion-spinner *ngIf="enviandoReview" name="crescent" slot="start"></ion-spinner>
+            Publicar
+          </ion-button>
+        </div>
+      </div>
+
+      <div class="mi-review-card" *ngIf="miReview">
+        <div class="mi-review-top">
+          <span class="mi-review-label">Tu reseña</span>
+          <button class="delete-btn" (click)="eliminarMiReview()">
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
+        <div class="stars-row">
+          <ion-icon
+            *ngFor="let s of [1,2,3,4,5]"
+            [name]="s <= miReview.puntuacion ? 'star' : 'star-outline'"
+            class="star-icon">
+          </ion-icon>
+        </div>
+        <p class="comment-text">{{ miReview.comentario }}</p>
+        <span class="comment-date">{{ miReview.fecha | date:'d MMM y' }}</span>
+      </div>
+
+      <div class="comments-list">
+        <ng-container *ngFor="let r of otrasReviews">
+          <div class="comment-item">
+            <div class="comment-header">
+              <span class="user-name">{{ r.autor }}</span>
+              <span class="user-rating">
+                <ion-icon
+                  *ngFor="let s of [1,2,3,4,5]"
+                  [name]="s <= r.puntuacion ? 'star' : 'star-outline'"
+                  [class.active]="s <= r.puntuacion">
+                </ion-icon>
+              </span>
+            </div>
+            <p class="comment-text">{{ r.comentario }}</p>
+            <span class="comment-date">{{ r.fecha | date:'d MMM y' }}</span>
+          </div>
+        </ng-container>
+
+        <div class="no-comments" *ngIf="reviews.length === 0 && !cargandoReviews">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+          <p>Sé el primero en dejar una reseña</p>
+        </div>
+
+        <div class="no-comments" *ngIf="cargandoReviews">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      </div>
+    </div>
   </div>
 </ion-content>
