@@ -3,7 +3,6 @@
 // API DE CHOLLOS (Productos WooCommerce)
 // ======================================================
 
-
 // Capturar errores
 set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     error_log("Error: $errstr en $errfile:$errline");
@@ -51,7 +50,9 @@ function getChollos(PDO $db, string $prefix): void
             MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) as precio_original,
             MAX(CASE WHEN pm.meta_key = '_sale_price' THEN pm.meta_value END) as precio_oferta,
             MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id,
-            CAST(MAX(CASE WHEN pm.meta_key = 'total_sales' THEN pm.meta_value END) AS UNSIGNED) as ventas
+            CAST(MAX(CASE WHEN pm.meta_key = 'total_sales' THEN pm.meta_value END) AS UNSIGNED) as ventas,
+            (SELECT AVG(CAST(cm.meta_value AS DECIMAL(10,2))) FROM {$prefix}comments c JOIN {$prefix}commentmeta cm ON c.comment_ID = cm.comment_id WHERE c.comment_post_ID = p.ID AND c.comment_approved = '1' AND cm.meta_key = 'rating') as valoracion,
+            (SELECT COUNT(c.comment_ID) FROM {$prefix}comments c JOIN {$prefix}commentmeta cm ON c.comment_ID = cm.comment_id WHERE c.comment_post_ID = p.ID AND c.comment_approved = '1' AND cm.meta_key = 'rating') as comentarios
         FROM {$prefix}posts p
         LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
         WHERE p.post_type = 'product'
@@ -62,17 +63,16 @@ function getChollos(PDO $db, string $prefix): void
 
     $products = $db->query($sql)->fetchAll();
 
-    // Enriquecer con imágenes, categorías y vendedor
     foreach ($products as &$product) {
         $product['imagen_url'] = getImageUrl($db, $prefix, $product['thumbnail_id']);
         $product['categorias'] = getProductCategories($db, $prefix, $product['id']);
         $product['proveedores'] = getVendor($db, $prefix, $product['autor_id']);
 
-        // Limpiar campos auxiliares
         $product['ventas'] = intval($product['ventas'] ?? 0);
+        $product['valoracion'] = isset($product['valoracion']) ? floatval($product['valoracion']) : 0;
+        $product['comentarios'] = isset($product['comentarios']) ? intval($product['comentarios']) : 0;
         unset($product['thumbnail_id'], $product['autor_id']);
 
-        // Asegurar tipos numéricos
         $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
         $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
 
@@ -100,7 +100,9 @@ function getTopVentas(PDO $db, string $prefix): void
             MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) as precio_original,
             MAX(CASE WHEN pm.meta_key = '_sale_price' THEN pm.meta_value END) as precio_oferta,
             MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id,
-            CAST(MAX(CASE WHEN pm.meta_key = 'total_sales' THEN pm.meta_value END) AS UNSIGNED) as ventas
+            CAST(MAX(CASE WHEN pm.meta_key = 'total_sales' THEN pm.meta_value END) AS UNSIGNED) as ventas,
+            (SELECT AVG(CAST(cm.meta_value AS DECIMAL(10,2))) FROM {$prefix}comments c JOIN {$prefix}commentmeta cm ON c.comment_ID = cm.comment_id WHERE c.comment_post_ID = p.ID AND c.comment_approved = '1' AND cm.meta_key = 'rating') as valoracion,
+            (SELECT COUNT(c.comment_ID) FROM {$prefix}comments c JOIN {$prefix}commentmeta cm ON c.comment_ID = cm.comment_id WHERE c.comment_post_ID = p.ID AND c.comment_approved = '1' AND cm.meta_key = 'rating') as comentarios
         FROM {$prefix}posts p
         LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
         WHERE p.post_type = 'product'
@@ -117,6 +119,8 @@ function getTopVentas(PDO $db, string $prefix): void
         $product['categorias'] = getProductCategories($db, $prefix, $product['id']);
         $product['proveedores'] = getVendor($db, $prefix, $product['autor_id']);
 
+        $product['valoracion'] = isset($product['valoracion']) ? floatval($product['valoracion']) : 0;
+        $product['comentarios'] = isset($product['comentarios']) ? intval($product['comentarios']) : 0;
         unset($product['thumbnail_id'], $product['autor_id'], $product['ventas']);
 
         $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
@@ -146,7 +150,9 @@ function getCholloById(PDO $db, string $prefix, string $id): void
             MAX(CASE WHEN pm.meta_key = '_price' THEN pm.meta_value END) as precio_actual,
             MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) as precio_original,
             MAX(CASE WHEN pm.meta_key = '_sale_price' THEN pm.meta_value END) as precio_oferta,
-            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id
+            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id,
+            (SELECT AVG(CAST(cm.meta_value AS DECIMAL(10,2))) FROM {$prefix}comments c JOIN {$prefix}commentmeta cm ON c.comment_ID = cm.comment_id WHERE c.comment_post_ID = p.ID AND c.comment_approved = '1' AND cm.meta_key = 'rating') as valoracion,
+            (SELECT COUNT(c.comment_ID) FROM {$prefix}comments c JOIN {$prefix}commentmeta cm ON c.comment_ID = cm.comment_id WHERE c.comment_post_ID = p.ID AND c.comment_approved = '1' AND cm.meta_key = 'rating') as comentarios
         FROM {$prefix}posts p
         LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
         WHERE p.ID = :id
@@ -167,6 +173,8 @@ function getCholloById(PDO $db, string $prefix, string $id): void
     $product['categorias'] = getProductCategories($db, $prefix, $product['id']);
     $product['proveedores'] = getVendor($db, $prefix, $product['autor_id']);
 
+    $product['valoracion'] = isset($product['valoracion']) ? floatval($product['valoracion']) : 0;
+    $product['comentarios'] = isset($product['comentarios']) ? intval($product['comentarios']) : 0;
     unset($product['thumbnail_id'], $product['autor_id']);
 
     $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
@@ -219,7 +227,9 @@ function getChollosSimilares(PDO $db, string $prefix): void
             p.post_author as autor_id,
             MAX(CASE WHEN pm.meta_key = '_price' THEN pm.meta_value END) as precio_actual,
             MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) as precio_original,
-            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id
+            MAX(CASE WHEN pm.meta_key = '_thumbnail_id' THEN pm.meta_value END) as thumbnail_id,
+            (SELECT AVG(CAST(cm.meta_value AS DECIMAL(10,2))) FROM {$prefix}comments c JOIN {$prefix}commentmeta cm ON c.comment_ID = cm.comment_id WHERE c.comment_post_ID = p.ID AND c.comment_approved = '1' AND cm.meta_key = 'rating') as valoracion,
+            (SELECT COUNT(c.comment_ID) FROM {$prefix}comments c JOIN {$prefix}commentmeta cm ON c.comment_ID = cm.comment_id WHERE c.comment_post_ID = p.ID AND c.comment_approved = '1' AND cm.meta_key = 'rating') as comentarios
         FROM {$prefix}posts p
         LEFT JOIN {$prefix}postmeta pm ON p.ID = pm.post_id
         WHERE p.post_type = 'product'
@@ -239,7 +249,11 @@ function getChollosSimilares(PDO $db, string $prefix): void
         $product['imagen_url'] = getImageUrl($db, $prefix, $product['thumbnail_id']);
         $product['categorias'] = getProductCategories($db, $prefix, $product['id']);
         $product['proveedores'] = getVendor($db, $prefix, $product['autor_id']);
+
+        $product['valoracion'] = isset($product['valoracion']) ? floatval($product['valoracion']) : 0;
+        $product['comentarios'] = isset($product['comentarios']) ? intval($product['comentarios']) : 0;
         unset($product['thumbnail_id'], $product['autor_id']);
+
         $product['precio_actual'] = $product['precio_actual'] ? floatval($product['precio_actual']) : null;
         $product['precio_original'] = $product['precio_original'] ? floatval($product['precio_original']) : null;
 
@@ -260,7 +274,6 @@ function getImageUrl(PDO $db, string $prefix, ?string $thumbnailId): ?string
     if (!$thumbnailId)
         return null;
 
-    // Intentar obtener la URL de la imagen del attachment
     $stmt = $db->prepare("
         SELECT pm.meta_value
         FROM {$prefix}postmeta pm
@@ -273,7 +286,6 @@ function getImageUrl(PDO $db, string $prefix, ?string $thumbnailId): ?string
         return SITE_URL . '/wp-content/uploads/' . $file;
     }
 
-    // Fallback: usar guid del post
     $stmt = $db->prepare("SELECT guid FROM {$prefix}posts WHERE ID = :id");
     $stmt->execute(['id' => $thumbnailId]);
     return $stmt->fetchColumn() ?: null;

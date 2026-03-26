@@ -26,7 +26,8 @@ import {
   locationOutline,
   storefrontOutline,
   cartOutline,
-  imageOutline
+  imageOutline,
+  chevronDownOutline
 } from 'ionicons/icons';
 
 import { SupabaseService } from '../services/supabase.service';
@@ -78,15 +79,11 @@ export class Tab4Page implements OnInit, OnDestroy {
   paginaActual = 0;
   infiniteScrollDisabled = false;
 
-  // Referencia al searchbar del template
   @ViewChild('searchbar', { static: false }) searchbarRef?: IonSearchbar;
-
-  // Referencia al popover de categorías
   @ViewChild('popoverCats') popoverCats?: IonPopover;
 
   private searchSub?: Subscription;
 
-  // Inyecciones usando `inject()` para evitar la regla prefer-inject
   private supabaseService = inject(SupabaseService);
   private locationService = inject(LocationService);
   private searchService = inject(SearchService);
@@ -95,24 +92,19 @@ export class Tab4Page implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
 
-  // Búsqueda interna del popover de categorías
   catSearch: string = '';
 
-  constructor() {
-    // constructor vacío intencionalmente (inyecciones con inject())
-  }
+  constructor() {}
 
   async ngOnInit() {
-    // Registrar iconos aquí (antes estaba en el constructor)
     addIcons({
       heart, heartOutline, bagOutline, add,
       searchOutline, locationOutline, storefrontOutline,
-      cartOutline, imageOutline
+      cartOutline, imageOutline, chevronDownOutline
     });
 
     await this.obtenerUbicacion();
 
-    // Suscripción reactiva al buscador del header
     this.searchSub = this.searchService.getBusqueda$().subscribe(texto => {
       this.textoBusqueda = texto;
       if (this.listadoChollos.length > 0) {
@@ -131,15 +123,12 @@ export class Tab4Page implements OnInit, OnDestroy {
   }
 
   onCatSearchInput(event: any) {
-    // Normalizar valor: si viene undefined lo convertimos a cadena vacía
     const v = event?.detail?.value;
     this.catSearch = (v === undefined || v === null) ? '' : String(v);
   }
 
   async ionViewWillEnter() {
-    // Sincronizar con el valor actual del servicio (por si se navegó desde otra pestaña)
     this.textoBusqueda = this.searchService.valorActual;
-    // 1. Recibir búsqueda por texto
     const q = this.route.snapshot.queryParamMap.get('q');
     if (q !== null) {
       this.textoBusqueda = q.trim();
@@ -156,12 +145,13 @@ export class Tab4Page implements OnInit, OnDestroy {
       this.subFiltroSeleccionado = filtro;
     }
 
+    // ACTUALIZACIÓN AUTOMÁTICA: Si ya tenemos datos, recargamos "en silencio" para actualizar las notas
     if (this.listadoChollos.length > 0) {
-      this.aplicarFiltros();
+      this.cargarDatos(true); // true = recargar en silencio sin pantalla de carga
       return;
     }
 
-    await this.cargarDatos();
+    await this.cargarDatos(false); // false = cargar por primera vez mostrando el spinner
   }
 
   async obtenerUbicacion() {
@@ -176,8 +166,11 @@ export class Tab4Page implements OnInit, OnDestroy {
     }
   }
 
-  async cargarDatos() {
-    this.cargando = true;
+  // Le añadimos el parámetro "isSilent" para que no moleste al recargar
+  async cargarDatos(isSilent: boolean = false) {
+    if (!isSilent) {
+      this.cargando = true;
+    }
 
     try {
       const data = await this.supabaseService.getChollos();
@@ -203,12 +196,16 @@ export class Tab4Page implements OnInit, OnDestroy {
         });
 
         this.categorias = [{ nombre: 'Todas', slug: 'todas' }, ...Array.from(catsMap.values())];
+
+        // Al terminar de recargar los datos frescos, actualizamos la vista
         this.aplicarFiltros();
       }
     } catch (e) {
       console.error('Error cargando chollos:', e);
     } finally {
-      this.cargando = false;
+      if (!isSilent) {
+        this.cargando = false;
+      }
     }
   }
 
@@ -236,32 +233,16 @@ export class Tab4Page implements OnInit, OnDestroy {
         });
       } else if (this.subFiltroSeleccionado === 'valoracion') {
 
-        console.log("---- DEBUG FILTRO MEJOR VALORADOS ----");
-        if (tmp.length > 0) {
-          console.log("🔍 Estructura del primer chollo:", tmp[0]);
-        }
-
-        // Explicación: Simplificar la lógica del filtro de valoraciones usando una expresión ternaria
-        // para evitar la advertencia del linter sobre 'if' simplificable.
+        // 1. FILTRO DE NOTA MÍNIMA: Solo pasan los que tengan más de 3 estrellas
         tmp = tmp.filter(c => {
-          const val = parseFloat(c.valoracion ?? c.rating ?? c.puntuacion ?? c.average_rating ?? c._wc_average_rating ?? 0) || 0;
-
-          const numComentarios = parseInt(c.comentarios ?? c.rating_count ?? c.review_count ?? c.cantidad_comentarios ?? 0) || 0;
-          const arrayComentarios = Array.isArray(c.comentarios) ? c.comentarios.length : 0;
-          const arrayReviews = Array.isArray(c.reviews) ? c.reviews.length : 0;
-
-          const totalComentarios = numComentarios + arrayComentarios + arrayReviews;
-
-          const estaValorado = val > 0;
-
-          // Si está valorado, lo incluimos solo si la nota >= 2.3; si no está valorado, lo incluimos solo si tiene comentarios
-          return estaValorado ? val >= 2.3 : totalComentarios > 0;
+          const val = parseFloat(c.valoracion) || 0;
+          return val > 3;
         });
 
-        // Ordenar de mayor nota a menor
+        // 2. Ordenar los aprobados de mejor nota a peor nota
         tmp.sort((a, b) => {
-          const valA = parseFloat(a.valoracion ?? a.rating ?? a.puntuacion ?? a.average_rating ?? a._wc_average_rating ?? 0) || 0;
-          const valB = parseFloat(b.valoracion ?? b.rating ?? b.puntuacion ?? b.average_rating ?? b._wc_average_rating ?? 0) || 0;
+          const valA = parseFloat(a.valoracion) || 0;
+          const valB = parseFloat(b.valoracion) || 0;
           return valB - valA;
         });
 
@@ -309,13 +290,11 @@ export class Tab4Page implements OnInit, OnDestroy {
   }
 
   onSelectCategory(slug: string) {
-    // Cerrar el popover y limpiar la búsqueda de categoría
     this.popoverCats?.dismiss();
     this.catSearch = '';
     this.seleccionarCategoria(slug);
   }
 
-  // Determina si una categoría coincide con el texto de búsqueda del popover
   matchesCategory(cat: any): boolean {
     const name = (cat?.nombre || '').toString();
     const search = (this.catSearch || '').toString().trim().toLowerCase();
