@@ -26,7 +26,7 @@ import {
   locationOutline,
   storefrontOutline,
   cartOutline,
-  imageOutline
+  imageOutline, chevronDownOutline, checkmarkOutline
 } from 'ionicons/icons';
 
 import { SupabaseService } from '../services/supabase.service';
@@ -100,6 +100,7 @@ export class Tab4Page implements OnInit, OnDestroy {
 
   constructor() {
     // constructor vacío intencionalmente (inyecciones con inject())
+    addIcons({ chevronDownOutline, heartOutline, bagOutline, checkmarkOutline, searchOutline, imageOutline, locationOutline, heart, cartOutline });
   }
 
   async ngOnInit() {

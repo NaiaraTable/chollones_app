@@ -110,8 +110,8 @@
               </span>
             </div>
 
-            <div class="fav-icon" (click)="toggleFavorito(chollo, $event)">
-              <ion-icon [name]="esFavorito(chollo.id) ? 'heart' : 'heart-outline'"></ion-icon>
+            <div class="fav-icon" [class.active]="esFavorito(chollo.id)" (click)="toggleFavorito(chollo, $event)">
+              <ion-icon name="heart"></ion-icon>
             </div>
           </div>
 
