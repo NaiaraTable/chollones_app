@@ -11,8 +11,10 @@ import {
   IonCardContent,
   IonButton,
   IonIcon,
-  IonText
+  IonText,
+  NavController
 } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 
 import { addIcons } from 'ionicons';
 import { heart, heartOutline, trashOutline } from 'ionicons/icons';
@@ -42,7 +44,9 @@ export class Tab3Page {
 
   constructor(
     private supabaseService: SupabaseService,
-    private favoritosEventService: FavoritosEvent
+    private favoritosEventService: FavoritosEvent,
+    private router: Router,
+    private navCtrl: NavController
   ) {
     addIcons({ heart, heartOutline, trashOutline });
   }
@@ -108,6 +112,12 @@ export class Tab3Page {
 
   async quitarDeGuardados(chollo: any) {
     try {
+      // Añadir clase de animación
+      chollo.removing = true;
+
+      // Esperar a que la animación termine (250ms según SCSS)
+      await new Promise(resolve => setTimeout(resolve, 250));
+
       await this.supabaseService.eliminarCholloFavorito(chollo.id);
 
       // Notificar a otros componentes (Tab1) que los favoritos cambiaron
@@ -118,6 +128,11 @@ export class Tab3Page {
     } catch (error) {
       console.error('Error al quitar de guardados:', error);
     }
+  }
+
+  irAProducto(chollo: any) {
+    if (!chollo.id) return;
+    this.router.navigate(['/tabs', 'producto', chollo.id]);
   }
 
   calcDescuento(chollo: any): number {

@@ -11,19 +11,19 @@
     </div>
   </div>
 
-  <!-- Enlaces Rápidos Circulares -->
-  <div class="section">
+  <!-- Accesos Rápidos -->
+  <div class="section section-no-pad-bottom">
     <div class="section-title">
       <h3>Nuestros Chollos</h3>
     </div>
     <div class="quick-row">
-      <div class="quick-circle-item" *ngFor="let q of quickLinks"
+      <div class="quick-card" *ngFor="let q of quickLinks"
         (click)="router.navigate(['/tabs/tab4'], { queryParams: { filtro: q.id } })">
-        <div class="circle-bg" [style.background-color]="q.bgColor">
-          <img [src]="q.img" />
+        <div class="card-bg" [style.background-image]="'url(' + q.img + ')'"></div>
+        <div class="card-overlay">
+          <span class="quick-text">{{ q.title }}</span>
+          <ion-icon name="arrow-forward-circle-outline" class="quick-arrow"></ion-icon>
         </div>
-        <div class="quick-text">{{ q.title }}</div>
-        <div class="quick-cta">Comprar ahora</div>
       </div>
     </div>
   </div>

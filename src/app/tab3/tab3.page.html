@@ -20,9 +20,10 @@
 
     <!-- Lista de guardados -->
     <div *ngIf="!cargando && chollosGuardados.length > 0" class="guardados-list">
-      <div class="chollo-card" *ngFor="let chollo of chollosGuardados">
+      <div class="chollo-card" *ngFor="let chollo of chollosGuardados" [class.removing]="chollo.removing"
+        (click)="irAProducto(chollo)">
 
-        <div class="fav-icon" (click)="quitarDeGuardados(chollo)">
+        <div class="fav-icon" (click)="quitarDeGuardados(chollo); $event.stopPropagation()">
           <ion-icon name="heart"></ion-icon>
         </div>
 
@@ -45,7 +46,8 @@
             <span class="old" *ngIf="chollo?.precio_original">{{ chollo?.precio_original | number:'1.2-2' }}€</span>
           </div>
 
-          <button class="btn-cart" (click)="anadirAlCarrito(chollo)">Añadir al carrito</button>
+          <button class="btn-cart" (click)="anadirAlCarrito(chollo); $event.stopPropagation()">Añadir al
+            carrito</button>
         </div>
       </div>
     </div>

@@ -1,16 +1,13 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-searchbar
-      placeholder="Buscar chollos o tiendas..."
-      #searchbar
-      [value]="textoBusqueda"
-      (ionInput)="buscar($event)"
-      [debounce]="300">
+    <ion-searchbar placeholder="Buscar chollos o tiendas..." #searchbar [value]="textoBusqueda"
+      (ionInput)="buscar($event)" [debounce]="300">
     </ion-searchbar>
 
     <ion-buttons slot="end">
       <!-- Botón de categoría colocado en la derecha, estilo de botón compacto -->
-      <ion-button id="cat-button" class="cat-trigger" fill="solid" color="light" aria-haspopup="dialog" aria-label="Seleccionar categoría">
+      <ion-button id="cat-button" class="cat-trigger" fill="solid" color="light" aria-haspopup="dialog"
+        aria-label="Seleccionar categoría">
         <span class="cat-label">{{ categoriaSeleccionadaNombre }}</span>
         <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
       </ion-button>
@@ -28,7 +25,8 @@
   <ion-popover #popoverCats trigger="cat-button">
     <ng-template>
       <ion-content>
-        <ion-searchbar placeholder="Buscar categoría..." [value]="catSearch" (ionInput)="onCatSearchInput($event)"></ion-searchbar>
+        <ion-searchbar placeholder="Buscar categoría..." [value]="catSearch"
+          (ionInput)="onCatSearchInput($event)"></ion-searchbar>
         <ion-list>
           <ng-container *ngFor="let cat of categorias">
             <ion-item [button]="true" *ngIf="matchesCategory(cat)" (click)="onSelectCategory(cat.slug)">
@@ -43,36 +41,20 @@
 
   <div class="sub-filters-bar" *ngIf="categoriaSeleccionada === 'todas'">
     <div class="scroll-container">
-      <button
-        type="button"
-        class="sub-filter-chip"
-        [class.active]="subFiltroSeleccionado === 'destacados'"
-        (click)="seleccionarSubFiltro('destacados')"
-      >
+      <button type="button" class="sub-filter-chip" [class.active]="subFiltroSeleccionado === 'destacados'"
+        (click)="seleccionarSubFiltro('destacados')">
         Destacados
       </button>
-      <button
-        type="button"
-        class="sub-filter-chip"
-        [class.active]="subFiltroSeleccionado === 'recientes'"
-        (click)="seleccionarSubFiltro('recientes')"
-      >
-         Recientes
+      <button type="button" class="sub-filter-chip" [class.active]="subFiltroSeleccionado === 'recientes'"
+        (click)="seleccionarSubFiltro('recientes')">
+        Recientes
       </button>
-      <button
-        type="button"
-        class="sub-filter-chip"
-        [class.active]="subFiltroSeleccionado === 'valoracion'"
-        (click)="seleccionarSubFiltro('valoracion')"
-      >
+      <button type="button" class="sub-filter-chip" [class.active]="subFiltroSeleccionado === 'valoracion'"
+        (click)="seleccionarSubFiltro('valoracion')">
         Mejor valoración
       </button>
-      <button
-        type="button"
-        class="sub-filter-chip"
-        [class.active]="subFiltroSeleccionado === 'descuentos'"
-        (click)="seleccionarSubFiltro('descuentos')"
-      >
+      <button type="button" class="sub-filter-chip" [class.active]="subFiltroSeleccionado === 'descuentos'"
+        (click)="seleccionarSubFiltro('descuentos')">
         Mejores descuentos
       </button>
     </div>
@@ -108,13 +90,8 @@
             -{{ calcDescuento(chollo) }}%
           </div>
 
-          <img
-             class="cover"
-             *ngIf="chollo.imagen_url"
-             [src]="chollo.imagen_url"
-             (error)="chollo.imagen_url = null"
-             [alt]="chollo.titulo || 'Imagen'"
-           />
+          <img class="cover" *ngIf="chollo.imagen_url" [src]="chollo.imagen_url" (error)="chollo.imagen_url = null"
+            [alt]="chollo.titulo || 'Imagen'" />
 
           <div class="no-image" *ngIf="!chollo.imagen_url">
             <ion-icon name="image-outline"></ion-icon>
@@ -155,13 +132,8 @@
       </div>
     </div>
 
-    <ion-infinite-scroll
-      *ngIf="!cargando"
-      [disabled]="infiniteScrollDisabled"
-      (ionInfinite)="cargarMas($event)">
-      <ion-infinite-scroll-content
-        loadingSpinner="crescent"
-        loadingText="Cargando más chollos...">
+    <ion-infinite-scroll *ngIf="!cargando" [disabled]="infiniteScrollDisabled" (ionInfinite)="cargarMas($event)">
+      <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Cargando más chollos...">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
 

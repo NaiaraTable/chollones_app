@@ -85,6 +85,7 @@ h1 {
 
     .product-description {
       padding: 0 4px;
+
       p {
         line-height: 1.7;
         color: var(--text-secondary);
@@ -167,36 +168,69 @@ h1 {
     .face-icon {
       cursor: pointer;
       transition: transform 0.2s;
-      &:active { transform: scale(0.8); }
+
+      &:active {
+        transform: scale(0.8);
+      }
     }
   }
 }
 
-/* Botones flotantes */
-.back-button-float, .fav-button-float {
+/* Botones flotantes — idénticos al .fav-icon de tab1, adaptativos al tema */
+.back-button-float,
+.fav-button-float {
   position: absolute !important;
   top: calc(10px + var(--ion-safe-area-top, 0px)) !important;
   z-index: 999 !important;
-  width: 45px;
-  height: 45px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.45) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   margin-top: 50px !important;
   cursor: pointer;
-  transition: transform 0.1s ease;
 
-  ion-icon { font-size: 24px; color: #ffffff; }
-  &:active { transform: scale(0.9); }
+  // Mismo sistema que .fav-icon en tab1: usa variables del tema
+  background: var(--card-background) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid var(--card-border) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+
+  ion-icon {
+    font-size: 22px;
+    // Usa el color de texto silenciado del tema (oscuro en light, claro en dark)
+    color: var(--text-muted);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+      color 0.3s ease;
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
 }
 
-.back-button-float { left: 15px; }
+.back-button-float {
+  left: 15px;
+}
+
 .fav-button-float {
   right: 15px;
-  &.active ion-icon { color: var(--ion-color-primary) !important; }
+
+  // Estado favorito activo — glow rojo, igual que tab1
+  &.active {
+    border-color: rgba(255, 71, 87, 0.4) !important;
+    box-shadow: 0 4px 14px rgba(255, 71, 87, 0.25) !important;
+
+    ion-icon {
+      color: #ff4757 !important;
+      transform: scale(1.25); // efecto latido
+    }
+  }
 }
 
 .btn-action {
@@ -229,7 +263,14 @@ h1 {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      h3 { margin: 0; font-weight: 800; font-size: 1.25rem; color: var(--text-primary); }
+
+      h3 {
+        margin: 0;
+        font-weight: 800;
+        font-size: 1.25rem;
+        color: var(--text-primary);
+      }
+
       .average-badge {
         display: flex;
         align-items: center;
@@ -240,10 +281,19 @@ h1 {
         font-weight: 800;
         border: 1px solid rgba(230, 126, 34, 0.3);
         font-size: 0.95rem;
-        ion-icon { margin-right: 4px; font-size: 1rem; color: #ffc107; }
+
+        ion-icon {
+          margin-right: 4px;
+          font-size: 1rem;
+          color: #ffc107;
+        }
       }
     }
-    ion-button { --border-radius: 10px; font-weight: 700; }
+
+    ion-button {
+      --border-radius: 10px;
+      font-weight: 700;
+    }
   }
 }
 
@@ -253,13 +303,20 @@ h1 {
   border-radius: 16px;
   margin-bottom: 24px;
   border: 1px dashed var(--card-border);
+
   .star-rating-input {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-bottom: 18px;
-    ion-icon { font-size: 2.4rem; color: #ffc107; cursor: pointer; }
+
+    ion-icon {
+      font-size: 2.4rem;
+      color: #ffc107;
+      cursor: pointer;
+    }
   }
+
   ion-textarea {
     border: 1px solid var(--input-border, #ddd);
     border-radius: 12px;
@@ -274,26 +331,51 @@ h1 {
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 20px;
-  .stars-row ion-icon { color: #ffc107; font-size: 1rem; }
-  .comment-text { font-size: 0.95rem; line-height: 1.5; margin: 8px 0; }
+
+  .stars-row ion-icon {
+    color: #ffc107;
+    font-size: 1rem;
+  }
+
+  .comment-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 8px 0;
+  }
 }
 
 .comments-list {
   .comment-item {
     padding: 16px 0;
     border-bottom: 1px solid var(--card-border);
+
     .comment-header {
       display: flex;
       justify-content: space-between;
-      .user-name { font-weight: 700; }
-      .user-rating ion-icon { font-size: 0.85rem; &.active { color: #ffc107; } }
+
+      .user-name {
+        font-weight: 700;
+      }
+
+      .user-rating ion-icon {
+        font-size: 0.85rem;
+
+        &.active {
+          color: #ffc107;
+        }
+      }
     }
   }
+
   .no-comments {
     text-align: center;
     padding: 32px 10px;
     background: var(--card-background-alt);
     border-radius: 12px;
-    ion-icon { font-size: 2rem; opacity: 0.5; }
+
+    ion-icon {
+      font-size: 2rem;
+      opacity: 0.5;
+    }
   }
 }

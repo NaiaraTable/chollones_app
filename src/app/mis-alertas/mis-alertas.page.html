@@ -40,7 +40,7 @@
       <ion-card *ngFor="let chollo of ofertas" class="alert-card">
         <div class="card-row">
           <img [src]="chollo.imagen_url || 'assets/placeholder.png'" class="thumb"
-               (error)="$any($event.target).src='assets/placeholder.png'" />
+            (error)="$any($event.target).src='assets/placeholder.png'" />
           <div class="info">
             <h3 class="title">{{ chollo.titulo }}</h3>
             <div class="prices">
@@ -52,7 +52,7 @@
             </ion-badge>
           </div>
           <div class="actions">
-            <ion-button fill="clear" color="danger" routerLink="/tabs/tab1">Ver</ion-button>
+            <ion-button fill="clear" color="danger" [routerLink]="['/tabs/producto', chollo.id]">Ver</ion-button>
           </div>
         </div>
       </ion-card>
