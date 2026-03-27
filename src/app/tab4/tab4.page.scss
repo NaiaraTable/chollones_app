@@ -1,3 +1,6 @@
+/* ==========================================================================
+   1. ESTRUCTURA DEL HEADER Y TOOLBAR
+   ========================================================================== */
 ion-header {
   background: var(--ion-color-primary);
   height: auto !important;
@@ -7,6 +10,61 @@ ion-header {
   }
 }
 
+ion-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 8px 8px;
+
+  ion-searchbar {
+    flex: 1 1 auto;
+    --border-radius: 10px;
+    --background: rgba(255, 255, 255, 0.95);
+    margin-right: 8px;
+  }
+
+  /* Botón de categorías en el toolbar */
+  .cat-trigger {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    --min-width: 88px;
+    border-radius: 12px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+    color: #111;
+    margin-top: 4px;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      opacity: 0.95;
+    }
+  }
+
+  .cat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #222;
+    white-space: nowrap;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+}
+
+/* ==========================================================================
+   2. BARRAS DE FILTROS (PRINCIPAL Y SUB-FILTROS)
+   ========================================================================== */
 .filters-bar {
   background: #ffffff;
   height: 56px;
@@ -52,70 +110,21 @@ ion-header {
   }
 }
 
-/* Banner de búsqueda activa */
-.search-banner {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px 4px;
-  font-size: 13px;
-  color: var(--text-muted, #666);
-
-  ion-icon {
-    color: var(--ion-color-primary);
-    font-size: 15px;
-    flex-shrink: 0;
-  }
-
-  strong {
-    color: var(--text-primary, #111);
-  }
-
-  .search-count {
-    margin-left: 2px;
-    color: var(--ion-color-primary);
-    font-weight: 700;
-  }
-}
-
-/* Estado vacío */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 24px;
-  gap: 12px;
-  color: #aaa;
-
-  ion-icon {
-    font-size: 48px;
-    color: #ddd;
-  }
-
-  p {
-    font-size: 15px;
-    font-weight: 500;
-    text-align: center;
-    margin: 0;
-  }
-}
-
-/* ESTILOS PARA LA NUEVA BARRA DE SUBFILTROS */
 .sub-filters-bar {
-  background: #f9f9f9;
-  height: 50px;
+  background: #ffffff; // Color base de la app
+  height: 60px; // Un poco más alta para albergar botones grandes
   display: flex;
   align-items: center;
   width: 100%;
   padding-bottom: 8px;
   border-bottom: 1px solid #eeeeee;
+  margin-top: 12px; // Desplaza la barra hacia abajo (separándola del buscador)
 
   .scroll-container {
     display: flex;
     overflow-x: auto;
     padding: 0 16px;
-    gap: 8px;
+    gap: 10px; // Más espacio entre botones
     align-items: center;
     width: 100%;
     scroll-behavior: smooth;
@@ -126,25 +135,87 @@ ion-header {
 
     .sub-filter-chip {
       flex: 0 0 auto;
-      background: #ffffff;
+      background: #f4f4f4;
       color: #666666;
       border: 1px solid #dddddd;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
+      padding: 10px 18px; // Botones más grandes
+      border-radius: 25px;
+      font-size: 14px; // Texto más grande
+      font-weight: 600;
       transition: all 0.2s ease;
 
       &.active {
-        background: #333333;
+        background: var(--ion-color-primary); // Color corporativo
         color: #ffffff;
-        border-color: #333333;
-        font-weight: 600;
+        border-color: var(--ion-color-primary);
+        font-weight: 700;
+        box-shadow: 0 4px 10px rgba(var(--ion-color-primary-rgb), 0.2);
       }
     }
   }
 }
+/* ==========================================================================
+   3. SECCIÓN DE CATEGORÍAS (RECIÉN AÑADIDA)
+   ========================================================================== */
+.category-selection-row {
+  background: #ffffff;
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 16px 12px 16px;
 
+  .modern-dropdown-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 140px;
+    height: 44px;
+    padding: 0 16px;
+    background: #ffffff;
+    border: 1.5px solid #eee;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.97);
+      background: #f9f9f9;
+      border-color: var(--ion-color-primary);
+    }
+
+    .icon-main {
+      font-size: 18px;
+      color: var(--ion-color-primary);
+    }
+
+    .btn-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .icon-chevron {
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    &.filter-active {
+      border-color: var(--ion-color-primary);
+      background: rgba(var(--ion-color-primary-rgb), 0.03);
+      .btn-text { color: var(--ion-color-primary); }
+    }
+  }
+}
+
+/* ==========================================================================
+   4. LISTADO DE CHOLLOS Y CARDS
+   ========================================================================== */
 .chollos-container {
   padding: 8px 16px 40px 16px;
   background: transparent;
@@ -173,6 +244,7 @@ ion-header {
   }
 }
 
+/* Contenedor de Imagen */
 .image-container {
   width: 130px;
   height: 100%;
@@ -207,21 +279,12 @@ ion-header {
   .no-image {
     text-align: center;
     color: #c4c4c4;
-
-    ion-icon {
-      font-size: 30px;
-    }
-
-    span {
-      display: block;
-      font-size: 9px;
-      font-weight: 700;
-      margin-top: 4px;
-      text-transform: uppercase;
-    }
+    ion-icon { font-size: 30px; }
+    span { display: block; font-size: 9px; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
   }
 }
 
+/* Información del Chollo */
 .meta {
   padding: 12px;
   display: flex;
@@ -240,36 +303,8 @@ ion-header {
       align-items: center;
       gap: 6px;
       max-width: calc(100% - 32px);
-
-      .provider {
-        font-size: 10px;
-        font-weight: 700;
-        color: #ff5a5f;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        flex-shrink: 1;
-      }
-
-      .dist {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        font-size: 9px;
-        font-weight: 700;
-        color: #666;
-        background: #f0f0f0;
-        padding: 3px 6px;
-        border-radius: 6px;
-        flex-shrink: 0;
-
-        ion-icon {
-          font-size: 11px;
-          color: #ff5a5f;
-        }
-      }
+      .provider { font-size: 10px; font-weight: 700; color: #ff5a5f; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .dist { display: flex; align-items: center; gap: 2px; font-size: 9px; font-weight: 700; color: #666; background: #f0f0f0; padding: 3px 6px; border-radius: 6px; ion-icon { font-size: 11px; color: #ff5a5f; } }
     }
 
     .fav-icon {
@@ -277,45 +312,21 @@ ion-header {
       margin-right: -4px;
       width: 32px;
       height: 32px;
-
-      /* Fondo adaptativo (usa el fondo de la tarjeta) combinado con desenfoque estilo glassmorphism */
       background: var(--card-background, #ffffff);
       backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-
-      /* Borde muy sutil para delimitarlo del fondo de la imagen, adaptativo al tema */
       border: 1px solid var(--card-border, rgba(0, 0, 0, 0.05));
       border-radius: 50%;
-
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
-      ion-icon {
-        /* En lugar de gris fijo, usamos el texto silenciado del tema */
-        color: var(--text-muted, #a0a0a0);
-        font-size: 18px;
-        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
-
+      ion-icon { color: var(--text-muted, #a0a0a0); font-size: 18px; }
       &.active {
-        /* Efecto glow cuando le das a me gusta */
         border-color: rgba(255, 71, 87, 0.4);
         box-shadow: 0 4px 14px rgba(255, 71, 87, 0.25);
-
-        ion-icon {
-          color: #ff4757;
-          /* Rojo vibrante */
-          transform: scale(1.25);
-          /* Latido */
-        }
+        ion-icon { color: #ff4757; transform: scale(1.25); }
       }
     }
   }
@@ -342,21 +353,8 @@ ion-header {
     .prices {
       display: flex;
       flex-direction: column;
-
-      .now {
-        font-size: 18px;
-        font-weight: 800;
-        color: #111111;
-        line-height: 1;
-      }
-
-      .old {
-        font-size: 11px;
-        font-weight: 500;
-        color: #a0a0a0;
-        text-decoration: line-through;
-        margin-top: 2px;
-      }
+      .now { font-size: 18px; font-weight: 800; color: #111111; line-height: 1; }
+      .old { font-size: 11px; font-weight: 500; color: #a0a0a0; text-decoration: line-through; margin-top: 2px; }
     }
 
     .btn-cart.red-btn {
@@ -369,19 +367,38 @@ ion-header {
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       transition: background 0.2s ease, transform 0.2s ease;
-
-      ion-icon {
-        font-size: 20px;
-      }
-
-      &:active {
-        background: #e0484d;
-        transform: scale(0.95);
-      }
+      ion-icon { font-size: 20px; }
+      &:active { background: #e0484d; transform: scale(0.95); }
     }
   }
+}
+
+/* ==========================================================================
+   5. COMPONENTES ADICIONALES (BANNER, POPOVER, LOADING)
+   ========================================================================== */
+.search-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px 4px;
+  font-size: 13px;
+  color: var(--text-muted, #666);
+  ion-icon { color: var(--ion-color-primary); font-size: 15px; }
+  strong { color: var(--text-primary, #111); }
+  .search-count { margin-left: 2px; color: var(--ion-color-primary); font-weight: 700; }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  gap: 12px;
+  color: #aaa;
+  ion-icon { font-size: 48px; color: #ddd; }
+  p { font-size: 15px; font-weight: 500; text-align: center; margin: 0; }
 }
 
 .loading {
@@ -390,166 +407,65 @@ ion-header {
   padding: 50px;
 }
 
-/* ── MODO OSCURO ── */
-:host-context(body.dark) {
-  .filters-bar {
-    background: #121212;
+/* Popover de Categorías */
+ion-popover {
+  --width: 280px;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 
-    .filter-chip {
-      background: rgba(255, 255, 255, 0.15);
-      color: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-
-      &.active {
-        background: #ffffff;
-        color: var(--ion-color-primary);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        border: 1px solid transparent;
-      }
-    }
-  }
-
-  /* MODO OSCURO PARA SUBFILTROS */
-  .sub-filters-bar {
-    background: #1a1a1a;
-    border-bottom: 1px solid #2a2a2a;
-
-    .sub-filter-chip {
-      background: transparent;
-      color: #bbbbbb;
-      border-color: #444444;
-
-      &.active {
-        background: #eeeeee;
-        color: #111111;
-        border-color: #eeeeee;
-      }
-    }
-  }
-
-  .search-banner {
-    color: #aaa;
-
-    strong {
-      color: #f5f5f5;
-    }
-  }
-
-  .empty-state {
-    color: #555;
-
-    ion-icon {
-      color: #333;
-    }
-
-    p {
-      color: #777;
-    }
-  }
-
-  .chollos-container {
-    background: #121212;
-  }
-
-  .chollo-card {
-    background: #1e1e1e;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .image-container {
-    background: #2a2a2a;
-
-    .no-image {
-      color: #555;
-    }
-  }
-
-  .meta {
-    .header-meta .provider-row .dist {
-      background: #2a2a2a;
-      color: #bbb;
-    }
-
-    .title {
-      color: #f5f5f5;
-    }
-
-    .bottom-meta .prices {
-      .now {
-        color: #ffffff;
-      }
-
-      .old {
-        color: #777777;
-      }
-    }
+  ion-content { --background: #ffffff; }
+  ion-searchbar { --padding-top: 12px; --padding-bottom: 8px; --border-radius: 10px; }
+  ion-item {
+    --padding-start: 16px;
+    margin: 2px 8px;
+    --border-radius: 10px;
+    font-size: 14px;
+    &::part(native) { border: none; }
+    .selected-label { font-weight: 700; color: var(--ion-color-primary); }
   }
 }
 
-ion-toolbar {
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
+/* ==========================================================================
+   6. RESPONSIVE Y MODO OSCURO
+   ========================================================================== */
+@media (max-width: 480px) {
+  ion-toolbar {
+    .cat-trigger { --min-width: 70px; height: 34px; font-size: 12px; }
+    ion-searchbar { margin-right: 6px; }
+    .cat-label { max-width: 80px; }
+  }
+}
 
-  ion-searchbar {
-    flex: 1 1 auto;
-    --border-radius: 10px;
-    --background: rgba(255, 255, 255, 0.95);
-    margin-right: 8px;
+:host-context(body.dark) {
+  .filters-bar, .chollos-container { background: #121212; }
+
+  .filters-bar .filter-chip {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+    &.active { background: #ffffff; color: var(--ion-color-primary); }
   }
 
-  .cat-trigger {
-    --padding-start: 10px;
-    --padding-end: 10px;
-    --min-width: 88px;
-    border-radius: 12px;
-    height: 36px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    background: #ffffff;
-    color: #111;
-  }
-
-  .cat-trigger:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-  }
-
-  .cat-trigger:active {
-    transform: translateY(0);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    opacity: 0.95;
-  }
-
-  .cat-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #222;
-    white-space: nowrap;
-    max-width: 110px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-  }
-
-  @media (max-width: 480px) {
-    .cat-trigger {
-      --min-width: 70px;
-      height: 34px;
-      font-size: 12px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
-    }
-
-    ion-searchbar {
-      margin-right: 6px;
-    }
-
-    .cat-label {
-      max-width: 80px;
+  .sub-filters-bar {
+    background: #1a1a1a;
+    border-bottom: 1px solid #2a2a2a;
+    .sub-filter-chip {
+      background: transparent; color: #bbbbbb; border-color: #444444;
+      &.active { background: #eeeeee; color: #111111; }
     }
   }
+
+  .category-selection-row {
+    background: #121212;
+    border-color: #222;
+    .modern-dropdown-btn {
+      background: #1e1e1e; border-color: #333;
+      .btn-text { color: #eee; }
+      &.filter-active { background: rgba(var(--ion-color-primary-rgb), 0.1); }
+    }
+  }
+
+  .chollo-card { background: #1e1e1e; border: 1px solid rgba(255, 255, 255, 0.05); }
+  .image-container { background: #2a2a2a; }
+  .meta .title { color: #f5f5f5; }
+  .meta .bottom-meta .prices .now { color: #ffffff; }
 }
