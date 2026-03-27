@@ -11,8 +11,10 @@ import {
   IonCardContent,
   IonButton,
   IonIcon,
-  IonText
+  IonText,
+  NavController
 } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 
 import { addIcons } from 'ionicons';
 import { heart, heartOutline, trashOutline } from 'ionicons/icons';
@@ -42,22 +44,24 @@ export class Tab3Page {
 
   constructor(
     private supabaseService: SupabaseService,
-    private favoritosEventService: FavoritosEvent
+    private favoritosEventService: FavoritosEvent,
+    private router: Router,
+    private navCtrl: NavController
   ) {
     addIcons({ heart, heartOutline, trashOutline });
   }
 
-  // Se ejecuta cada vez que el usuario navega a este tab
   async ionViewWillEnter() {
     console.log('Tab3 ionViewWillEnter');
-    await this.cargarGuardados();
+    await this.cargarGuardados(true);
 
     // Suscribirse a cambios de favoritos
     if (!this.favoritosSubscription || this.favoritosSubscription.closed) {
       console.log('Tab3 suscribiéndose a eventos');
       this.favoritosSubscription = this.favoritosEventService.favoritosChanged$.subscribe(() => {
         console.log('Tab3 recibió evento favoritosChanged');
-        this.cargarGuardados();
+        // Actualización silenciosa (sin loader) para evitar microparpadeos
+        this.cargarGuardados(false);
       });
     }
   }
@@ -70,10 +74,12 @@ export class Tab3Page {
     }
   }
 
-  async cargarGuardados() {
+  async cargarGuardados(mostrarLoading: boolean = true) {
     console.log('Tab3 cargando guardados...');
     try {
-      this.cargando = true;
+      if (mostrarLoading) {
+        this.cargando = true;
+      }
       const data = await this.supabaseService.getChollosGuardados();
 
       console.log('Datos recibidos de Supabase:', data);
@@ -108,16 +114,35 @@ export class Tab3Page {
 
   async quitarDeGuardados(chollo: any) {
     try {
-      await this.supabaseService.eliminarCholloFavorito(chollo.id);
+      // Añadir clase de animación
+      chollo.removing = true;
 
-      // Notificar a otros componentes (Tab1) que los favoritos cambiaron
-      this.favoritosEventService.notificarCambio();
+      // Esperar a que la animación termine (400ms según SCSS)
+      await new Promise(resolve => setTimeout(resolve, 400));
 
-      // Recargar la lista local
-      await this.cargarGuardados();
+      // Quitar de la lista local inmediatamente para evitar saltos o relentizaciones
+      this.chollosGuardados = this.chollosGuardados.filter(c => c.id !== chollo.id);
+
+      // Llamada a la BD de forma asíncrona sin bloquear el hilo
+      this.supabaseService.eliminarCholloFavorito(chollo.id).then(() => {
+        // Notificar a otros componentes que los favoritos cambiaron de forma silenciosa
+        this.favoritosEventService.notificarCambio();
+      }).catch(err => {
+        console.error('Error al quitar DB favorito:', err);
+      });
+
     } catch (error) {
       console.error('Error al quitar de guardados:', error);
     }
+  }
+
+  trackById(index: number, item: any) {
+    return item.id;
+  }
+
+  irAProducto(chollo: any) {
+    if (!chollo.id) return;
+    this.router.navigate(['/tabs', 'producto', chollo.id]);
   }
 
   calcDescuento(chollo: any): number {

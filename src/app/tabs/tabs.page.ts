@@ -18,8 +18,9 @@ import {
   searchOutline, storefrontOutline
 } from 'ionicons/icons';
 
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
+import { SearchService } from '../services/Search.service';
 
 @Component({
   selector: 'app-tabs',
@@ -45,7 +46,11 @@ export class TabsPage {
   private todosLosChollos: any[] = [];
   private busquedaTimeout: any;
 
-  constructor(public router: Router, private apiService: ApiService) {
+  constructor(
+    public router: Router,
+    private apiService: ApiService,
+    private searchService: SearchService
+  ) {
     addIcons({
       heartOutline, personOutline, bagOutline,
       flameOutline, gridOutline, notificationsOutline,
@@ -64,8 +69,9 @@ export class TabsPage {
   }
 
   onBuscar(event: any) {
-    const texto = (event.target?.value || '').trim();
+    const texto = (event.target?.value ?? '').trim();
     this.textoBusqueda = texto;
+
     clearTimeout(this.busquedaTimeout);
 
     if (texto.length < 2) {
@@ -103,24 +109,26 @@ export class TabsPage {
 
   seleccionarSugerencia(sugerencia: any) {
     this.mostrarSugerencias = false;
-    if (sugerencia.esProveedor) {
-      this.textoBusqueda = sugerencia.proveedor;
-      this.buscarTexto(sugerencia.proveedor);
-    } else {
-      this.textoBusqueda = sugerencia.titulo;
-      this.buscarTexto(sugerencia.titulo);
-    }
+    const texto = sugerencia.esProveedor ? sugerencia.proveedor : sugerencia.titulo;
+    this.textoBusqueda = texto;
+    this.buscarTexto(texto);
   }
 
   buscarTexto(texto: string) {
     if (!texto.trim()) return;
     this.mostrarSugerencias = false;
-    const extras: NavigationExtras = { queryParams: { q: texto.trim() } };
-    this.router.navigate(['/tabs/tab4'], extras);
+
+    // Emite la búsqueda al servicio reactivo
+    this.searchService.setBusqueda(texto.trim());
+
+    // Navega a tab4 si no estamos ya ahí
+    if (!this.router.url.includes('/tabs/tab4')) {
+      this.router.navigate(['/tabs/tab4']);
+    }
   }
 
   onEnter(event: any) {
-    const texto = event.target?.value || this.textoBusqueda;
+    const texto = (event.target?.value || this.textoBusqueda).trim();
     this.buscarTexto(texto);
   }
 
@@ -128,14 +136,15 @@ export class TabsPage {
     this.textoBusqueda = '';
     this.sugerencias = [];
     this.mostrarSugerencias = false;
-    this.router.navigate(['/tabs/tab4'], { queryParams: { q: '' } });
+    this.searchService.setBusqueda('');
   }
 
   cerrarSugerencias() {
+    // Pequeño delay para que el mousedown de la sugerencia se procese antes
     setTimeout(() => {
       this.mostrarSugerencias = false;
       this.cdr.detectChanges();
-    }, 200);
+    }, 150);
   }
 
   navegar(ruta: string) { this.router.navigate([ruta]); }
