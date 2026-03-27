@@ -204,3 +204,6 @@ define('STRIPE_PUBLIC_KEY', getenv('STRIPE_PUBLIC_KEY') ?: 'TU_CLAVE_PUBLICA_AQU
 // IMPORTANTE: Usa tus propias claves de Stripe TEST
 // Se pueden pasar por variables de entorno o hardcodear para desarrollo
 //
+define('STRIPE_SECRET_KEY', 'sk_test_51TE5k6D6J49AJcg4QRtnmToMWvDycGZ5WTUvUBoFMsSaQPH0TLGYyzYKEshprDDSIJTO1drfkjim9DU9AQoFJp3300pH1sAxZV');
+define('STRIPE_PUBLISHABLE_KEY', 'pk_test_51TE5k6D6J49AJcg4Bs1F7eT6ciod9ALi8ZFLQznxLjijmIkNXjailVf26VKRAXY2Px7hdUDajoorNjiM7SZWc7qk00jWu6ZGUy');
+define('STRIPE_WEBHOOK_SECRET', 'whsec_test_placeholder');
