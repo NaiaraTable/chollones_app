@@ -190,6 +190,7 @@ function wp_hash_password(string $password): string
 // ======================================================
 // STRIPE CONFIGURATION
 // ======================================================
+
 // IMPORTANTE: No pongas tu clave real aquí directamente.
 // Usa variables de entorno o cárgala desde un archivo externo no trackeado.
 
@@ -198,3 +199,8 @@ define('STRIPE_PUBLIC_KEY', getenv('STRIPE_PUBLIC_KEY') ?: 'TU_CLAVE_PUBLICA_AQU
 
 // Si necesitas usar la librería de Stripe más adelante:
 // \Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
+// Get them from: https://dashboard.stripe.com/apikeys (when in Test Mode)
+//
+// IMPORTANTE: Usa tus propias claves de Stripe TEST
+// Se pueden pasar por variables de entorno o hardcodear para desarrollo
+//
