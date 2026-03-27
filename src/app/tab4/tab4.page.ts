@@ -251,7 +251,7 @@ export class Tab4Page implements OnInit, OnDestroy {
         });
       } else if (this.subFiltroSeleccionado === 'valoracion') {
 
-        // LÓGICA DE TU COMPAÑERO CONSERVADA PARA MAYOR COMPATIBILIDAD CON SU BASE DE DATOS
+        // NUEVA LÓGICA DE FILTRADO
         tmp = tmp.filter(c => {
           const val = parseFloat(c.valoracion ?? c.rating ?? c.puntuacion ?? c.average_rating ?? c._wc_average_rating ?? 0) || 0;
 
@@ -261,10 +261,8 @@ export class Tab4Page implements OnInit, OnDestroy {
 
           const totalComentarios = numComentarios + arrayComentarios + arrayReviews;
 
-          const estaValorado = val > 0;
-
-          // Si está valorado, lo incluimos solo si la nota >= 2.3; si no está valorado, lo incluimos solo si tiene comentarios
-          return estaValorado ? val >= 2.3 : totalComentarios > 0;
+          // Solo pasa si tiene comentarios y su media es estrictamente mayor a 3
+          return totalComentarios > 0 && val > 3;
         });
 
         // Ordenar de mayor nota a menor
