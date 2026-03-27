@@ -49,7 +49,7 @@ import { Capacitor } from '@capacitor/core';
     IonButton,
     IonIcon,
     IonSpinner,
-    IonImg,
+
     IonInfiniteScroll,
     IonInfiniteScrollContent
   ]
