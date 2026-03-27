@@ -56,6 +56,12 @@ ion-content {
     box-shadow: 0 12px 30px var(--card-shadow);
     overflow: hidden;
     position: relative;
+    max-height: 500px;
+    /* Necesario para animar el colapso fluido */
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: center top;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .badge {
@@ -165,22 +171,15 @@ ion-button {
     }
 }
 
-// Animación de salida al quitar favorito — más rápida y fluida
-@keyframes snackOut {
-    0% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(-20px) scale(0.92);
-    }
-}
-
 .chollo-card.removing {
-    animation: snackOut 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    pointer-events: none;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    margin-bottom: -16px !important; // Compensa el grid gap de 16px fluidamente
+    transform: scale(0.9) !important;
+    pointer-events: none !important;
+    border: none !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 .btn-cart {

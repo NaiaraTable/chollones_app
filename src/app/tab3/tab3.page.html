@@ -20,8 +20,8 @@
 
     <!-- Lista de guardados -->
     <div *ngIf="!cargando && chollosGuardados.length > 0" class="guardados-list">
-      <div class="chollo-card" *ngFor="let chollo of chollosGuardados" [class.removing]="chollo.removing"
-        (click)="irAProducto(chollo)">
+      <div class="chollo-card" *ngFor="let chollo of chollosGuardados; trackBy: trackById"
+        [class.removing]="chollo.removing" (click)="irAProducto(chollo)">
 
         <div class="fav-icon" (click)="quitarDeGuardados(chollo); $event.stopPropagation()">
           <ion-icon name="heart"></ion-icon>
