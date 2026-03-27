@@ -12,8 +12,12 @@ import {
   IonIcon,
   IonSpinner,
   IonInfiniteScroll,
-  IonInfiniteScrollContent, IonSearchbar,
-  IonPopover, IonList, IonItem, IonLabel
+  IonInfiniteScrollContent,
+  IonSearchbar,
+  IonPopover,
+  IonList,
+  IonItem,
+  IonLabel
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -26,7 +30,9 @@ import {
   locationOutline,
   storefrontOutline,
   cartOutline,
-  imageOutline, chevronDownOutline, checkmarkOutline
+  imageOutline,
+  chevronDownOutline,
+  checkmarkOutline
 } from 'ionicons/icons';
 
 import { SupabaseService } from '../services/supabase.service';
@@ -52,7 +58,10 @@ import { ToastController } from '@ionic/angular/standalone';
     IonInfiniteScroll,
     IonInfiniteScrollContent,
     IonSearchbar,
-    IonPopover, IonList, IonItem, IonLabel
+    IonPopover,
+    IonList,
+    IonItem,
+    IonLabel
   ]
 })
 export class Tab4Page implements OnInit, OnDestroy {
@@ -98,17 +107,14 @@ export class Tab4Page implements OnInit, OnDestroy {
   // Búsqueda interna del popover de categorías
   catSearch: string = '';
 
-  constructor() {
-    // constructor vacío intencionalmente (inyecciones con inject())
-    addIcons({ chevronDownOutline, heartOutline, bagOutline, checkmarkOutline, searchOutline, imageOutline, locationOutline, heart, cartOutline });
-  }
+  constructor() {}
 
   async ngOnInit() {
-    // Registrar iconos aquí (antes estaba en el constructor)
+    // Registrar todos los iconos aquí
     addIcons({
       heart, heartOutline, bagOutline, add,
       searchOutline, locationOutline, storefrontOutline,
-      cartOutline, imageOutline
+      cartOutline, imageOutline, chevronDownOutline, checkmarkOutline
     });
 
     await this.obtenerUbicacion();
@@ -138,9 +144,8 @@ export class Tab4Page implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
-    // Sincronizar con el valor actual del servicio (por si se navegó desde otra pestaña)
+    // Sincronizar con el valor actual del servicio
     this.textoBusqueda = this.searchService.valorActual;
-    // 1. Recibir búsqueda por texto
     const q = this.route.snapshot.queryParamMap.get('q');
     if (q !== null) {
       this.textoBusqueda = q.trim();
@@ -157,12 +162,14 @@ export class Tab4Page implements OnInit, OnDestroy {
       this.subFiltroSeleccionado = filtro;
     }
 
+    // ACTUALIZACIÓN AUTOMÁTICA (TU CÓDIGO): Si ya tenemos datos, recargamos "en silencio"
+    // para actualizar las notas sin mostrar la pantalla de carga de nuevo
     if (this.listadoChollos.length > 0) {
-      this.aplicarFiltros();
+      this.cargarDatos(true); // true = recargar en silencio sin pantalla de carga
       return;
     }
 
-    await this.cargarDatos();
+    await this.cargarDatos(false); // false = cargar por primera vez mostrando el spinner
   }
 
   async obtenerUbicacion() {
@@ -177,8 +184,11 @@ export class Tab4Page implements OnInit, OnDestroy {
     }
   }
 
-  async cargarDatos() {
-    this.cargando = true;
+  // TU CÓDIGO AÑADIDO: Parámetro "isSilent" para que no moleste al recargar
+  async cargarDatos(isSilent: boolean = false) {
+    if (!isSilent) {
+      this.cargando = true;
+    }
 
     try {
       const data = await this.supabaseService.getChollos();
@@ -204,12 +214,16 @@ export class Tab4Page implements OnInit, OnDestroy {
         });
 
         this.categorias = [{ nombre: 'Todas', slug: 'todas' }, ...Array.from(catsMap.values())];
+
+        // Al terminar de recargar los datos frescos, actualizamos la vista
         this.aplicarFiltros();
       }
     } catch (e) {
       console.error('Error cargando chollos:', e);
     } finally {
-      this.cargando = false;
+      if (!isSilent) {
+        this.cargando = false;
+      }
     }
   }
 
@@ -237,13 +251,7 @@ export class Tab4Page implements OnInit, OnDestroy {
         });
       } else if (this.subFiltroSeleccionado === 'valoracion') {
 
-        console.log("---- DEBUG FILTRO MEJOR VALORADOS ----");
-        if (tmp.length > 0) {
-          console.log("🔍 Estructura del primer chollo:", tmp[0]);
-        }
-
-        // Explicación: Simplificar la lógica del filtro de valoraciones usando una expresión ternaria
-        // para evitar la advertencia del linter sobre 'if' simplificable.
+        // LÓGICA DE TU COMPAÑERO CONSERVADA PARA MAYOR COMPATIBILIDAD CON SU BASE DE DATOS
         tmp = tmp.filter(c => {
           const val = parseFloat(c.valoracion ?? c.rating ?? c.puntuacion ?? c.average_rating ?? c._wc_average_rating ?? 0) || 0;
 
@@ -277,7 +285,6 @@ export class Tab4Page implements OnInit, OnDestroy {
     this.infiniteScrollDisabled = false;
     this.agregarChollos();
   }
-
 
   seleccionarSubFiltro(subFiltro: string) {
     this.subFiltroSeleccionado = subFiltro;
