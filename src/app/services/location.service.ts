@@ -6,19 +6,19 @@ export class LocationService {
 
   constructor() {}
 
-async getPosition() {
-  try {
-    const coordinates = await Geolocation.getCurrentPosition({
-      enableHighAccuracy: false, // Carga más rápido (usa WiFi/Antenas) y falla menos
-      timeout: 5000,            // Máximo 5 segundos de espera
-      maximumAge: 30000         // Acepta una posición guardada hace 30 segundos
-    });
-    return coordinates.coords;
-  } catch (e) {
-    console.warn("GPS falló, usando fallback");
-    throw e; // Lanzamos el error para que el componente use las coordenadas por defecto
+  async getPosition() {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: false, // Carga más rápido (usa WiFi/Antenas) y falla menos
+        timeout: 5000,            // Máximo 5 segundos de espera
+        maximumAge: 30000         // Acepta una posición guardada hace 30 segundos
+      });
+      return coordinates.coords;
+    } catch (e) {
+      console.warn("GPS falló, usando fallback");
+      throw e; // Lanzamos el error para que el componente use las coordenadas por defecto
+    }
   }
-}
 
   // La fórmula ahora vive aquí para que todos la usen
   calcularDistancia(lat1: number, lon1: number, lat2: number, lon2: number): number {

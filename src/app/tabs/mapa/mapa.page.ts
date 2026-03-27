@@ -47,6 +47,27 @@ export class MapaPage implements OnInit {
 
       if (data && Array.isArray(data)) {
         this.chollos = data;
+        console.log('✅ Chollos cargados:', this.chollos.length);
+        
+        // 🐛 DEBUG: Mostrar cuáles tienen coordenadas
+        const conCoordenadas = this.chollos.filter(c => {
+          const lat = c.lat ?? c.proveedores?.lat;
+          const lng = c.lng ?? c.proveedores?.lng;
+          return lat && lng;
+        });
+        console.warn('🗺️ Chollos CON coordenadas:', conCoordenadas.length, 'de', this.chollos.length);
+        
+        // 🐛 DEBUG: Mostrar los que NO tienen
+        const sinCoordenadas = this.chollos.filter(c => {
+          const lat = c.lat ?? c.proveedores?.lat;
+          const lng = c.lng ?? c.proveedores?.lng;
+          return !lat || !lng;
+        });
+        console.error('❌ Chollos SIN coordenadas:', sinCoordenadas.length);
+        sinCoordenadas.slice(0, 3).forEach((c: any) => {
+          console.log(`  - ${c.titulo}: proveedor=${c.proveedores?.nombre}, lat=${c.proveedores?.lat}, lng=${c.proveedores?.lng}`);
+        });
+        
         this.pintarMarcadores();
       }
     } catch (e) {
@@ -55,18 +76,59 @@ export class MapaPage implements OnInit {
   }
 
   pintarMarcadores() {
+    // Coordenadas por defecto (Sevilla)
+    const DEFAULT_LAT = 37.3891;
+    const DEFAULT_LNG = -5.9845;
+
+    // Agrupar chollos por coordenadas para detectar duplicados
+    const coordMap = new Map<string, any[]>();
+
     this.chollos.forEach(chollo => {
-      // Usamos las variables limpias que vienen directas del PHP
-      const latitud = chollo.lat ?? chollo.proveedores?.lat;
-      const longitud = chollo.lng ?? chollo.proveedores?.lng;
+      // Intentar obtener coordenadas
+      let latitud = chollo.lat ?? chollo.proveedores?.lat;
+      let longitud = chollo.lng ?? chollo.proveedores?.lng;
 
-      const nombreProveedor = chollo.proveedores?.nombre || 'Proveedor desconocido';
-      const precio = chollo.precio_actual || chollo.precio || 0;
+      // Si no hay coordenadas, usar fallback con aviso
+      const tieneUbicacion = latitud && longitud;
+      if (!tieneUbicacion) {
+        latitud = DEFAULT_LAT;
+        longitud = DEFAULT_LNG;
+      }
 
-      if (latitud && longitud) {
+      // Agrupar por coordenadas
+      const key = `${latitud},${longitud}`;
+      if (!coordMap.has(key)) {
+        coordMap.set(key, []);
+      }
+      coordMap.get(key)?.push({ ...chollo, latitud, longitud, tieneUbicacion });
+    });
+
+    // Pintar marcadores con offset si hay múltiples en la misma ubicación
+    coordMap.forEach((chollos, coordKey) => {
+      const total = chollos.length;
+
+      chollos.forEach((chollo, index) => {
+        let lat = chollo.latitud;
+        let lng = chollo.longitud;
+
+        // Si hay múltiples chollos en la misma ubicación, agregar offset
+        if (total > 1) {
+          // Distribuir en círculo pequeño (radio ≈ 0.0005 grados ≈ 50 metros)
+          const angle = (index / total) * (2 * Math.PI);
+          const offsetRadius = 0.0005;
+          lat = parseFloat(lat) + offsetRadius * Math.cos(angle);
+          lng = parseFloat(lng) + offsetRadius * Math.sin(angle);
+        }
+
+        const nombreProveedor = chollo.proveedores?.nombre || 'Proveedor desconocido';
+        const precio = chollo.precio_actual || chollo.precio || 0;
+
         // Creamos el contenedor del popup
         const popupContent = document.createElement('div');
         popupContent.style.textAlign = 'center';
+
+        const avisoUbicacion = chollo.tieneUbicacion ? '' : '<br><span style="color: orange; font-size: 11px;">⚠️ Ubicación aproximada</span>';
+        const avisoColisión = total > 1 ? `<br><span style="color: #666; font-size: 11px;">📍 ${index + 1} de ${total} ofertas</span>` : '';
 
         popupContent.innerHTML = `
           <div class="map-popup-container">
@@ -75,6 +137,8 @@ export class MapaPage implements OnInit {
             <span class="popup-vendor">${nombreProveedor}</span>
             <br>
             <b class="popup-price">${precio}€</b>
+            ${avisoUbicacion}
+            ${avisoColisión}
             <br>
             <button class="popup-btn" style="margin-top: 5px;">Ver Oferta</button>
           </div>
@@ -85,11 +149,22 @@ export class MapaPage implements OnInit {
           this.irADetalle(chollo.id);
         });
 
-        L.marker([parseFloat(String(latitud)), parseFloat(String(longitud))])
+        const marker = L.marker([lat, lng], {
+          title: chollo.titulo
+        })
           .addTo(this.map)
           .bindPopup(popupContent);
-      }
+      });
     });
+
+    // Log para debugging
+    const duplicados = Array.from(coordMap.entries()).filter(([_, arr]) => arr.length > 1);
+    if (duplicados.length > 0) {
+      console.log(`🎯 Ubicaciones con múltiples chollos (${duplicados.length}):`);
+      duplicados.forEach(([coord, arr]) => {
+        console.log(`  ${coord}: ${arr.length} ofertas`);
+      });
+    }
   }
 
   private initMap(lat: number, lng: number) {

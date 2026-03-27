@@ -5,6 +5,20 @@
   /* Asegura que tenga espacio */
 }
 
+/* Asegurar que no haya barra negra */
+ion-content {
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  margin: 0;
+  padding: 0;
+
+  ::ng-deep .inner-scroll {
+    overflow: hidden !important;
+  }
+}
+
 /* 🔥 CLAVE: cuando el tab no está activo, que no capture eventos */
 :host(.ion-page-hidden) #map,
 :host(.ion-page-hidden) .leaflet-container {
