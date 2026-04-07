@@ -1,5 +1,5 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
+<ion-header class="ion-no-border bg-transparent">
+  <ion-toolbar color="transparent">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/login" text="Volver"></ion-back-button>
     </ion-buttons>
@@ -7,59 +7,65 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div class="registro-container">
-    <p>Únete a la comunidad de Chollones.</p>
+<ion-content>
+  <!-- Background decorativo moderno -->
+  <div class="decor-bg decor-1"></div>
+  <div class="decor-bg decor-2"></div>
 
-    <!-- Nombre -->
-    <ion-item lines="none" class="custom-input">
-      <ion-label position="stacked">Nombre Completo</ion-label>
-      <ion-input [(ngModel)]="nombre" type="text" placeholder="Tu nombre"></ion-input>
-    </ion-item>
-
-    <!-- Email -->
-    <ion-item lines="none" class="custom-input">
-      <ion-label position="stacked">Email</ion-label>
-      <ion-input [(ngModel)]="email" type="email" placeholder="email@ejemplo.com"></ion-input>
-    </ion-item>
-
-    <!-- Requisito email -->
-    <div class="requisitos-box" *ngIf="email.length > 0">
-      <div class="requisito" [class.ok]="tieneArroba" [class.fail]="!tieneArroba">
-        <ion-icon [name]="tieneArroba ? 'checkmark-circle' : 'close-circle'"></ion-icon>
-        <span>Email válido con @ y dominio</span>
-      </div>
+  <div class="auth-container">
+    <div class="auth-header">
+      <p class="subtitle">Únete a la mejor comunidad de chollos y no te pierdas ni una oferta.</p>
     </div>
 
-    <!-- Contraseña -->
-    <ion-item lines="none" class="custom-input">
-      <ion-label position="stacked">Contraseña</ion-label>
-      <ion-input [(ngModel)]="password" type="password" placeholder="Mínimo 8 caracteres"></ion-input>
-    </ion-item>
+    <div class="auth-card">
+      <!-- Nombre -->
+      <ion-item lines="none" class="modern-input">
+        <ion-icon name="person-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">Nombre Completo</ion-label>
+        <ion-input [(ngModel)]="nombre" type="text" placeholder="Tu nombre"></ion-input>
+      </ion-item>
 
-    <!-- Requisitos contraseña -->
-    <div class="requisitos-box" *ngIf="password.length > 0">
-      <div class="requisito" [class.ok]="tieneMinCaracteres" [class.fail]="!tieneMinCaracteres">
-        <ion-icon [name]="tieneMinCaracteres ? 'checkmark-circle' : 'close-circle'"></ion-icon>
-        <span>Mínimo 8 caracteres</span>
+      <!-- Email -->
+      <ion-item lines="none" class="modern-input" [class.input-valid]="email.length > 0 && tieneArroba">
+        <ion-icon name="mail-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input [(ngModel)]="email" type="email" placeholder="email@ejemplo.com"></ion-input>
+        <ion-icon name="checkmark-circle" slot="end" *ngIf="email.length > 0 && tieneArroba" color="success"></ion-icon>
+      </ion-item>
+
+      <!-- Contraseña -->
+      <ion-item lines="none" class="modern-input"
+        [class.input-valid]="password.length > 0 && tieneMinCaracteres && tieneMayuscula && tieneNumero">
+        <ion-icon name="lock-closed-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">Contraseña</ion-label>
+        <ion-input [(ngModel)]="password" type="password" placeholder="Mínimo 8 caracteres"></ion-input>
+        <ion-icon name="checkmark-circle" slot="end"
+          *ngIf="password.length > 0 && tieneMinCaracteres && tieneMayuscula && tieneNumero" color="success"></ion-icon>
+      </ion-item>
+
+      <!-- Requisitos contraseña estilo chips -->
+      <div class="requisitos-chips" *ngIf="password.length > 0 || email.length > 0">
+        <div class="chip" [class.ok]="email.length > 0 && tieneArroba" *ngIf="email.length > 0 && !tieneArroba">
+          <ion-icon [name]="tieneArroba ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <span>Email válido</span>
+        </div>
+        <div class="chip" [class.ok]="tieneMinCaracteres">
+          <ion-icon [name]="tieneMinCaracteres ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <span>8+ caracteres</span>
+        </div>
+        <div class="chip" [class.ok]="tieneMayuscula">
+          <ion-icon [name]="tieneMayuscula ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <span>Mayúscula</span>
+        </div>
+        <div class="chip" [class.ok]="tieneNumero">
+          <ion-icon [name]="tieneNumero ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <span>Número</span>
+        </div>
       </div>
-      <div class="requisito" [class.ok]="tieneMayuscula" [class.fail]="!tieneMayuscula">
-        <ion-icon [name]="tieneMayuscula ? 'checkmark-circle' : 'close-circle'"></ion-icon>
-        <span>Al menos una mayúscula</span>
-      </div>
-      <div class="requisito" [class.ok]="tieneNumero" [class.fail]="!tieneNumero">
-        <ion-icon [name]="tieneNumero ? 'checkmark-circle' : 'close-circle'"></ion-icon>
-        <span>Al menos un número</span>
-      </div>
+
+      <ion-button expand="block" (click)="registrarse()" class="btn-auth btn-secondary" [disabled]="!formularioValido">
+        CREAR CUENTA
+      </ion-button>
     </div>
-
-    <ion-button
-      expand="block"
-      (click)="registrarse()"
-      class="ion-margin-top btn-verde"
-      [disabled]="!formularioValido">
-      REGISTRARSE
-    </ion-button>
-
   </div>
 </ion-content>
