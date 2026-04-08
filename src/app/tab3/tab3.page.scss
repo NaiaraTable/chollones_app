@@ -47,7 +47,9 @@ ion-content {
 .guardados-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+    /* Usar column-gap, remover row-gap para animar el margen y evitar saltitos */
+    column-gap: 16px;
+    row-gap: 0;
 }
 
 .chollo-card {
@@ -56,12 +58,13 @@ ion-content {
     box-shadow: 0 12px 30px var(--card-shadow);
     overflow: hidden;
     position: relative;
-    max-height: 500px;
+    max-height: 400px;
+    margin-bottom: 16px;
     /* Necesario para animar el colapso fluido */
     opacity: 1;
     transform: scale(1);
     transform-origin: center top;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .badge {
@@ -174,12 +177,13 @@ ion-button {
 .chollo-card.removing {
     max-height: 0 !important;
     opacity: 0 !important;
-    margin-bottom: -16px !important; // Compensa el grid gap de 16px fluidamente
-    transform: scale(0.9) !important;
+    margin-bottom: 0 !important; // Comprime fluidamente sin salto final
+    transform: scale(0.8) !important;
     pointer-events: none !important;
     border: none !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    box-shadow: none !important;
 }
 
 .btn-cart {

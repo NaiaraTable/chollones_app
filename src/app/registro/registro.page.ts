@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 import { addIcons } from 'ionicons';
-import { checkmarkCircle, closeCircle } from 'ionicons/icons';
+import { checkmarkCircle, closeCircle, personOutline, mailOutline, lockClosedOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-registro',
@@ -25,9 +25,9 @@ import { checkmarkCircle, closeCircle } from 'ionicons/icons';
   ]
 })
 export class RegistroPage {
-  email    = '';
+  email = '';
   password = '';
-  nombre   = '';
+  nombre = '';
 
   constructor(
     private supabase: ApiService,
@@ -35,7 +35,7 @@ export class RegistroPage {
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController
   ) {
-    addIcons({ checkmarkCircle, closeCircle });
+    addIcons({ checkmarkCircle, closeCircle, personOutline, mailOutline, lockClosedOutline });
   }
 
   // --- Getters de validación en tiempo real ---

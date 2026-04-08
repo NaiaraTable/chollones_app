@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonContent, IonItem, IonLabel, IonInput, IonButton
+  IonContent, IonItem, IonLabel, IonInput, IonButton, IonIcon
 } from '@ionic/angular/standalone';
-import { Router, RouterLink } from '@angular/router'; // Añadido RouterLink
+import { addIcons } from 'ionicons';
+import { bagOutline, mailOutline, lockClosedOutline } from 'ionicons/icons';
+import { Router, RouterLink } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 
@@ -16,8 +18,8 @@ import { ApiService } from '../services/api.service';
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink, // Necesario para usar [routerLink] en el HTML
-    IonContent, IonItem, IonLabel, IonInput, IonButton
+    RouterLink,
+    IonContent, IonItem, IonLabel, IonInput, IonButton, IonIcon
   ]
 })
 export class LoginPage implements OnInit {
@@ -29,7 +31,9 @@ export class LoginPage implements OnInit {
     private router: Router,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController
-  ) { }
+  ) {
+    addIcons({ bagOutline, mailOutline, lockClosedOutline });
+  }
 
   ngOnInit() { }
 

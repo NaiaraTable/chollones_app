@@ -1,112 +1,168 @@
+ion-header.bg-transparent {
+  background: transparent;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+
+  ion-toolbar {
+    --background: transparent;
+    --border-color: transparent;
+  }
+}
+
 ion-content {
   --background: var(--ion-background-color);
-  --padding-top: 0;
+  touch-action: pan-y;
 }
 
-ion-header {
-  ion-toolbar {
-    --background: var(--ion-background-color);
-    --color: var(--text-primary);
-  }
-
-  ion-back-button,
-  ion-title {
-    color: var(--text-primary);
-  }
+.decor-bg {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+  z-index: -1;
+  pointer-events: none;
 }
 
-.registro-container {
-  padding: 10px 20px;
+.decor-1 {
+  top: -50px;
+  right: -80px;
+  width: 250px;
+  height: 250px;
+  background: var(--ion-color-secondary);
+}
+
+.decor-2 {
+  bottom: 100px;
+  left: -50px;
+  width: 200px;
+  height: 200px;
+  background: var(--ion-color-primary);
+}
+
+.auth-container {
+  padding: 80px 24px 40px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  min-height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
-p {
-  color: var(--text-secondary);
-  text-align: center;
+.auth-header {
   margin-bottom: 24px;
-  font-size: 15px;
+  text-align: center;
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
 }
 
-/* Input custom con label stacked */
-.custom-input {
+.auth-card {
+  background: var(--card-background);
+  border-radius: 24px;
+  padding: 24px 20px 30px;
+  box-shadow: 0 12px 30px var(--card-shadow);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(10px);
+}
+
+.modern-input {
   --background: var(--input-background);
-  --color: var(--text-primary);
-  --border-radius: 12px;
+  --border-radius: 16px;
   --padding-start: 16px;
-  --padding-end: 16px;
-  --padding-top: 10px;
-  --padding-bottom: 10px;
   --inner-padding-end: 16px;
-  margin-bottom: 6px;
+  margin-bottom: 16px;
   border: 1px solid var(--input-border);
-  border-radius: 12px;
   box-shadow: 0 2px 8px var(--card-shadow);
+  transition: all 0.2s ease;
+
+  ion-icon[slot="start"] {
+    margin-top: 24px;
+    margin-right: 12px;
+    font-size: 22px;
+  }
+
+  ion-icon[slot="end"] {
+    margin-top: 18px;
+    font-size: 20px;
+  }
 
   ion-label {
-    font-weight: 700;
-    font-size: 11px !important;
-    color: var(--ion-color-primary) !important;
-    letter-spacing: 0.8px;
+    font-size: 12px !important;
+    font-weight: 800;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    padding-top: 4px;
+    color: var(--ion-color-secondary) !important;
+    padding-top: 8px;
   }
 
   ion-input {
-    --color: var(--text-primary);
-    --placeholder-color: var(--text-muted);
-    font-weight: 500;
     font-size: 16px;
+    font-weight: 500;
+    --color: var(--text-primary);
+    margin-top: 4px;
+    margin-bottom: 8px;
+  }
+
+  &.item-has-focus {
+    border-color: var(--ion-color-secondary);
+  }
+
+  &.input-valid {
+    border-color: var(--ion-color-success, #2dd36f);
+    --background: rgba(45, 211, 111, 0.03);
   }
 }
 
-/* Caja de requisitos */
-.requisitos-box {
-  padding: 8px 4px 12px 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.requisito {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
-
-  ion-icon {
-    font-size: 1.1rem;
-    flex-shrink: 0;
-    transition: color 0.2s ease;
-  }
-
-  // Requisito cumplido — verde
-  &.ok {
-    color: var(--ion-color-success, #2dd36f);
-    ion-icon { color: var(--ion-color-success, #2dd36f); }
-  }
-
-  // Requisito no cumplido — rojo apagado
-  &.fail {
-    color: var(--ion-color-danger, #eb445a);
-    ion-icon { color: var(--ion-color-danger, #eb445a); }
-  }
-}
-
-.btn-verde {
-  --background: var(--ion-color-secondary);
-  --color: #ffffff;
-  --border-radius: 12px;
+.btn-auth {
+  --border-radius: 16px;
+  margin-top: 24px;
   height: 54px;
   font-weight: 800;
-  margin-top: 20px;
-  box-shadow: 0 6px 15px var(--card-shadow);
+  letter-spacing: 0.5px;
+  font-size: 16px;
+  --box-shadow: 0 6px 16px rgba(var(--ion-color-secondary-rgb), 0.3);
 
-  // Botón deshabilitado mientras no se cumplan los requisitos
-  &[disabled] {
-    opacity: 0.45;
+  &.btn-secondary {
+    --background: var(--ion-color-secondary);
+    --color: white;
+  }
+}
+
+/* Requisitos con estilo Chips */
+.requisitos-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--input-background);
+  border: 1px solid var(--input-border);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+
+  ion-icon {
+    font-size: 16px;
+  }
+
+  &.ok {
+    background: rgba(45, 211, 111, 0.1);
+    border-color: rgba(45, 211, 111, 0.3);
+    color: var(--ion-color-success, #2dd36f);
   }
 }
