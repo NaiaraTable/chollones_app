@@ -58,6 +58,10 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../carrito/carrito.page').then((m) => m.CarritoPage),
       },
+      {
+        path: 'seguridad',
+        loadComponent: () => import('../seguridad/seguridad.page').then((m) => m.SeguridadPage),
+      },
 
       // DEFAULT TAB
       {

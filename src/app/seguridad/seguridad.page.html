@@ -1,0 +1,95 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab5"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Seguridad</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="security-banner ion-padding ion-text-center">
+    <ion-icon name="shield-checkmark-outline" color="primary" style="font-size: 64px;"></ion-icon>
+    <h3>Protege tu cuenta</h3>
+    <p>Gestiona el acceso y la seguridad de tus datos en Chollones.</p>
+  </div>
+
+  <div class="form-section">
+    <div class="section-label">Cambiar contraseña</div>
+
+    <ion-list lines="full" class="form-list">
+      <ion-item>
+        <ion-icon slot="start" name="lock-closed-outline" color="primary"></ion-icon>
+        <ion-input
+          label="Nueva contraseña"
+          labelPlacement="floating"
+          type="password"
+          [(ngModel)]="newPassword"
+          placeholder="Mínimo 8 caracteres">
+        </ion-input>
+      </ion-item>
+
+      <div class="requisitos-box" *ngIf="newPassword.length > 0">
+        <div class="requisito" [class.ok]="tieneMinCaracteres" [class.fail]="!tieneMinCaracteres">
+          <ion-icon [name]="tieneMinCaracteres ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <span>Mínimo 8 caracteres</span>
+        </div>
+        <div class="requisito" [class.ok]="tieneMayuscula" [class.fail]="!tieneMayuscula">
+          <ion-icon [name]="tieneMayuscula ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <span>Al menos una mayúscula</span>
+        </div>
+        <div class="requisito" [class.ok]="tieneNumero" [class.fail]="!tieneNumero">
+          <ion-icon [name]="tieneNumero ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <span>Al menos un número</span>
+        </div>
+      </div>
+
+      <ion-item>
+        <ion-icon slot="start" name="lock-closed-outline" color="primary"></ion-icon>
+        <ion-input
+          label="Repetir contraseña"
+          labelPlacement="floating"
+          type="password"
+          [(ngModel)]="confirmPassword"
+          placeholder="Repite la contraseña">
+        </ion-input>
+      </ion-item>
+
+      <div class="requisitos-box" *ngIf="confirmPassword.length > 0">
+        <div class="requisito" [class.ok]="passwordsCoinciden" [class.fail]="!passwordsCoinciden">
+          <ion-icon [name]="passwordsCoinciden ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <span>Las contraseñas coinciden</span>
+        </div>
+      </div>
+    </ion-list>
+  </div>
+
+  <div class="ion-padding">
+    <ion-button
+      expand="block"
+      color="primary"
+      class="ion-margin-top"
+      (click)="cambiarPassword()"
+      [disabled]="savingPassword || !passwordValida">
+      <ion-spinner *ngIf="savingPassword" name="crescent" slot="start"></ion-spinner>
+      {{ savingPassword ? 'Cambiando...' : 'Actualizar Contraseña' }}
+    </ion-button>
+  </div>
+
+  <ion-list lines="full">
+    <ion-item button detail="false">
+      <ion-icon slot="start" name="mail-outline" color="primary"></ion-icon>
+      <ion-label>
+        <h2>Autenticación de dos factores</h2>
+        <p>Próximamente</p>
+      </ion-label>
+      <ion-note slot="end">Beta</ion-note>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-padding">
+    <ion-note color="medium">
+      Si detectas actividad inusual, te recomendamos cerrar sesión en todos tus dispositivos.
+    </ion-note>
+  </div>
+</ion-content>

@@ -1,0 +1,46 @@
+/* Puedes copiar esto directamente en seguridad.page.scss */
+
+.security-banner {
+  padding: 30px 20px;
+  h3 { font-weight: 800; margin-top: 15px; }
+  p { color: var(--ion-color-medium); }
+}
+
+.form-section {
+  margin-top: 10px;
+  .section-label {
+    padding: 0 20px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ion-color-medium);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+}
+
+.form-list {
+  background: var(--ion-item-background, #fff);
+  border-top: 0.5px solid rgba(0,0,0,0.1);
+  border-bottom: 0.5px solid rgba(0,0,0,0.1);
+}
+
+.requisitos-box {
+  padding: 12px 20px 12px 52px;
+  background: var(--ion-item-background, #fff);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.requisito {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+
+  ion-icon { font-size: 1.2rem; }
+
+  &.ok { color: var(--ion-color-success); }
+  &.fail { color: var(--ion-color-danger); }
+}

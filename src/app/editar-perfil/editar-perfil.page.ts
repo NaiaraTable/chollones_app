@@ -38,10 +38,7 @@ export class EditarPerfilPage implements OnInit, OnDestroy {
   phone = '';
   address = '';
   birthDate = '';
-  newPassword = '';
-  confirmPassword = '';
   saving = false;
-  savingPassword = false;
 
 
   // Fecha máxima = hoy (no permite fechas futuras)
@@ -86,28 +83,6 @@ export class EditarPerfilPage implements OnInit, OnDestroy {
     this.phone = valor.replace(/[^0-9+\s\-]/g, '');
     // Actualizar el input visualmente
     if (event.target) event.target.value = this.phone;
-  }
-
-  // --- Getters de validación de contraseña ---
-
-  get tieneMinCaracteres(): boolean {
-    return this.newPassword.length >= 8;
-  }
-
-  get tieneMayuscula(): boolean {
-    return /[A-Z]/.test(this.newPassword);
-  }
-
-  get tieneNumero(): boolean {
-    return /[0-9]/.test(this.newPassword);
-  }
-
-  get passwordsCoinciden(): boolean {
-    return this.newPassword.length > 0 && this.newPassword === this.confirmPassword;
-  }
-
-  get passwordValida(): boolean {
-    return this.tieneMinCaracteres && this.tieneMayuscula && this.tieneNumero && this.passwordsCoinciden;
   }
 
   // --- Fecha de nacimiento formateada para mostrar ---
@@ -155,38 +130,6 @@ export class EditarPerfilPage implements OnInit, OnDestroy {
       this.showToast(' Error: ' + (err.message || err), 'danger');
     } finally {
       this.saving = false;
-    }
-  }
-
-  /** Cambiar contraseña */
-  async cambiarPassword() {
-    if (!this.tieneMinCaracteres) {
-      this.showToast('La contraseña debe tener al menos 8 caracteres', 'warning');
-      return;
-    }
-    if (!this.tieneMayuscula) {
-      this.showToast('La contraseña debe tener al menos una mayúscula', 'warning');
-      return;
-    }
-    if (!this.tieneNumero) {
-      this.showToast('La contraseña debe tener al menos un número', 'warning');
-      return;
-    }
-    if (!this.passwordsCoinciden) {
-      this.showToast('Las contraseñas no coinciden', 'warning');
-      return;
-    }
-
-    this.savingPassword = true;
-    try {
-      await this.supabase.updatePassword(this.newPassword);
-      this.newPassword = '';
-      this.confirmPassword = '';
-      this.showToast('✅ Contraseña cambiada correctamente', 'success');
-    } catch (err: any) {
-      this.showToast(' Error: ' + (err.message || err), 'danger');
-    } finally {
-      this.savingPassword = false;
     }
   }
 

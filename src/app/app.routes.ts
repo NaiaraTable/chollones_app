@@ -36,6 +36,7 @@ export const routes: Routes = [
 
       // MIS CATEGORÍAS
       { path: 'mis-categorias', loadComponent: () => import('./mis-categorias/mis-categorias.component').then(m => m.MisCategoriasComponent) },
+      { path: 'seguridad', loadComponent: () => import('./seguridad/seguridad.page').then((m) => m.SeguridadPage),},
 
       // default
       { path: '', redirectTo: 'tab1', pathMatch: 'full' },
