@@ -1,10 +1,10 @@
 <ion-content *ngIf="producto">
   <div class="header-image">
     <img class="header-img-bg" [src]="producto.imagen_url || 'assets/placeholder.png'"
-         (error)="$any($event.target).src='assets/placeholder.png'" />
+      (error)="$any($event.target).src='assets/placeholder.png'" />
     <div class="back-button-float" (click)="volverAtras()"><ion-icon name="arrow-back"></ion-icon></div>
     <div class="fav-button-float" [class.active]="esFavorito" (click)="toggleFavorito()"><ion-icon
-      [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon></div>
+        [name]="esFavorito ? 'heart' : 'heart-outline'"></ion-icon></div>
     <div class="discount-badge" *ngIf="producto.precio_original">-{{ (((producto.precio_original -
       producto.precio_actual) / producto.precio_original) * 100).toFixed(0) }}% DTO</div>
   </div>
@@ -57,54 +57,48 @@
           </div>
         </div>
 
-        <ion-button
-          *ngIf="!miReview && !mostrarFormulario"
-          expand="block"
-          fill="outline"
-          color="primary"
+        <ion-button *ngIf="!miReview && !mostrarFormulario && haComprado" expand="block" fill="outline" color="primary"
           (click)="abrirFormulario()">
           <ion-icon name="create-outline" slot="start"></ion-icon>
           Escribir una reseña
         </ion-button>
       </div>
 
-      <div class="review-form" *ngIf="mostrarFormulario && !miReview">
+      <div class="review-form" *ngIf="mostrarFormulario">
         <p class="form-label">Tu puntuación</p>
         <div class="star-rating-input">
-          <ion-icon
-            *ngFor="let s of [1,2,3,4,5]"
-            [name]="s <= nuevaReviewPuntuacion ? 'star' : 'star-outline'"
+          <ion-icon *ngFor="let s of [1,2,3,4,5]" [name]="s <= nuevaReviewPuntuacion ? 'star' : 'star-outline'"
             (click)="nuevaReviewPuntuacion = s">
           </ion-icon>
         </div>
 
-        <ion-textarea
-          [(ngModel)]="nuevaReviewComentario"
-          placeholder="Cuéntanos tu experiencia con este chollo…"
-          rows="4"
-          autoGrow="true">
+        <ion-textarea [(ngModel)]="nuevaReviewComentario" placeholder="Cuéntanos tu experiencia con este chollo…"
+          rows="4" autoGrow="true">
         </ion-textarea>
 
         <div class="form-actions">
           <ion-button fill="clear" color="medium" (click)="cerrarFormulario()">Cancelar</ion-button>
           <ion-button color="primary" [disabled]="enviandoReview" (click)="enviarReview()">
             <ion-spinner *ngIf="enviandoReview" name="crescent" slot="start"></ion-spinner>
-            Publicar
+            {{ editandoReview ? 'Guardar Cambios' : 'Publicar' }}
           </ion-button>
         </div>
       </div>
 
-      <div class="mi-review-card" *ngIf="miReview">
+      <div class="mi-review-card" *ngIf="miReview && !mostrarFormulario">
         <div class="mi-review-top">
           <span class="mi-review-label">Tu reseña</span>
-          <button class="delete-btn" (click)="eliminarMiReview()">
-            <ion-icon name="trash-outline"></ion-icon>
-          </button>
+          <div class="review-actions">
+            <button class="edit-btn" (click)="abrirEdicion()">
+              <ion-icon name="create-outline"></ion-icon>
+            </button>
+            <button class="delete-btn" (click)="eliminarMiReview()">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
         </div>
         <div class="stars-row">
-          <ion-icon
-            *ngFor="let s of [1,2,3,4,5]"
-            [name]="s <= miReview.puntuacion ? 'star' : 'star-outline'"
+          <ion-icon *ngFor="let s of [1,2,3,4,5]" [name]="s <= miReview.puntuacion ? 'star' : 'star-outline'"
             class="star-icon">
           </ion-icon>
         </div>
@@ -118,9 +112,7 @@
             <div class="comment-header">
               <span class="user-name">{{ r.autor }}</span>
               <span class="user-rating">
-                <ion-icon
-                  *ngFor="let s of [1,2,3,4,5]"
-                  [name]="s <= r.puntuacion ? 'star' : 'star-outline'"
+                <ion-icon *ngFor="let s of [1,2,3,4,5]" [name]="s <= r.puntuacion ? 'star' : 'star-outline'"
                   [class.active]="s <= r.puntuacion">
                 </ion-icon>
               </span>

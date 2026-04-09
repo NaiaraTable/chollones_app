@@ -326,21 +326,87 @@ h1 {
 }
 
 .mi-review-card {
-  background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.08), rgba(var(--ion-color-primary-rgb), 0.03));
-  border: 1.5px solid rgba(var(--ion-color-primary-rgb), 0.3);
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
   border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 20px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+
+  .mi-review-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+
+    .mi-review-label {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--ion-color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .review-actions {
+      display: flex;
+      gap: 10px;
+
+      button {
+        background: transparent;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        cursor: pointer;
+
+        ion-icon {
+          font-size: 1.25rem;
+        }
+
+        &.edit-btn {
+          color: var(--text-secondary);
+          background: rgba(128, 128, 128, 0.1);
+
+          &:active {
+            transform: scale(0.9);
+            background: rgba(128, 128, 128, 0.15);
+          }
+        }
+
+        &.delete-btn {
+          color: #ff4757;
+          background: rgba(255, 71, 87, 0.1);
+
+          &:active {
+            transform: scale(0.9);
+            background: rgba(255, 71, 87, 0.15);
+          }
+        }
+      }
+    }
+  }
 
   .stars-row ion-icon {
     color: #ffc107;
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 
   .comment-text {
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1.5;
-    margin: 8px 0;
+    margin: 12px 0;
+    color: var(--text-primary);
+  }
+
+  .comment-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
   }
 }
 

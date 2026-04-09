@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { NavController, AlertController } from '@ionic/angular/standalone';
-import { arrowBack, heart, heartOutline, star, starOutline, createOutline, trashOutline, chatbubbleOutline} from 'ionicons/icons';
+import { arrowBack, heart, heartOutline, star, starOutline, createOutline, trashOutline, chatbubbleOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { Browser } from '@capacitor/browser';
 import { ApiService } from '../services/api.service';
@@ -20,6 +20,7 @@ import { ApiService } from '../services/api.service';
 export class ProductosPage implements OnInit {
   producto: any;
   esFavorito: boolean = false;
+  haComprado: boolean = false;
 
   // --- Reviews ---
   reviews: any[] = [];
@@ -28,6 +29,7 @@ export class ProductosPage implements OnInit {
 
   // Formulario nueva reseña
   mostrarFormulario: boolean = false;
+  editandoReview: boolean = false;
   nuevaReviewPuntuacion: number = 0;
   nuevaReviewComentario: string = '';
   enviandoReview: boolean = false;
@@ -39,7 +41,7 @@ export class ProductosPage implements OnInit {
     private navCtrl: NavController,
     private alertController: AlertController
   ) {
-    addIcons({ arrowBack, heart, heartOutline, star, starOutline, createOutline, trashOutline, chatbubbleOutline});
+    addIcons({ arrowBack, heart, heartOutline, star, starOutline, createOutline, trashOutline, chatbubbleOutline });
   }
 
   async ngOnInit() {
@@ -53,7 +55,8 @@ export class ProductosPage implements OnInit {
 
         await Promise.all([
           this.comprobarSiEsFavorito(),
-          this.cargarReviews()
+          this.cargarReviews(),
+          this.comprobarSiHaComprado()
         ]);
       }
     }
@@ -102,13 +105,23 @@ export class ProductosPage implements OnInit {
       this.mostrarAlertaLogin();
       return;
     }
+    this.editandoReview = false;
     this.nuevaReviewPuntuacion = 0;
     this.nuevaReviewComentario = '';
     this.mostrarFormulario = true;
   }
 
+  abrirEdicion() {
+    if (!this.miReview) return;
+    this.editandoReview = true;
+    this.nuevaReviewPuntuacion = this.miReview.puntuacion || 0;
+    this.nuevaReviewComentario = this.miReview.comentario || '';
+    this.mostrarFormulario = true;
+  }
+
   cerrarFormulario() {
     this.mostrarFormulario = false;
+    this.editandoReview = false;
     this.nuevaReviewPuntuacion = 0;
     this.nuevaReviewComentario = '';
   }
@@ -136,19 +149,41 @@ export class ProductosPage implements OnInit {
 
     this.enviandoReview = true;
     try {
-      const nueva = await this.apiService.request('reviews.php?action=add', {
-        method: 'POST',
-        body: JSON.stringify({
-          product_id: this.producto.id,
-          puntuacion: this.nuevaReviewPuntuacion,
-          comentario: this.nuevaReviewComentario.trim()
-        })
-      });
+      if (this.editandoReview && this.miReview) {
+        // Enviar edición
+        const actualizada = await this.apiService.request('reviews.php?action=update', {
+          method: 'POST',
+          body: JSON.stringify({
+            review_id: this.miReview.id,
+            puntuacion: this.nuevaReviewPuntuacion,
+            comentario: this.nuevaReviewComentario.trim()
+          })
+        });
 
-      // Añadir al array y marcar como "mía"
-      nueva.es_mia = true;
-      this.reviews = [nueva, ...this.reviews];
-      this.miReview = nueva;
+        // Actualizar en el array
+        this.miReview.puntuacion = actualizada.puntuacion;
+        this.miReview.comentario = actualizada.comentario;
+        const index = this.reviews.findIndex(r => r.id === this.miReview.id);
+        if (index > -1) {
+          this.reviews[index] = this.miReview;
+        }
+      } else {
+        // Enviar nueva reseña
+        const nueva = await this.apiService.request('reviews.php?action=add', {
+          method: 'POST',
+          body: JSON.stringify({
+            product_id: this.producto.id,
+            puntuacion: this.nuevaReviewPuntuacion,
+            comentario: this.nuevaReviewComentario.trim()
+          })
+        });
+
+        // Añadir al array y marcar como "mía"
+        nueva.es_mia = true;
+        this.reviews = [nueva, ...this.reviews];
+        this.miReview = nueva;
+      }
+
       this.cerrarFormulario();
 
     } catch (e: any) {
@@ -201,6 +236,23 @@ export class ProductosPage implements OnInit {
   // -------------------------------------------------------
   //  RESTO DE LÓGICA ORIGINAL
   // -------------------------------------------------------
+
+  async comprobarSiHaComprado() {
+    if (!this.producto?.id) return;
+    const token = localStorage.getItem('chollones_token');
+    if (!token) {
+      this.haComprado = false;
+      return;
+    }
+
+    try {
+      const res = await this.apiService.request(`reviews.php?action=can_review&product_id=${this.producto.id}`);
+      this.haComprado = res.can_review;
+    } catch (e) {
+      console.error('Error al verificar compras:', e);
+      this.haComprado = false;
+    }
+  }
 
   async comprobarSiEsFavorito() {
     try {
