@@ -2,152 +2,124 @@ import { Injectable, signal, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class GameService {
-    // L0 = Home
-    // L1 = Atrapa Monedas
-    // L2 = Memory
-    // L3 = Match 3
-    // L4 = Ruleta Final
-    level = signal<number>(0);
-    score = signal<number>(0);
-    remainingTime = signal<number>(0);
-    isFinished = signal<boolean>(false);
-    extraSpins = signal<number>(0);
+  // L0 = Home | L1 = Fácil | L2 = Medio | L3 = Difícil | L4 = Ruleta
+  level = signal<number>(0);
+  score = signal<number>(0);
 
-    private timerInterval: any;
-    private supabase = inject(SupabaseService);
+  // Cambiado de remainingTime a timeLeft para solucionar el error TS2339 en game-base
+  timeLeft = signal<number>(0);
 
-    constructor() { }
+  lastCode = signal<string | null>(localStorage.getItem('ultimo_codigo'));
 
-    showHome() {
-        this.level.set(0);
-        this.score.set(0);
-        this.isFinished.set(false);
-        this.extraSpins.set(0);
-        this.stopTimer();
+  private timerInterval: any;
+  private supabase = inject(SupabaseService);
+
+  constructor() { }
+
+  showHome() {
+    this.level.set(0);
+    this.stopTimer();
+  }
+
+  // Inicia todo el flujo automático
+  async startFullGame() {
+    this.score.set(0);
+    this.level.set(1);
+    this.runLevel(20); // Nivel 1: Fácil (20s)
+  }
+
+  private runLevel(seconds: number) {
+    this.timeLeft.set(seconds);
+    this.startTimer();
+  }
+
+  startTimer() {
+    this.stopTimer();
+    this.timerInterval = setInterval(() => {
+      if (this.timeLeft() > 0) {
+        this.timeLeft.update(val => val - 1);
+      } else {
+        // Cuando el tiempo llega a 0, salta solo al siguiente nivel
+        this.autoNextLevel();
+      }
+    }, 1000);
+  }
+
+  private autoNextLevel() {
+    this.stopTimer();
+    const current = this.level();
+
+    if (current === 1) {
+      this.level.set(2);
+      this.runLevel(20);
+    } else if (current === 2) {
+      this.level.set(3);
+      this.runLevel(20);
+    } else if (current === 3) {
+      this.level.set(4);
+    }
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+  }
+
+  // Los puntos se suman sin que el usuario lo vea en pantalla
+  addScore(points: number) {
+    this.score.update(val => Math.max(0, val + points));
+  }
+
+  saveFinalCode(code: string) {
+    this.lastCode.set(code);
+    localStorage.setItem('ultimo_codigo', code);
+  }
+
+  /**
+   * NUEVO MÉTODO: resetGame
+   * Soluciona el error en game-ruleta.component.ts
+   */
+  resetGame(code?: string) {
+    if (code) {
+      this.saveFinalCode(code);
+    }
+    this.showHome();
+  }
+
+  async canPlayToday(): Promise<boolean> {
+    const user = this.supabase.userValue;
+    const today = new Date().toDateString();
+
+    // Comprobación rápida local
+    const localKey = 'ultima_partida_' + (user ? user.id : 'anon');
+    if (localStorage.getItem(localKey) === today) {
+      return false;
     }
 
-    startGame() {
-        this.level.set(1);
-        this.score.set(0);
-        this.isFinished.set(false);
-        this.extraSpins.set(0);
-        this.startLevel1();
+    if (!user) return true;
+
+    // Comprobación en Supabase por si jugó en otro móvil
+    const lastPlayed = user.user_metadata?.['ultima_partida'];
+    return lastPlayed !== today;
+  }
+
+  async registerPlay(): Promise<void> {
+    const today = new Date().toDateString();
+    const user = this.supabase.userValue;
+
+    const localKey = 'ultima_partida_' + (user ? user.id : 'anon');
+    localStorage.setItem(localKey, today);
+
+    if (user) {
+      try {
+        await this.supabase.updateProfile({ ultima_partida: today });
+      } catch (error) {
+        console.error('Error registrando la partida:', error);
+      }
     }
-
-    async canPlayToday(): Promise<boolean> {
-        const user = this.supabase.userValue;
-        const today = new Date().toDateString();
-
-        // Bloqueo rápido por LocalStorage (evita problemas de sincronización)
-        const localKey = 'ultima_partida_' + (user ? user.id : 'anon');
-        const localPlayed = localStorage.getItem(localKey);
-
-        if (localPlayed === today) {
-            return false;
-        }
-
-        if (!user) {
-            return true; // Si no hay usuario, permitimos jugar basado en LocalStorage
-        }
-
-        // Verificamos también en Supabase por si jugó en otro dispositivo
-        const lastPlayed = user.user_metadata?.['ultima_partida'];
-        return lastPlayed !== today;
-    }
-
-    async registerPlay(): Promise<void> {
-        const today = new Date().toDateString();
-        const user = this.supabase.userValue;
-
-        // Guardar rápido en LocalStorage
-        const localKey = 'ultima_partida_' + (user ? user.id : 'anon');
-        localStorage.setItem(localKey, today);
-
-        if (user) {
-            try {
-                // Guardar en Supabase para persistencia en nube
-                await this.supabase.updateProfile({ ultima_partida: today });
-            } catch (error) {
-                console.error('Error registrando la partida:', error);
-            }
-        }
-    }
-
-    private startLevel1() {
-        this.level.set(1);
-        this.remainingTime.set(40); // 40 secs para nivel 1
-        this.startTimer();
-    }
-
-    private startLevel2() {
-        this.level.set(2);
-        this.remainingTime.set(40); // 40 secs para nivel 2
-        this.startTimer();
-    }
-
-    private startLevel3() {
-        this.level.set(3);
-        this.remainingTime.set(40); // 40 secs para nivel 3
-        this.startTimer();
-    }
-
-    private showRuleta() {
-        this.level.set(4);
-        this.calculateExtraSpins();
-    }
-
-    private calculateExtraSpins() {
-        const finalScore = this.score();
-        // 1 extra spin per 100 points
-        const extra = Math.floor(finalScore / 100);
-
-        // Base spin is 1, so the total spins allowed is 1 + extra
-        this.extraSpins.set(1 + extra);
-    }
-
-    startTimer() {
-        this.stopTimer();
-        this.timerInterval = setInterval(() => {
-            if (this.remainingTime() > 0) {
-                this.remainingTime.update(val => val - 1);
-            } else {
-                this.checkLevelProgression();
-            }
-        }, 1000);
-    }
-
-    stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-        }
-    }
-
-    addScore(points: number) {
-        this.score.update(val => Math.max(0, val + points));
-    }
-
-    private checkLevelProgression() {
-        this.stopTimer();
-        const l = this.level();
-
-        if (l === 1) {
-            this.startLevel2();
-        } else if (l === 2) {
-            this.startLevel3();
-        } else if (l === 3) {
-            this.showRuleta(); // Nivel 3 termina, siempre va a ruleta
-        }
-    }
-
-    private endGameFailed() {
-        this.stopTimer();
-        this.isFinished.set(true);
-    }
-
-    restart() {
-        this.showHome();
-    }
+  }
 }

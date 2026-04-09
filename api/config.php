@@ -191,19 +191,17 @@ function wp_hash_password(string $password): string
 // STRIPE CONFIGURATION
 // ======================================================
 
-// IMPORTANTE: No pongas tu clave real aquí directamente.
-// Usa variables de entorno o cárgala desde un archivo externo no trackeado.
-
-define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY') ?: 'TU_CLAVE_AQUI_SOLO_LOCAL');
-define('STRIPE_PUBLIC_KEY', getenv('STRIPE_PUBLIC_KEY') ?: 'TU_CLAVE_PUBLICA_AQUI');
-
-// Si necesitas usar la librería de Stripe más adelante:
-// \Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
-// Get them from: https://dashboard.stripe.com/apikeys (when in Test Mode)
-//
-// IMPORTANTE: Usa tus propias claves de Stripe TEST
+// IMPORTANTE: Usa tus propias claves de Stripe
 // Se pueden pasar por variables de entorno o hardcodear para desarrollo
-//
-define('STRIPE_SECRET_KEY', 'sk_test_51TE5k6D6J49AJcg4QRtnmToMWvDycGZ5WTUvUBoFMsSaQPH0TLGYyzYKEshprDDSIJTO1drfkjim9DU9AQoFJp3300pH1sAxZV');
-define('STRIPE_PUBLISHABLE_KEY', 'pk_test_51TE5k6D6J49AJcg4Bs1F7eT6ciod9ALi8ZFLQznxLjijmIkNXjailVf26VKRAXY2Px7hdUDajoorNjiM7SZWc7qk00jWu6ZGUy');
-define('STRIPE_WEBHOOK_SECRET', 'whsec_test_placeholder');
+
+if (!defined('STRIPE_SECRET_KEY')) {
+    define('STRIPE_SECRET_KEY', 'TU_CLAVE_SECRETA_AQUI');
+}
+
+if (!defined('STRIPE_PUBLISHABLE_KEY')) {
+    define('STRIPE_PUBLISHABLE_KEY', 'TU_CLAVE_PUBLICA_AQUI');
+}
+
+if (!defined('STRIPE_WEBHOOK_SECRET')) {
+    define('STRIPE_WEBHOOK_SECRET', 'TU_WEBHOOK_SECRET_AQUI');
+}

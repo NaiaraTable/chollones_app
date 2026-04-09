@@ -1,18 +1,114 @@
 .home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    text-align: center;
-    color: #2c3e50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 20px;
+  background: transparent;
+  color: var(--ion-text-color, #2c3e50);
 }
 
-.logo-area {
-    margin-top: 50px;
+.main-mascot {
+  width: 130px;
+  height: 130px;
+  margin-bottom: 15px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+}
+
+.glass-title {
+  font-size: 2.2rem;
+  line-height: 1.1;
+  margin-bottom: 25px;
+  font-family: 'Titan One', cursive;
+  .highlight {
+    color: #ff4757;
+  }
+}
+
+.card {
+  background: var(--ion-card-background, rgba(255, 255, 255, 0.9));
+  padding: 20px;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.selection-text {
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.level-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Dejamos de usar botones, ahora son simples cajas de colores */
+.level-indicator {
+  border-radius: 15px;
+  padding: 15px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  background: white;
+}
+
+.lvl-num {
+  font-size: 1.5rem;
+  font-weight: 900;
+  font-family: 'Titan One', cursive;
+}
+
+.lvl-name {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.l1 { color: #2ed573; border: 2px solid #2ed573; }
+.l2 { color: #ffa502; border: 2px solid #ffa502; }
+.l3 { color: #ff4757; border: 2px solid #ff4757; }
+
+.start-btn {
+  margin-top: 25px;
+  width: 100%;
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 30px;
+  font-family: 'Titan One', cursive;
+  font-size: 1.2rem;
+  box-shadow: 0 5px 0 #ff6b81;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.start-btn:active {
+  transform: translateY(5px);
+  box-shadow: 0 0px 0 #ff6b81;
 }
 
 .terms {
-    margin-top: 30px;
-    opacity: 0.8;
+  margin-top: 20px;
+  opacity: 0.7;
+  a { color: inherit; font-weight: bold; }
+}
+
+.animate-pop {
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }

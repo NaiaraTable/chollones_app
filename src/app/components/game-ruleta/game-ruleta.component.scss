@@ -1,157 +1,190 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Titan+One&display=swap');
 
 .ruleta-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 20px;
-    box-sizing: border-box;
-    font-family: 'Titan One', cursive;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  // Fondo adaptativo: funciona bien en modo claro y oscuro
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.05) 100%);
 }
 
 .ruleta-title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #ff6b6b;
-    /* Rojo pastel */
-    font-size: 2.5rem;
-    margin-bottom: 5px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-    /* Sombra suave para que destaque */
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  color: #ff4757;
+  font-size: 2.5rem;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
 }
 
-.ruleta-score,
-.ruleta-spins {
-    color: #444;
-    /* Dark gray for visibility on light bg */
-    font-size: 1.2rem;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 700;
-    margin-bottom: 20px;
+.ruleta-info {
+  font-family: 'Titan One', cursive;
+  color: #666;
+  margin-bottom: 20px;
 }
 
+/* --- ESTILOS DE LA RULETA (IGUAL QUE TENÍAS) --- */
 .ruleta-wrapper {
-    position: relative;
-    width: 250px;
-    height: 250px;
-    margin: 20px auto 40px;
-    flex-shrink: 0;
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 30px;
 }
 
 .ruleta-wheel {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    position: relative;
-    transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-    /* suave easing para ruleta */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-    border: 5px solid white;
-    overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
+  border: 8px solid #2f3542;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
 }
 
 .wheel-bg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .slice-label {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px;
-    margin-left: -50px;
-    margin-top: -15px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 900;
-    color: #333;
-    z-index: 10;
-    transform-origin: 50% 15px;
-    /* pivote en el centro de la rueda */
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 80px;
+  margin-left: -40px;
+  margin-top: -20px;
+  text-align: center;
+  font-weight: 900;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+  z-index: 10;
+  transform-origin: 50% 20px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .ruleta-pointer {
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
-    background: #ff4757;
-    clip-path: polygon(50% 100%, 0 0, 100% 0);
-    z-index: 20;
-    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
+  position: absolute;
+  top: -15px; left: 50%;
+  transform: translateX(-50%);
+  width: 40px; height: 40px;
+  background: #2f3542;
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  z-index: 20;
 }
 
-.spin-btn {
-    font-size: 1.5rem;
-    padding: 15px 40px;
-    margin-top: 10px;
+/* --- NUEVA TARJETA DE RESULTADO MEJORADA --- */
+.result-card {
+  width: 100%;
+  max-width: 340px;
+  background: rgba(255, 255, 255, 0.95); // Fondo claro por defecto
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  padding: 40px 25px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  // Soporte para Modo Oscuro automático
+  @media (prefers-color-scheme: dark) {
+    background: rgba(45, 52, 54, 0.95);
+    color: white;
+  }
 }
 
-.result-box {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    color: #333;
-    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.confetti-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
 }
 
-.result-box h2 {
-    color: #ff4757;
-    margin: 0 0 10px 0;
-    font-size: 2rem;
-}
-
-.discount-code {
-    background: #ffecb3;
-    border: 2px dashed #ffb300;
-    padding: 15px 30px;
-    font-size: 2rem;
+.prize-header {
+  h2 {
+    font-family: 'Montserrat', sans-serif;
     font-weight: 900;
-    border-radius: 10px;
-    margin: 20px auto;
-    display: inline-block;
-    color: #f57c00;
+    color: #ff4757;
+    margin: 0;
+    font-size: 1.6rem;
+  }
+  .prize-description {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 5px;
+  }
 }
 
-.decision-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+.prize-badge {
+  font-family: 'Titan One', cursive;
+  font-size: 4rem;
+  color: #2ed573;
+  line-height: 1;
+  margin: 25px 0;
+  text-shadow: 3px 3px 0px rgba(0,0,0,0.05);
+  animation: pulse 1.5s infinite;
 }
 
-.decision-buttons p {
-    font-family: 'Open Sans', sans-serif;
+.coupon-box {
+  width: 100%;
+  background: rgba(0,0,0,0.05);
+  padding: 15px;
+  border-radius: 20px;
+  border: 2px dashed #ff4757;
+  margin-bottom: 25px;
+
+  p {
+    font-size: 0.8rem;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 }
 
-.btn-danger {
-    background: linear-gradient(135deg, #ff4d4d, #e60000);
+.final-code {
+  font-family: 'Titan One', cursive;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  color: #ff4757;
+}
+
+.btn-pill {
+  width: 100%;
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 18px 30px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 900;
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 6px 0 #d63031;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  &:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #d63031;
+  }
+}
+
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.animate-pop {
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes popIn {
-    0% {
-        transform: scale(0.5);
-        opacity: 0;
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+  from { opacity: 0; transform: scale(0.8) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
