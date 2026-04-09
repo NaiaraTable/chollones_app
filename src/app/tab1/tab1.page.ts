@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   IonContent,
-  IonIcon
+  IonIcon,
+  IonRefresher,
+  IonRefresherContent
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -31,7 +33,9 @@ import { FavoritosEvent } from '../services/favoritos-event';
   imports: [
     CommonModule,
     IonContent,
-    IonIcon
+    IonIcon,
+    IonRefresher,
+    IonRefresherContent
   ],
 })
 export class Tab1Page implements OnInit {
@@ -74,11 +78,17 @@ export class Tab1Page implements OnInit {
     await this.cargarFavoritos();
   }
 
-  async cargarDatos() {
+  async handleRefresh(event: any) {
+    await this.cargarDatos(true);
+    await this.cargarFavoritos();
+    event.target.complete();
+  }
+
+  async cargarDatos(forceRefresh = false) {
     try {
       const [res, resTopVentas] = await Promise.all([
-        this.apiService.getChollos(),
-        this.apiService.getTopVentas()
+        this.apiService.getChollos(forceRefresh),
+        this.apiService.getTopVentas(forceRefresh)
       ]);
 
       const mapProduct = (c: any) => ({

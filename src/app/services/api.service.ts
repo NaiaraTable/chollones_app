@@ -25,6 +25,9 @@ export class ApiService {
   private currentUser = new BehaviorSubject<AppUser | null>(null);
   currentUser$ = this.currentUser.asObservable();
 
+  private cachedChollos: any[] | null = null;
+  private cachedTopVentas: any[] | null = null;
+
   // Propiedad "client" simulada para compatibilidad con código existente
   public client = {
     auth: {
@@ -147,22 +150,34 @@ export class ApiService {
     this.token = null;
     localStorage.removeItem('chollones_token');
     this.currentUser.next(null);
+    this.cachedChollos = null;
+    this.cachedTopVentas = null;
   }
 
   // --- MÉTODOS DE DATOS ---
 
-  async getChollos(): Promise<any[]> {
+  async getChollos(forceRefresh = false): Promise<any[]> {
+    if (!forceRefresh && this.cachedChollos) {
+      return this.cachedChollos;
+    }
     try {
-      return await this.request('chollos.php');
+      const data = await this.request('chollos.php');
+      this.cachedChollos = data;
+      return data;
     } catch (err) {
       console.error('Error en getChollos:', err);
       return [];
     }
   }
 
-  async getTopVentas(): Promise<any[]> {
+  async getTopVentas(forceRefresh = false): Promise<any[]> {
+    if (!forceRefresh && this.cachedTopVentas) {
+      return this.cachedTopVentas;
+    }
     try {
-      return await this.request('chollos.php?top_ventas=1');
+      const data = await this.request('chollos.php?top_ventas=1');
+      this.cachedTopVentas = data;
+      return data;
     } catch (err) {
       console.error('Error en getTopVentas:', err);
       return [];
@@ -299,26 +314,26 @@ export class ApiService {
 
     try {
       console.log('Creando orden Dokan:', { articulos, total });
-      
+
       // Crear orden en WooCommerce/Dokan
       const resultado = await this.request('dokan-orden.php?action=crear', {
         method: 'POST',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           articulos,
           total,
           metodo_pago: 'dokan_gateway'
         }),
       });
-      
+
       console.log('Orden Dokan creada exitosamente:', resultado);
-      
+
       // También guardar en historial local de la app para referencia rápida
       // (es un registro secundario, el principal es la orden de WooCommerce)
       try {
         await this.request('historial.php?action=create', {
           method: 'POST',
-          body: JSON.stringify({ 
-            articulos, 
+          body: JSON.stringify({
+            articulos,
             total,
             numero_pedido_wc: resultado.numero_orden
           }),
@@ -327,7 +342,7 @@ export class ApiService {
         console.warn('Aviso: No se pudo guardar en historial local:', err);
         // No es crítico, continuamos
       }
-      
+
       return resultado;
     } catch (error: any) {
       console.error('Error al crear orden Dokan:', error.message, error);

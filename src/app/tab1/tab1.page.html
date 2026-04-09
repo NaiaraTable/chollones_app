@@ -1,4 +1,8 @@
 <ion-content fullscreen>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <!-- Banner grande -->
   <div class="banner" [style.background-image]="'url(' + bannerUrl + ')'">
     <div class="banner-overlay">
