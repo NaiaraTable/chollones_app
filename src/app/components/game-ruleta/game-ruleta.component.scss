@@ -1,4 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Titan+One&display=swap');
+/* game-ruleta.component.scss */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+:host {
+  --bg-dark: #0a0a0a;
+  --bg-card: #141414;
+  --text-main: #e0e0e0;
+  --text-muted: #888888;
+  --accent-gold: #f03d3d;
+  --border-color: #2a2a2a;
+  --font-title: 'Cinzel', serif;
+  --font-body: 'Inter', sans-serif;
+}
 
 .ruleta-container {
   width: 100%;
@@ -8,32 +20,43 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  // Fondo adaptativo: funciona bien en modo claro y oscuro
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.05) 100%);
+  background-color: var(--bg-dark);
+  font-family: var(--font-body);
+  // Gradiente sutil de fondo
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(198, 163, 96, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(198, 163, 96, 0.05) 0%, transparent 20%);
 }
 
 .ruleta-title {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 900;
-  color: #ff4757;
-  font-size: 2.5rem;
+  font-family: var(--font-title);
+  font-weight: 400;
+  color: var(--text-main);
+  font-size: 2.2rem;
   margin-bottom: 5px;
   text-transform: uppercase;
-  text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+  letter-spacing: 2px;
+
+  .highlight {
+    color: var(--accent-gold);
+    text-shadow: 0 0 15px rgba(198, 163, 96, 0.3);
+  }
 }
 
 .ruleta-info {
-  font-family: 'Titan One', cursive;
-  color: #666;
-  margin-bottom: 20px;
+  font-family: var(--font-title);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
 }
 
-/* --- ESTILOS DE LA RULETA (IGUAL QUE TENÍAS) --- */
+/* --- ESTRUCTURA DE LA RULETA (Mantenemos dimensiones) --- */
 .ruleta-wrapper {
   position: relative;
   width: 300px;
   height: 300px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .ruleta-wheel {
@@ -42,14 +65,15 @@
   border-radius: 50%;
   position: relative;
   transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
-  border: 8px solid #2f3542;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border: 4px solid var(--border-color); // Más fino y elegante
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
   overflow: hidden;
 }
 
 .wheel-bg {
   width: 100%;
   height: 100%;
+  opacity: 0.9; // Suaviza un poco los colores brillantes para que no desentonen
 }
 
 .slice-label {
@@ -61,130 +85,129 @@
   text-align: center;
   font-weight: 900;
   color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
   z-index: 10;
   transform-origin: 50% 20px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
 }
 
 .ruleta-pointer {
   position: absolute;
-  top: -15px; left: 50%;
+  top: -10px; left: 50%;
   transform: translateX(-50%);
-  width: 40px; height: 40px;
-  background: #2f3542;
+  width: 30px; height: 35px;
+  background: var(--accent-gold);
   clip-path: polygon(50% 100%, 0 0, 100% 0);
   z-index: 20;
+  box-shadow: 0 0 10px rgba(240, 61, 61, 0.5);
 }
 
-/* --- NUEVA TARJETA DE RESULTADO MEJORADA --- */
+/* --- TARJETA DE RESULTADO (Estilo Game Home) --- */
 .result-card {
   width: 100%;
-  max-width: 340px;
-  background: rgba(255, 255, 255, 0.95); // Fondo claro por defecto
-  backdrop-filter: blur(10px);
-  border-radius: 30px;
-  padding: 40px 25px;
+  max-width: 400px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 4px; // Bordes rectos minimalistas
+  padding: 40px 30px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 
-  // Soporte para Modo Oscuro automático
-  @media (prefers-color-scheme: dark) {
-    background: rgba(45, 52, 54, 0.95);
-    color: white;
+  // Línea de luz superior dorada
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
   }
-}
-
-.confetti-icon {
-  font-size: 3rem;
-  margin-bottom: 10px;
 }
 
 .prize-header {
   h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 900;
-    color: #ff4757;
+    font-family: var(--font-title);
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: 2px;
+    font-size: 1.5rem;
     margin: 0;
-    font-size: 1.6rem;
   }
   .prize-description {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    margin-top: 5px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 }
 
 .prize-badge {
-  font-family: 'Titan One', cursive;
-  font-size: 4rem;
-  color: #2ed573;
-  line-height: 1;
-  margin: 25px 0;
-  text-shadow: 3px 3px 0px rgba(0,0,0,0.05);
-  animation: pulse 1.5s infinite;
+  font-family: var(--font-title);
+  font-size: 4.5rem;
+  color: var(--accent-gold);
+  margin: 20px 0;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(240, 61, 61, 0.3);
+  animation: pulseGold 2s infinite;
 }
 
 .coupon-box {
-  width: 100%;
-  background: rgba(0,0,0,0.05);
-  padding: 15px;
-  border-radius: 20px;
-  border: 2px dashed #ff4757;
-  margin-bottom: 25px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 30px;
 
   p {
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
 }
 
 .final-code {
-  font-family: 'Titan One', cursive;
+  font-family: 'Courier New', monospace;
   font-size: 1.8rem;
-  letter-spacing: 2px;
-  color: #ff4757;
+  color: var(--accent-gold);
+  letter-spacing: 4px;
 }
 
 .btn-pill {
   width: 100%;
-  background: #ff4757;
-  color: white;
-  border: none;
-  padding: 18px 30px;
-  border-radius: 50px;
+  background: transparent;
+  color: var(--accent-gold);
+  border: 1px solid var(--accent-gold);
+  padding: 18px;
+  font-family: var(--font-title);
   font-size: 1.1rem;
-  font-weight: 900;
-  font-family: 'Montserrat', sans-serif;
-  box-shadow: 0 6px 0 #d63031;
-  transition: all 0.2s;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
   cursor: pointer;
+  transition: all 0.3s;
 
-  &:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #d63031;
+  &:hover {
+    background: var(--accent-gold);
+    color: var(--bg-dark);
+    box-shadow: 0 0 20px rgba(240, 61, 61, 0.4);
   }
 }
 
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+@keyframes pulseGold {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .animate-pop {
-  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: svelteFadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.8) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes svelteFadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

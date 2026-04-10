@@ -17,10 +17,12 @@ interface RouletteSlice {
   imports: [CommonModule],
   template: `
     <div class="ruleta-container">
-      <h1 class="ruleta-title" *ngIf="!showCode">¡Tu Premio!</h1>
-      <p class="ruleta-info" *ngIf="!showCode">Puntos Acumulados: {{ finalScore }}</p>
+      <h1 class="ruleta-title animate-pop" *ngIf="!showCode">
+        Tu <span class="highlight">Premio</span>
+      </h1>
+      <p class="ruleta-info animate-pop" *ngIf="!showCode">Puntos: {{ finalScore }}</p>
 
-      <div class="ruleta-wrapper" *ngIf="!showCode">
+      <div class="ruleta-wrapper animate-pop" *ngIf="!showCode" style="animation-delay: 0.1s">
         <div class="ruleta-wheel" [style.transform]="'rotate(' + currentRotation + 'deg)'">
           <div class="slice-label" *ngFor="let s of slices"
                [style.transform]="'rotate(' + getLabelRotation(s) + 'deg) translate(0, -115px)'"
@@ -32,15 +34,17 @@ interface RouletteSlice {
         <div class="ruleta-pointer"></div>
       </div>
 
-      <button class="btn-pill spin-btn" *ngIf="!isSpinning && !spinResult && !showCode" (click)="spin()">
+      <button class="btn-pill spin-btn animate-pop"
+              *ngIf="!isSpinning && !spinResult && !showCode"
+              (click)="spin()"
+              style="max-width: 300px; animation-delay: 0.2s">
         GIRAR RULETA
       </button>
 
       <div class="result-card animate-pop" *ngIf="showCode">
         <div class="prize-header">
-          <div class="confetti-icon">🎉</div>
-          <h2>¡ENHORABUENA!</h2>
-          <p class="prize-description">Has conseguido un descuento de:</p>
+          <h2>Código obtenido</h2>
+          <p class="prize-description">Bonificación desbloqueada:</p>
         </div>
 
         <div class="prize-badge">
@@ -48,12 +52,12 @@ interface RouletteSlice {
         </div>
 
         <div class="coupon-box">
-          <p>Copia tu código y canjéalo:</p>
+          <p>Código de transferencia:</p>
           <div class="final-code">{{ finalCode }}</div>
         </div>
 
         <button class="btn-pill finish-btn" (click)="game.resetGame(finalCode)">
-          VOLVER AL INICIO
+          FINALIZAR JUEGO
         </button>
       </div>
     </div>
@@ -100,7 +104,7 @@ export class GameRuletaComponent implements OnInit {
 
     if (this.finalScore > 120) {
       w5  -= 10; // Baja a 50%
-      w10 += 6;  // Sube a 30% 
+      w10 += 6;  // Sube a 30%
       w15 += 2;  // Sube a 11%
       w20 += 1;  // Sube a 5%
       w25 += 1;  // Sube a 4%

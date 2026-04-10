@@ -1,114 +1,217 @@
+/* game-home.component.scss */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+:host {
+  --bg-dark: #0a0a0a; // Negro casi puro
+  --bg-card: #141414; // Gris muy oscuro para tarjetas
+  --text-main: #e0e0e0;
+  --text-muted: #888888;
+  --accent-gold: #f42f2f; // Oro sofisticado, no amarillo
+  --accent-gold-dim: #856f43;
+  --border-color: #2a2a2a;
+  --font-title: 'Cinzel', serif; // Fuente clásica y elegante
+  --font-body: 'Inter', sans-serif; // Fuente moderna y limpia
+}
+
 .home-container {
+  font-family: var(--font-body);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(198, 163, 96, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(198, 163, 96, 0.05) 0%, transparent 20%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
-  text-align: center;
-  padding: 20px;
-  background: transparent;
-  color: var(--ion-text-color, #2c3e50);
+  padding: 40px 20px;
 }
 
-.main-mascot {
-  width: 130px;
-  height: 130px;
-  margin-bottom: 15px;
-  object-fit: contain;
-  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+.logo-area {
+  margin-bottom: 50px;
+  text-align: center;
+  position: relative;
+
+  // Eliminamos la mascota y creamos un emblema abstracto/abstract icon
+  &::before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    border: 2px solid var(--accent-gold);
+    transform: rotate(45deg);
+    background: radial-gradient(circle, var(--accent-gold-dim) 0%, transparent 70%);
+    box-shadow: 0 0 20px rgba(198, 163, 96, 0.2);
+  }
 }
 
 .glass-title {
-  font-size: 2.2rem;
-  line-height: 1.1;
-  margin-bottom: 25px;
-  font-family: 'Titan One', cursive;
+  font-family: var(--font-title);
+  font-size: 2.4rem;
+  font-weight: 400;
+  letter-spacing: 2px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--text-main);
+  margin: 0;
+
   .highlight {
-    color: #ff4757;
+    color: var(--accent-gold);
+    font-weight: 700;
+    // Efecto de brillo sutil en el oro
+    text-shadow: 0 0 15px rgba(198, 163, 96, 0.5);
   }
 }
 
 .card {
-  background: var(--ion-card-background, rgba(255, 255, 255, 0.9));
-  padding: 20px;
-  border-radius: 25px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  background-color: var(--bg-card);
+  padding: 40px;
+  border-radius: 4px; // Bordes afilados, minimalistas
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   width: 100%;
-  max-width: 400px;
-  border: 1px solid rgba(255,255,255,0.2);
+  max-width: 450px;
+  position: relative;
+  overflow: hidden;
+
+  // Línea de luz decorativa superior
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+  }
 }
 
 .selection-text {
-  font-weight: bold;
-  margin-bottom: 15px;
-  font-size: 1rem;
-  opacity: 0.9;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 25px;
 }
 
 .level-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 15px;
+  margin-bottom: 35px;
 }
 
-/* Dejamos de usar botones, ahora son simples cajas de colores */
 .level-indicator {
-  border-radius: 15px;
-  padding: 15px 5px;
+  border-radius: 2px;
+  padding: 15px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-  background: white;
-}
+  background-color: transparent;
+  transition: all 0.3s ease;
+  cursor: default;
+  font-family: var(--font-body);
 
-.lvl-num {
-  font-size: 1.5rem;
-  font-weight: 900;
-  font-family: 'Titan One', cursive;
-}
+  .lvl-name {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
 
-.lvl-name {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  font-weight: bold;
-  margin-top: 5px;
-}
+  // Colores de nivel sutiles y refinados
+  &.l1 { color: #81c784; border: 1px solid rgba(129, 199, 132, 0.3); }
+  &.l2 { color: #ffd54f; border: 1px solid rgba(255, 213, 79, 0.3); }
+  &.l3 { color: #e57373; border: 1px solid rgba(229, 115, 115, 0.3); }
 
-.l1 { color: #2ed573; border: 2px solid #2ed573; }
-.l2 { color: #ffa502; border: 2px solid #ffa502; }
-.l3 { color: #ff4757; border: 2px solid #ff4757; }
+  // Al no ser botones, eliminamos efectos hover complejos
+}
 
 .start-btn {
-  margin-top: 25px;
   width: 100%;
-  background: #ff4757;
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 30px;
-  font-family: 'Titan One', cursive;
-  font-size: 1.2rem;
-  box-shadow: 0 5px 0 #ff6b81;
+  background-color: transparent;
+  color: var(--accent-gold);
+  border: 1px solid var(--accent-gold);
+  padding: 18px;
+  border-radius: 2px;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+  overflow: hidden;
+
+  // Efecto de llenado al hacer hover
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: var(--accent-gold);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: -1;
+  }
+
+  &:hover {
+    color: var(--bg-dark);
+    box-shadow: 0 0 20px rgba(198, 163, 96, 0.4);
+
+    &::before {
+      width: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
 }
-.start-btn:active {
-  transform: translateY(5px);
-  box-shadow: 0 0px 0 #ff6b81;
+
+.code-recovery {
+  p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .last-code {
+    font-family: 'Courier New', monospace; // Estilo código/terminal
+    font-size: 1.8rem;
+    color: var(--accent-gold);
+    letter-spacing: 3px;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: rgba(198, 163, 96, 0.05);
+    border: 1px solid rgba(198, 163, 96, 0.1);
+  }
 }
 
 .terms {
-  margin-top: 20px;
-  opacity: 0.7;
-  a { color: inherit; font-weight: bold; }
+  margin-top: 30px;
+  font-size: 0.8rem;
+  color: #555555;
+
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+
+    &:hover { color: var(--accent-gold); }
+  }
 }
 
+// Animaciones más elegantes (Smooth Fade In + Slide Up)
 .animate-pop {
-  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: svelteFadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  opacity: 0;
 }
 
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
+@keyframes svelteFadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
