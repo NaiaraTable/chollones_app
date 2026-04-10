@@ -18,30 +18,30 @@
 
     border-radius: 50%;
     background-color: white;
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    border: 3px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    animation: fadeIn 0.1s ease-out;
+    animation: fadeIn 0.12s ease-out;
     z-index: 50;
 
     font-size: 16px;
     font-weight: 900;
-    font-family: var(--font-main);
+    font-family: var(--app-font-family);
 }
 
 .bomb-target {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.18));
 }
 
 .logo-target:active {
-    transform: scale(0.9);
+    transform: scale(0.92);
 }
 
 @keyframes fadeIn {
@@ -80,9 +80,9 @@
     font-weight: bold;
     animation: popEffect 0.5s forwards;
     z-index: 60;
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.35);
 }
 
 .pop-particle.bad {
-    color: #ff4757;
+    color: var(--ion-color-danger, #ff4757);
 }
