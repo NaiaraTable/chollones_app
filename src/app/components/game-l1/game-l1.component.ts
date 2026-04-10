@@ -23,24 +23,24 @@ const BUBBLE_TYPES: BubbleType[] = [
   imports: [CommonModule],
   template: `
     <div id="game-container">
-      <div *ngFor="let target of targets" 
-           class="logo-target" 
+      <div *ngFor="let target of targets"
+           class="logo-target"
            [class.bomb-target]="target.isBomb"
-           [style.left.%]="target.x" 
+           [style.left.%]="target.x"
            [style.top.%]="target.y"
            [ngStyle]="getTargetStyle(target)"
            (mousedown)="onTargetClick(target.id, $event)"
            (touchstart)="onTargetClick(target.id, $event)">
-      
+
           <ng-container *ngIf="!target.isBomb">
             {{ target.type.label }}
           </ng-container>
       </div>
 
-      <div *ngFor="let p of particles" 
+      <div *ngFor="let p of particles"
            class="pop-particle"
-           [class.bad]="p.isBad" 
-           [style.left.%]="p.x" 
+           [class.bad]="p.isBad"
+           [style.left.%]="p.x"
            [style.top.%]="p.y"
            [style.color]="p.color">
         {{ p.text }}
@@ -116,7 +116,7 @@ export class GameL1Component implements OnInit, OnDestroy {
   spawnTarget() {
     const isBomb = Math.random() > 0.8;
 
-    // Utilizamos porcentajes en lugar de píxeles absolutos 
+    // Utilizamos porcentajes en lugar de píxeles absolutos
     // para que las burbujas no se salgan nunca de la ventana emergente
     const x = Math.random() * 80 + 5; // 5% a 85% del ancho
     const y = Math.random() * 70 + 15; // 15% a 85% del alto
