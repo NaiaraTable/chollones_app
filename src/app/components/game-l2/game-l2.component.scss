@@ -39,8 +39,8 @@
 }
 
 .memory-card.matched .memory-card-back {
-    opacity: 0.7;
-    filter: grayscale(80%);
+    opacity: 0.75;
+    filter: grayscale(70%);
     transition: opacity 0.5s, filter 0.5s;
 }
 
@@ -54,13 +54,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
     user-select: none;
 }
 
 .memory-card-front {
-    background: linear-gradient(135deg, #1e3c72, #ff8a8a);
-    border: 2px solid white;
+    background: linear-gradient(135deg, #ee595d 0%, #ee595d 100%);
+    border: 2px solid rgba(255,255,255,0.06);
     color: white;
     font-size: 24px;
     font-weight: 800;
@@ -68,13 +68,13 @@
 
 .memory-card-front::after {
     content: '?';
-    opacity: 0.5;
+    opacity: 0.45;
 }
 
 .memory-card-back {
     transform: rotateY(180deg);
     background-color: white;
-    font-family: 'Titan One', cursive;
+    font-family: var(--app-font-family);
     font-weight: 900;
     font-size: min(4vw, 20px);
     text-align: center;
@@ -99,7 +99,7 @@
     font-weight: 900;
     animation: popEffectL2 0.8s forwards;
     z-index: 100;
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.35);
 }
 
 .shuffling {
@@ -112,8 +112,8 @@
     }
 
     50% {
-        transform: scale(0.8) translateY(-20px);
-        opacity: 0.5;
+        transform: scale(0.9) translateY(-20px);
+        opacity: 0.6;
     }
 
     100% {

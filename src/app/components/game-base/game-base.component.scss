@@ -33,7 +33,7 @@
   background: rgba(0, 0, 0, 0.4); /* Fondo oscuro semitransparente */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -51,16 +51,16 @@
 .hud-divider {
   width: 1px;
   height: 35px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.14);
   margin: 0 15px;
 }
 
 .hud-label {
   font-size: 0.7rem;
   font-weight: 800;
-  color: #ddd;
+  color: rgba(255,255,255,0.9);
   letter-spacing: 1px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--app-font-family);
   text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
   margin-bottom: 2px;
 }
@@ -69,25 +69,25 @@
   font-size: 1.6rem;
   font-weight: 900;
   color: #fff;
-  font-family: 'Titan One', cursive;
+  font-family: var(--app-font-family);
   line-height: 1;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 /* Animación de alerta cuando queda poco tiempo */
 .low-time {
-  color: #ff4757;
+  color: var(--ion-color-danger, #ff4757);
   animation: pulse-red 0.5s infinite alternate;
 }
 
 @keyframes pulse-red {
   from {
     transform: scale(1);
-    text-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+    text-shadow: 0 0 10px rgba(255, 71, 87, 0.35);
   }
   to {
     transform: scale(1.15);
-    text-shadow: 0 0 20px rgba(255, 71, 87, 0.9);
+    text-shadow: 0 0 20px rgba(255, 71, 87, 0.85);
   }
 }
 
