@@ -22,27 +22,29 @@
   font-size: 2.2rem;
   line-height: 1.1;
   margin-bottom: 25px;
-  font-family: 'Titan One', cursive;
+  font-family: var(--app-font-family-heading);
+  font-weight: 700;
   .highlight {
-    color: #ff4757;
+    color: var(--ion-color-primary);
   }
 }
 
 .card {
-  background: var(--ion-card-background, rgba(255, 255, 255, 0.9));
+  background: var(--ion-card-background, rgba(255, 255, 255, 0.95));
   padding: 20px;
-  border-radius: 25px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   width: 100%;
-  max-width: 400px;
-  border: 1px solid rgba(255,255,255,0.2);
+  max-width: 420px;
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .selection-text {
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 15px;
   font-size: 1rem;
-  opacity: 0.9;
+  opacity: 0.95;
+  font-family: var(--app-font-family);
 }
 
 .level-selector {
@@ -53,26 +55,27 @@
 
 /* Dejamos de usar botones, ahora son simples cajas de colores */
 .level-indicator {
-  border-radius: 15px;
-  padding: 15px 5px;
+  border-radius: 12px;
+  padding: 12px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
   background: white;
 }
 
 .lvl-num {
-  font-size: 1.5rem;
-  font-weight: 900;
-  font-family: 'Titan One', cursive;
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-family: var(--app-font-family);
 }
 
 .lvl-name {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
-  font-weight: bold;
-  margin-top: 5px;
+  font-weight: 800;
+  margin-top: 6px;
+  font-family: var(--app-font-family);
 }
 
 .l1 { color: #2ed573; border: 2px solid #2ed573; }
@@ -80,28 +83,28 @@
 .l3 { color: #ff4757; border: 2px solid #ff4757; }
 
 .start-btn {
-  margin-top: 25px;
+  margin-top: 20px;
   width: 100%;
-  background: #ff4757;
+  background: var(--ion-color-primary);
   color: white;
   border: none;
-  padding: 15px;
-  border-radius: 30px;
-  font-family: 'Titan One', cursive;
-  font-size: 1.2rem;
-  box-shadow: 0 5px 0 #ff6b81;
+  padding: 12px;
+  border-radius: 28px;
+  font-family: var(--app-font-family);
+  font-size: 1.05rem;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.06);
   cursor: pointer;
   transition: transform 0.1s;
 }
 .start-btn:active {
-  transform: translateY(5px);
-  box-shadow: 0 0px 0 #ff6b81;
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.04);
 }
 
 .terms {
-  margin-top: 20px;
-  opacity: 0.7;
-  a { color: inherit; font-weight: bold; }
+  margin-top: 14px;
+  opacity: 0.8;
+  a { color: inherit; font-weight: 700; }
 }
 
 .animate-pop {
@@ -109,6 +112,6 @@
 }
 
 @keyframes popIn {
-  from { opacity: 0; transform: scale(0.8); }
+  from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }

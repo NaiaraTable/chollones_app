@@ -24,7 +24,7 @@ interface RouletteSlice {
         <div class="ruleta-wheel" [style.transform]="'rotate(' + currentRotation + 'deg)'">
           <div class="slice-label" *ngFor="let s of slices"
                [style.transform]="'rotate(' + getLabelRotation(s) + 'deg) translate(0, -115px)'"
-               [style.fontSize]="s.fontSize">
+               [style.font-size]="s.fontSize">
             {{s.label}}
           </div>
           <div class="wheel-bg" [style.background]="wheelGradient"></div>
@@ -100,7 +100,7 @@ export class GameRuletaComponent implements OnInit {
 
     if (this.finalScore > 120) {
       w5  -= 10; // Baja a 50%
-      w10 += 6;  // Sube a 30% 
+      w10 += 6;  // Sube a 30%
       w15 += 2;  // Sube a 11%
       w20 += 1;  // Sube a 5%
       w25 += 1;  // Sube a 4%
